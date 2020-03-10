@@ -16,9 +16,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             using var factory = new WebApplicationFactory<Startup>();
             var client = factory.CreateClient();
 
-            var response = await client
-                .GetAsync(new Uri("", UriKind.Relative))
-                .ConfigureAwait(false);
+            var response = await client.GetAsync(new Uri("", UriKind.Relative));
 
             Assert.True(
                 response.IsSuccessStatusCode,
