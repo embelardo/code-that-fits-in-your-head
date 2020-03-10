@@ -30,7 +30,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             {
                 endpoints.MapGet("/", async context =>
                 {
-                    await context.Response.WriteAsync("Hello World!")
+                    await context.Response.WriteAsync("Hello, World!")
                         .ConfigureAwait(false);
                 });
             });
