@@ -13,27 +13,20 @@ namespace Ploeh.Samples.Restaurant.RestApi
 {
     public sealed class Startup
     {
-        // This method gets called by the runtime. Use this method to configure
-        // the HTTP request pipeline.
+        public static void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+        }
+
         public static void Configure(
             IApplicationBuilder app,
             IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             app.UseRouting();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello, World!")
-                        .ConfigureAwait(false);
-                });
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }
