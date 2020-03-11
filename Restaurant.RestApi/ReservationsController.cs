@@ -2,16 +2,35 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
-    [Route("[controller]")]
+    [ApiController, Route("[controller]")]
     public class ReservationsController
     {
-#pragma warning disable CA1822 // Mark members as static
-        public void Post() { }
-#pragma warning restore CA1822 // Mark members as static
+        public ReservationsController(IReservationsRepository repository)
+        {
+            Repository = repository;
+        }
+
+        public IReservationsRepository Repository { get; }
+
+        public async Task Post(ReservationDto dto)
+        {
+            if (dto is null)
+                throw new ArgumentNullException(nameof(dto));
+
+            await Repository
+                .Create(
+                    new Reservation(
+                        new DateTime(2023, 11, 24, 19, 0, 0),
+                        "juliad@example.net",
+                        "Julia Domna",
+                        5))
+                .ConfigureAwait(false);
+        }
     }
 }

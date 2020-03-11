@@ -16,6 +16,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public static void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddSingleton<IReservationsRepository>(
+                new NullRepository());
         }
 
         public static void Configure(
@@ -27,6 +30,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             app.UseRouting();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        }
+
+        private class NullRepository : IReservationsRepository
+        {
+            public Task Create(Reservation reservation)
+            {
+                return Task.CompletedTask;
+            }
         }
     }
 }

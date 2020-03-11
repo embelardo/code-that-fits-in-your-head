@@ -17,7 +17,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task PostValidReservation()
         {
             var response = await PostReservation(new {
-                date = "2023-03-10 19:00",
+                at = "2023-03-10 19:00",
                 email = "katinka@example.com",
                 name = "Katinka Ingabogovinanana",
                 quantity = 2 });
@@ -41,6 +41,29 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             using var content = new StringContent(json);
             content.Headers.ContentType.MediaType = "application/json";
             return await client.PostAsync("reservations", content);
+        }
+
+        [Fact]
+        public async Task PostValidReservationWhenDatabaseIsEmpty()
+        {
+            var db = new FakeDatabase();
+            var sut = new ReservationsController(db);
+
+            var dto = new ReservationDto
+            {
+                At = "2023-11-24 19:00",
+                Email = "juliad@example.net",
+                Name = "Julia Domna",
+                Quantity = 5
+            };
+            await sut.Post(dto);
+
+            var expected = new Reservation(
+                new DateTime(2023, 11, 24, 19, 0, 0),
+                dto.Email,
+                dto.Name,
+                dto.Quantity);
+            Assert.Contains(expected, db);
         }
     }
 }
