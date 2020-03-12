@@ -34,7 +34,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         private async Task<HttpResponseMessage> PostReservation(
             object reservation)
         {
-            using var factory = new WebApplicationFactory<Startup>();
+            using var factory = new RestaurantApiFactory();
             var client = factory.CreateClient();
 
             string json = JsonSerializer.Serialize(reservation);

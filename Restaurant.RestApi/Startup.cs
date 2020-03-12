@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -13,12 +14,20 @@ namespace Ploeh.Samples.Restaurant.RestApi
 {
     public sealed class Startup
     {
-        public static void ConfigureServices(IServiceCollection services)
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
 
+            var connStr = Configuration.GetConnectionString("Restaurant");
             services.AddSingleton<IReservationsRepository>(
-                new NullRepository());
+                new SqlReservationsRepository(connStr));
         }
 
         public static void Configure(
@@ -30,14 +39,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             app.UseRouting();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-        }
-
-        private class NullRepository : IReservationsRepository
-        {
-            public Task Create(Reservation reservation)
-            {
-                return Task.CompletedTask;
-            }
         }
     }
 }
