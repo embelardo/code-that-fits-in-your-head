@@ -23,14 +23,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (dto is null)
                 throw new ArgumentNullException(nameof(dto));
 
-            await Repository
-                .Create(
-                    new Reservation(
-                        new DateTime(2023, 11, 24, 19, 0, 0),
-                        "juliad@example.net",
-                        "Julia Domna",
-                        5))
-                .ConfigureAwait(false);
+            var r = new Reservation(
+                DateTime.Parse(dto.At!, CultureInfo.InvariantCulture),
+                dto.Email!,
+                dto.Name!,
+                dto.Quantity);
+            await Repository.Create(r).ConfigureAwait(false);
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -43,23 +44,30 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return await client.PostAsync("reservations", content);
         }
 
-        [Fact]
-        public async Task PostValidReservationWhenDatabaseIsEmpty()
+        [Theory]
+        [InlineData(
+            "2023-11-24 19:00", "juliad@example.net", "Julia Domna", 5)]
+        [InlineData("2024-02-13 18:15", "x@example.com", "Xenia Ng", 9)]
+        public async Task PostValidReservationWhenDatabaseIsEmpty(
+            string at,
+            string email,
+            string name,
+            int quantity)
         {
             var db = new FakeDatabase();
             var sut = new ReservationsController(db);
 
             var dto = new ReservationDto
             {
-                At = "2023-11-24 19:00",
-                Email = "juliad@example.net",
-                Name = "Julia Domna",
-                Quantity = 5
+                At = at,
+                Email = email,
+                Name = name,
+                Quantity = quantity
             };
             await sut.Post(dto);
 
             var expected = new Reservation(
-                new DateTime(2023, 11, 24, 19, 0, 0),
+                DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
                 dto.Email,
                 dto.Name,
                 dto.Quantity);
