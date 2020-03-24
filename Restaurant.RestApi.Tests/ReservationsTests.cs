@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -72,6 +73,19 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 dto.Name,
                 dto.Quantity);
             Assert.Contains(expected, db);
+        }
+
+        [Theory]
+        [InlineData(null, "j@example.net", "Jay Xerxes", 1)]
+        public async Task PostInvalidReservation(
+            string at,
+            string email,
+            string name,
+            int quantity)
+        {
+            var response =
+                await PostReservation(new { at, email, name, quantity });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
 }
