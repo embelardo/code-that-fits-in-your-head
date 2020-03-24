@@ -24,14 +24,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 throw new ArgumentNullException(nameof(dto));
             if (dto.At is null)
                 return new BadRequestResult();
+            if (!DateTime.TryParse(dto.At, out var d))
+                return new BadRequestResult();
             if (dto.Email is null)
                 return new BadRequestResult();
 
-            var r = new Reservation(
-                DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
-                dto.Email,
-                dto.Name!,
-                dto.Quantity);
+            var r = new Reservation(d, dto.Email, dto.Name!, dto.Quantity);
             await Repository.Create(r).ConfigureAwait(false);
 
             return new NoContentResult();
