@@ -80,6 +80,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData("not a date", "w@example.edu", "Wk Hd", 8)]
         [InlineData("2023-11-30 20:01", null, "Thora", 19)]
         [InlineData("2022-01-02 12:10", "3@example.org", "3 Beard", 0)]
+        [InlineData("2045-12-31 11:45", "git@example.com", "Gil Tan", -1)]
         public async Task PostInvalidReservation(
             string at,
             string email,

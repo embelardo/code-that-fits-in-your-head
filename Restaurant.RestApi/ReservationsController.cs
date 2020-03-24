@@ -26,7 +26,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 return new BadRequestResult();
             if (dto.Email is null)
                 return new BadRequestResult();
-            if (dto.Quantity == 0)
+            if (dto.Quantity < 1)
                 return new BadRequestResult();
 
             var r = new Reservation(d, dto.Email, dto.Name!, dto.Quantity);
