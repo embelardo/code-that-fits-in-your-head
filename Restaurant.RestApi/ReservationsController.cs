@@ -29,7 +29,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (dto.Quantity < 1)
                 return new BadRequestResult();
 
-            var r = new Reservation(d, dto.Email, dto.Name!, dto.Quantity);
+            var r =
+                new Reservation(d, dto.Email, dto.Name ?? "", dto.Quantity);
             await Repository.Create(r).ConfigureAwait(false);
 
             return new NoContentResult();

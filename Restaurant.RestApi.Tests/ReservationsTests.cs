@@ -49,6 +49,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData(
             "2023-11-24 19:00", "juliad@example.net", "Julia Domna", 5)]
         [InlineData("2024-02-13 18:15", "x@example.com", "Xenia Ng", 9)]
+        [InlineData("2023-08-23 16:55", "kite@example.edu", null, 2)]
         public async Task PostValidReservationWhenDatabaseIsEmpty(
             string at,
             string email,
@@ -70,7 +71,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var expected = new Reservation(
                 DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
                 dto.Email,
-                dto.Name,
+                dto.Name ?? "",
                 dto.Quantity);
             Assert.Contains(expected, db);
         }
