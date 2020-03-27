@@ -22,8 +22,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             if (dto is null)
                 throw new ArgumentNullException(nameof(dto));
-            if (dto.At is null)
-                return new BadRequestResult();
             if (!DateTime.TryParse(dto.At, out var d))
                 return new BadRequestResult();
             if (dto.Email is null)
