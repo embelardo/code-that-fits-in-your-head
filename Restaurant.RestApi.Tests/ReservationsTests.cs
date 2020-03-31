@@ -18,31 +18,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task PostValidReservation()
         {
-            var response = await PostReservation(new {
+            using var service = new RestaurantApiFactory();
+            var response = await service.PostReservation(new {
                 at = "2023-03-10 19:00",
                 email = "katinka@example.com",
                 name = "Katinka Ingabogovinanana",
                 quantity = 2 });
-
             Assert.True(
                 response.IsSuccessStatusCode,
                 $"Actual status code: {response.StatusCode}.");
-        }
-
-        [SuppressMessage(
-            "Usage",
-            "CA2234:Pass system uri objects instead of strings",
-            Justification = "URL isn't passed as variable, but as literal.")]
-        private async Task<HttpResponseMessage> PostReservation(
-            object reservation)
-        {
-            using var factory = new RestaurantApiFactory();
-            var client = factory.CreateClient();
-
-            string json = JsonSerializer.Serialize(reservation);
-            using var content = new StringContent(json);
-            content.Headers.ContentType.MediaType = "application/json";
-            return await client.PostAsync("reservations", content);
         }
 
         [Theory]
@@ -88,8 +72,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             string name,
             int quantity)
         {
-            var response =
-                await PostReservation(new { at, email, name, quantity });
+            using var service = new RestaurantApiFactory();
+            var response = await service.PostReservation(
+                new { at, email, name, quantity });
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
