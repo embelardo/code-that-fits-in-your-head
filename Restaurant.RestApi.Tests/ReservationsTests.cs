@@ -77,5 +77,30 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 new { at, email, name, quantity });
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
+
+        [Fact]
+        public async Task OverbookAttempt()
+        {
+            using var service = new RestaurantApiFactory();
+            await service.PostReservation(new
+            {
+                at = "2022-03-18 17:30",
+                email = "mars@example.edu",
+                name = "Marina Seminova",
+                quantity = 6
+            });
+
+            var response = await service.PostReservation(new
+            {
+                at = "2022-03-18 17:30",
+                email = "shli@example.org",
+                name = "Shanghai Li",
+                quantity = 5
+            });
+
+            Assert.Equal(
+                HttpStatusCode.InternalServerError,
+                response.StatusCode);
+        }
     }
 }

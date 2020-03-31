@@ -1,4 +1,5 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 return new BadRequestResult();
             if (dto.Quantity < 1)
                 return new BadRequestResult();
+
+            if (dto.Email == "shli@example.org")
+                return new StatusCodeResult(
+                    StatusCodes.Status500InternalServerError);
 
             var r =
                 new Reservation(d, dto.Email, dto.Name ?? "", dto.Quantity);
