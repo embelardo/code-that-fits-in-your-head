@@ -30,7 +30,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (dto.Quantity < 1)
                 return new BadRequestResult();
 
-            if (dto.Email == "shli@example.org")
+            var reservations =
+                await Repository.ReadReservations(d).ConfigureAwait(false);
+            if (reservations.Any())
                 return new StatusCodeResult(
                     StatusCodes.Status500InternalServerError);
 

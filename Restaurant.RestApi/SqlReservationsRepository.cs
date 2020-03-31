@@ -38,5 +38,33 @@ namespace Ploeh.Samples.Restaurant.RestApi
             INSERT INTO
                 [dbo].[Reservations] ([At], [Name], [Email], [Quantity])
             VALUES (@At, @Name, @Email, @Quantity)";
+
+        public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
+            DateTime dateTime)
+        {
+            var result = new List<Reservation>();
+
+            using var conn = new SqlConnection(ConnectionString);
+            using var cmd = new SqlCommand(readByRangeSql, conn);
+            cmd.Parameters.AddWithValue("@at", dateTime.Date);
+
+            await conn.OpenAsync().ConfigureAwait(false);
+            using var rdr =
+                await cmd.ExecuteReaderAsync().ConfigureAwait(false);
+            while (rdr.Read())
+                result.Add(
+                    new Reservation(
+                        (DateTime)rdr["At"],
+                        (string)rdr["Name"],
+                        (string)rdr["Email"],
+                        (int)rdr["Quantity"]));
+
+            return result.AsReadOnly();
+        }
+
+        private const string readByRangeSql = @"
+            SELECT [At], [Name], [Email], [Quantity]
+            FROM [dbo].[Reservations]
+            WHERE CONVERT(DATE, [At]) = @At";
     }
 }
