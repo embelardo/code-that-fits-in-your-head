@@ -10,14 +10,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public string? Name { get; set; }
         public int Quantity { get; set; }
 
-        internal bool IsValid
+        internal Reservation? Validate()
         {
-            get
-            {
-                return DateTime.TryParse(At, out _)
-                    && !(Email is null)
-                    && 0 < Quantity;
-            }
+            if (!DateTime.TryParse(At, out var d))
+                return null;
+            if (Email is null)
+                return null;
+            if (Quantity < 1)
+                return null;
+
+            return new Reservation(d, Email, Name ?? "", Quantity);
         }
     }
 }

@@ -23,20 +23,19 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             if (dto is null)
                 throw new ArgumentNullException(nameof(dto));
-            if (!dto.IsValid)
+
+            Reservation? r = dto.Validate();
+            if (r is null)
                 return new BadRequestResult();
 
-            var d = DateTime.Parse(dto.At!, CultureInfo.InvariantCulture);
-
-            var reservations =
-                await Repository.ReadReservations(d).ConfigureAwait(false);
+            var reservations = await Repository
+                .ReadReservations(r.At)
+                .ConfigureAwait(false);
             int reservedSeats = reservations.Sum(r => r.Quantity);
-            if (10 < reservedSeats + dto.Quantity)
+            if (10 < reservedSeats + r.Quantity)
                 return new StatusCodeResult(
                     StatusCodes.Status500InternalServerError);
 
-            var r =
-                new Reservation(d, dto.Email!, dto.Name ?? "", dto.Quantity);
             await Repository.Create(r).ConfigureAwait(false);
 
             return new NoContentResult();
