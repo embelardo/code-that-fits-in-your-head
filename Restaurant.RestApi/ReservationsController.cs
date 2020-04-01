@@ -23,7 +23,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             if (dto is null)
                 throw new ArgumentNullException(nameof(dto));
-            if (!IsValid(dto))
+            if (!dto.IsValid)
                 return new BadRequestResult();
 
             var d = DateTime.Parse(dto.At!, CultureInfo.InvariantCulture);
@@ -40,13 +40,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             await Repository.Create(r).ConfigureAwait(false);
 
             return new NoContentResult();
-        }
-
-        private static bool IsValid(ReservationDto dto)
-        {
-            return DateTime.TryParse(dto.At, out _)
-                && !(dto.Email is null)
-                && 0 < dto.Quantity;
         }
     }
 }
