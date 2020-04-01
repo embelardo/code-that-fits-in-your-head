@@ -23,12 +23,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             if (dto is null)
                 throw new ArgumentNullException(nameof(dto));
-            if (!DateTime.TryParse(dto.At, out var d))
+            if (!IsValid(dto))
                 return new BadRequestResult();
-            if (dto.Email is null)
-                return new BadRequestResult();
-            if (dto.Quantity < 1)
-                return new BadRequestResult();
+
+            var d = DateTime.Parse(dto.At!, CultureInfo.InvariantCulture);
 
             var reservations =
                 await Repository.ReadReservations(d).ConfigureAwait(false);
@@ -38,10 +36,17 @@ namespace Ploeh.Samples.Restaurant.RestApi
                     StatusCodes.Status500InternalServerError);
 
             var r =
-                new Reservation(d, dto.Email, dto.Name ?? "", dto.Quantity);
+                new Reservation(d, dto.Email!, dto.Name ?? "", dto.Quantity);
             await Repository.Create(r).ConfigureAwait(false);
 
             return new NoContentResult();
+        }
+
+        private static bool IsValid(ReservationDto dto)
+        {
+            return DateTime.TryParse(dto.At, out _)
+                && !(dto.Email is null)
+                && 0 < dto.Quantity;
         }
     }
 }
