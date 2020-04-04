@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CA1303: Do not pass literals as localized parameters
+dotnet_code_quality.CA1303.excluded_type_names_with_derived_types = Exception
