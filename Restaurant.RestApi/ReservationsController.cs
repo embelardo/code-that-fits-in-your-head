@@ -31,8 +31,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var reservations = await Repository
                 .ReadReservations(r.At)
                 .ConfigureAwait(false);
-            int reservedSeats = reservations.Sum(r => r.Quantity);
-            if (10 < reservedSeats + r.Quantity)
+            if (!MaitreD.WillAccept(reservations, r))
                 return new StatusCodeResult(
                     StatusCodes.Status500InternalServerError);
 
