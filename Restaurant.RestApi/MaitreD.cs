@@ -36,8 +36,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 {
                     availableTables.Remove(table);
                     if (table.IsCommunal)
-                        availableTables.Add(
-                            table.WithSeats(table.Seats - r.Quantity));
+                        availableTables.Add(table.Reserve(r.Quantity));
                 }
             }
 

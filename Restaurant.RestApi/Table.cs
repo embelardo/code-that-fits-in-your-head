@@ -31,6 +31,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new Table(IsStandard, newSeats);
         }
 
+        internal Table Reserve(int seatsToReserve)
+        {
+            return WithSeats(Seats - seatsToReserve);
+        }
+
         public override bool Equals(object? obj)
         {
             return obj is Table table &&
