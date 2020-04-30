@@ -12,9 +12,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
     [ApiController, Route("[controller]")]
     public class ReservationsController
     {
+        private readonly MaitreD maitreD;
+
         public ReservationsController(IReservationsRepository repository)
         {
             Repository = repository;
+            maitreD = new MaitreD(new Table(TableType.Communal, 10));
         }
 
         public IReservationsRepository Repository { get; }
@@ -31,8 +34,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var reservations = await Repository
                 .ReadReservations(r.At)
                 .ConfigureAwait(false);
-
-            var maitreD = new MaitreD(new Table(TableType.Communal, 10));
             if (!maitreD.WillAccept(reservations, r))
                 return new StatusCodeResult(
                     StatusCodes.Status500InternalServerError);
