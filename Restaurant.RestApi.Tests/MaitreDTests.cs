@@ -1,6 +1,7 @@
 ﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Xunit;
@@ -26,12 +27,24 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.True(actual);
         }
 
-        [Fact]
-        public void Reject()
+        [SuppressMessage(
+            "Performance",
+            "CA1812: Avoid uninstantiated internal classes",
+            Justification = "This class is instantiated via Reflection.")]
+        private class RejectTestCases : TheoryData<IEnumerable<int>>
         {
-            var sut = new MaitreD(
-                new Table(TableType.Communal, 6),
-                new Table(TableType.Communal, 6));
+            public RejectTestCases()
+            {
+                Add(new[] { 6, 6 });
+            }
+        }
+
+        [Theory, ClassData(typeof(RejectTestCases))]
+        public void Reject(int[] tableSeats)
+        {
+            var tables =
+                tableSeats.Select(s => new Table(TableType.Communal, s));
+            var sut = new MaitreD(tables);
 
             var r = Some.Reservation.WithQuantity(11);
             var actual = sut.WillAccept(Array.Empty<Reservation>(), r);
