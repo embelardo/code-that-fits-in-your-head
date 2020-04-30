@@ -7,8 +7,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
     {
         private Table(TableType tableType, int seats)
         {
-            TableType = tableType;
             Seats = seats;
+            IsStandard = tableType == TableType.Standard;
+            IsCommunal = tableType == TableType.Communal;
         }
 
         public static Table Standard(int seats)
@@ -21,24 +22,26 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new Table(TableType.Communal, seats);
         }
 
-        public TableType TableType { get; }
         public int Seats { get; }
+        public bool IsStandard { get; }
+        public bool IsCommunal { get; }
 
         public Table WithSeats(int newSeats)
         {
-            return new Table(TableType, newSeats);
+            return new Table(
+                IsStandard ? TableType.Standard : TableType.Communal,
+                newSeats);
         }
 
         public override bool Equals(object? obj)
         {
             return obj is Table table &&
-                   TableType == table.TableType &&
                    Seats == table.Seats;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(TableType, Seats);
+            return HashCode.Combine(Seats);
         }
     }
 }
