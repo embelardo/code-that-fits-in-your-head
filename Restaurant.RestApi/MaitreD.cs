@@ -8,11 +8,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
 {
     public sealed class MaitreD
     {
-        private readonly int capacity;
+        private readonly int largestTableSize;
 
         public MaitreD(params Table[] tables)
         {
-            capacity = tables.Sum(t => t.Seats);
+            largestTableSize = tables.Max(t => t.Seats);
         }
 
         public MaitreD(IEnumerable<Table> tables) : this(tables.ToArray())
@@ -27,7 +27,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 throw new ArgumentNullException(nameof(candidate));
 
             int reservedSeats = existingReservations.Sum(r => r.Quantity);
-            return reservedSeats + candidate.Quantity <= capacity;
+            return reservedSeats + candidate.Quantity <= largestTableSize;
         }
     }
 }
