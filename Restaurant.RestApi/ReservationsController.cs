@@ -17,7 +17,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public ReservationsController(IReservationsRepository repository)
         {
             Repository = repository;
-            maitreD = new MaitreD(new Table(TableType.Communal, 10));
+            maitreD = new MaitreD(Table.Communal(10));
         }
 
         public IReservationsRepository Repository { get; }

@@ -5,10 +5,20 @@ namespace Ploeh.Samples.Restaurant.RestApi
 {
     public sealed class Table
     {
-        public Table(TableType tableType, int seats)
+        private Table(TableType tableType, int seats)
         {
             TableType = tableType;
             Seats = seats;
+        }
+
+        public static Table Standard(int seats)
+        {
+            return new Table(TableType.Standard, seats);
+        }
+
+        public static Table Communal(int seats)
+        {
+            return new Table(TableType.Communal, seats);
         }
 
         public TableType TableType { get; }
