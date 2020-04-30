@@ -14,6 +14,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public TableType TableType { get; }
         public int Seats { get; }
 
+        public Table WithSeats(int newSeats)
+        {
+            return new Table(TableType, newSeats);
+        }
+
         public override bool Equals(object? obj)
         {
             return obj is Table table &&
