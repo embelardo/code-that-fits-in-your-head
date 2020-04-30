@@ -3,14 +3,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
 {
     public class Table
     {
-        private TableType communal;
-
-        public Table(TableType communal, int seats)
+        public Table(TableType tableType, int seats)
         {
-            this.communal = communal;
+            TableType = tableType;
             Seats = seats;
         }
 
+        public TableType TableType { get; }
         public int Seats { get; }
     }
 }
