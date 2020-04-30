@@ -6,14 +6,26 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
-    internal static class MaitreD
+    public sealed class MaitreD
     {
-        internal static bool WillAccept(
+        private readonly Table table;
+
+        public MaitreD(Table table)
+        {
+            this.table = table;
+        }
+
+        public bool WillAccept(
             IEnumerable<Reservation> existingReservations,
             Reservation candidate)
         {
+            if (candidate is null)
+            {
+                throw new ArgumentNullException(nameof(candidate));
+            }
+
             int reservedSeats = existingReservations.Sum(r => r.Quantity);
-            return reservedSeats + candidate.Quantity <= 10;
+            return reservedSeats + candidate.Quantity <= table.Seats;
         }
     }
 }
