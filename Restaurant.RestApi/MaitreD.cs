@@ -10,9 +10,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
     {
         private readonly Table table;
 
-        public MaitreD(Table table)
+        public MaitreD(params Table[] tables)
         {
-            this.table = table;
+            this.table = tables[0];
+        }
+
+        public MaitreD(IEnumerable<Table> tables) : this(tables.ToArray())
+        {
         }
 
         public bool WillAccept(
