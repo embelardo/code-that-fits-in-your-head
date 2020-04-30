@@ -24,11 +24,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 "x@example.net",
                 "",
                 s));
-            var r = new Reservation(
-                new DateTime(2022, 4, 1, 20, 15, 0),
-                "x@example.net",
-                "",
-                11);
+            var r = Some.Reservation;
             var actual = sut.WillAccept(rs, r);
 
             Assert.True(actual);
@@ -41,11 +37,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 new Table(TableType.Communal, 6),
                 new Table(TableType.Communal, 6));
 
-            var r = new Reservation(
-                new DateTime(2022, 4, 1, 20, 15, 0),
-                "x@example.com",
-                "",
-                11);
+            var r = Some.Reservation;
             var actual = sut.WillAccept(Array.Empty<Reservation>(), r);
 
             Assert.False(actual);
