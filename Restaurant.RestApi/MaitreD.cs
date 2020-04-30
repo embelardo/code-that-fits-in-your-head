@@ -20,9 +20,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Reservation candidate)
         {
             if (candidate is null)
-            {
                 throw new ArgumentNullException(nameof(candidate));
-            }
 
             int reservedSeats = existingReservations.Sum(r => r.Quantity);
             return reservedSeats + candidate.Quantity <= table.Seats;
