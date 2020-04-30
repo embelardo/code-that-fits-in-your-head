@@ -12,6 +12,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 new DateTime(2022, 4, 1, 20, 15, 0),
                 "x@example.net",
                 "",
-                11);
+                1);
     }
 }
