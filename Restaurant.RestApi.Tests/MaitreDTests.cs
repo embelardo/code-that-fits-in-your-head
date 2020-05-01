@@ -36,7 +36,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             IEnumerable<Table> tables,
             IEnumerable<Reservation> reservations)
         {
-            var sut = new MaitreD(tables);
+            var sut = new MaitreD(TimeSpan.FromHours(6), tables);
 
             var r = Some.Reservation.WithQuantity(11);
             var actual = sut.WillAccept(reservations, r);
@@ -69,7 +69,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             IEnumerable<Table> tables,
             IEnumerable<Reservation> reservations)
         {
-            var sut = new MaitreD(tables);
+            var sut = new MaitreD(TimeSpan.FromHours(6), tables);
 
             var r = Some.Reservation.WithQuantity(11);
             var actual = sut.WillAccept(reservations, r);

@@ -8,15 +8,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
 {
     public sealed class MaitreD
     {
-        public MaitreD(params Table[] tables) : this(tables.AsEnumerable())
+        public MaitreD(TimeSpan seatingDuration, params Table[] tables) :
+            this(seatingDuration, tables.AsEnumerable())
         {
         }
 
-        public MaitreD(IEnumerable<Table> tables)
+        public MaitreD(TimeSpan seatingDuration, IEnumerable<Table> tables)
         {
+            SeatingDuration = seatingDuration;
             Tables = tables;
         }
 
+        public TimeSpan SeatingDuration { get; }
         public IEnumerable<Table> Tables { get; }
 
         public bool WillAccept(
