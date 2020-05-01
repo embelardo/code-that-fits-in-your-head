@@ -59,6 +59,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                     new[] { Some.Reservation.WithQuantity(1) });
                 Add(new[] { Table.Standard(11) },
                     new[] { Some.Reservation.WithQuantity(1).OneHourBefore() });
+                Add(new[] { Table.Standard(12) },
+                    new[] { Some.Reservation.WithQuantity(2).OneHourLater() });
             }
         }
 

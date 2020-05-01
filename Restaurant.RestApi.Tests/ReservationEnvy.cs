@@ -27,6 +27,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return reservation.AddDate(TimeSpan.FromDays(-1));
         }
 
+        public static Reservation OneHourLater(this Reservation reservation)
+        {
+            return reservation.AddDate(TimeSpan.FromHours(1));
+        }
+
         public static Reservation TheDayAfter(this Reservation reservation)
         {
             return reservation.AddDate(TimeSpan.FromDays(1));

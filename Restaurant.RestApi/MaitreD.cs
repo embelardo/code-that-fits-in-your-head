@@ -28,10 +28,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (candidate is null)
                 throw new ArgumentNullException(nameof(candidate));
 
-            var relevantReservations =
-                existingReservations.Where(r =>
-                    candidate.At.Date <= r.At.Date &&
-                    r.At <= candidate.At);
+            var relevantReservations = existingReservations
+                .Where(r => candidate.At.Date == r.At.Date);
 
             List<Table> availableTables = Tables.ToList();
             foreach (var r in relevantReservations)
