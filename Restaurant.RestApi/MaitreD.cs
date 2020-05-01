@@ -30,9 +30,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             var relevantReservations =
                 existingReservations.Where(candidate.Overlaps);
-
             var availableTables = Allocate(relevantReservations);
-
             return availableTables.Any(t => t.Fits(candidate.Quantity));
         }
 
