@@ -10,10 +10,21 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 {
     public class MaitreDTests
     {
-        [Theory]
-        [InlineData(new[]    { 12 },  new int[0])]
-        [InlineData(new[] { 8, 11 },  new int[0])]
-        [InlineData(new[] { 2, 11 }, new[] { 2 })]
+        [SuppressMessage(
+            "Performance",
+            "CA1812: Avoid uninstantiated internal classes",
+            Justification = "This class is instantiated via Reflection.")]
+        private class AcceptTestCases : TheoryData<IEnumerable<int>, IEnumerable<int>>
+        {
+            public AcceptTestCases()
+            {
+                Add(new[]    { 12 }, Array.Empty<int>());
+                Add(new[] { 8, 11 }, Array.Empty<int>());
+                Add(new[] { 2, 11 }, new[] { 2 });
+            }
+        }
+
+        [Theory, ClassData(typeof(AcceptTestCases))]
         public void Accept(int[] tableSeats, int[] reservedSeats)
         {
             var tables = tableSeats.Select(Table.Communal);
