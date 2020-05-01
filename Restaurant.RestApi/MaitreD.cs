@@ -31,8 +31,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var relevantReservations = existingReservations
                 .Where(r => candidate.At.Date == r.At.Date);
 
+            var availableTables = Allocate(relevantReservations);
+
+            return availableTables.Any(t => candidate.Quantity <= t.Seats);
+        }
+
+        private IEnumerable<Table> Allocate(
+            IEnumerable<Reservation> reservations)
+        {
             List<Table> availableTables = Tables.ToList();
-            foreach (var r in relevantReservations)
+            foreach (var r in reservations)
             {
                 var table = availableTables.Find(t => r.Quantity <= t.Seats);
                 if (table is { })
@@ -43,7 +51,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 }
             }
 
-            return availableTables.Any(t => candidate.Quantity <= t.Seats);
+            return availableTables;
         }
     }
 }
