@@ -30,7 +30,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             var relevantReservations =
                 existingReservations.Where(r =>
-                    candidate.At <= r.At && r.At <= candidate.At);
+                    candidate.At.Date <= r.At.Date &&
+                    r.At <= candidate.At);
 
             List<Table> availableTables = Tables.ToList();
             foreach (var r in relevantReservations)
