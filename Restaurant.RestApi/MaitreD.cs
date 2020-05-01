@@ -33,7 +33,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             var availableTables = Allocate(relevantReservations);
 
-            return availableTables.Any(t => candidate.Quantity <= t.Seats);
+            return availableTables.Any(t => t.Fits(candidate.Quantity));
         }
 
         private IEnumerable<Table> Allocate(
@@ -42,7 +42,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             List<Table> availableTables = Tables.ToList();
             foreach (var r in reservations)
             {
-                var table = availableTables.Find(t => r.Quantity <= t.Seats);
+                var table = availableTables.Find(t => t.Fits(r.Quantity));
                 if (table is { })
                 {
                     availableTables.Remove(table);

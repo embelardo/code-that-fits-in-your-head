@@ -31,6 +31,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new Table(IsStandard, newSeats);
         }
 
+        internal bool Fits(int quantity)
+        {
+            return quantity <= Seats;
+        }
+
         internal Table Reserve(int seatsToReserve)
         {
             return WithSeats(Seats - seatsToReserve);
