@@ -28,8 +28,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (candidate is null)
                 throw new ArgumentNullException(nameof(candidate));
 
-            var relevantReservations = existingReservations
-                .Where(r => candidate.At.Date == r.At.Date);
+            var relevantReservations =
+                existingReservations.Where(candidate.Overlaps);
 
             var availableTables = Allocate(relevantReservations);
 
