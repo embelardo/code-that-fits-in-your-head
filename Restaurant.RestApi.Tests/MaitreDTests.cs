@@ -14,20 +14,21 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             "Performance",
             "CA1812: Avoid uninstantiated internal classes",
             Justification = "This class is instantiated via Reflection.")]
-        private class AcceptTestCases : TheoryData<IEnumerable<int>, IEnumerable<int>>
+        private class AcceptTestCases : TheoryData<IEnumerable<Table>, IEnumerable<int>>
         {
             public AcceptTestCases()
             {
-                Add(new[]    { 12 }, Array.Empty<int>());
-                Add(new[] { 8, 11 }, Array.Empty<int>());
-                Add(new[] { 2, 11 }, new[] { 2 });
+                Add(new[] { Table.Communal(12) }, Array.Empty<int>());
+                Add(new[] { Table.Communal(8), Table.Communal(11) },
+                    Array.Empty<int>());
+                Add(new[] { Table.Communal(2), Table.Communal(11) },
+                    new[] { 2 });
             }
         }
 
         [Theory, ClassData(typeof(AcceptTestCases))]
-        public void Accept(int[] tableSeats, int[] reservedSeats)
+        public void Accept(IEnumerable<Table> tables, int[] reservedSeats)
         {
-            var tables = tableSeats.Select(Table.Communal);
             var sut = new MaitreD(tables);
 
             var rs = reservedSeats.Select(Some.Reservation.WithQuantity);
