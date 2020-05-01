@@ -47,11 +47,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new Reservation(At, Email, Name, newQuantity);
         }
 
-        internal bool Overlaps(Reservation other)
-        {
-            return other.At.Date == At.Date;
-        }
-
         public override bool Equals(object? obj)
         {
             return obj is Reservation reservation &&

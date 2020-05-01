@@ -22,7 +22,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Add(TimeSpan.FromHours(6),
                     new[] { Table.Communal(12) },
                     Array.Empty<Reservation>());
-                Add(TimeSpan.FromHours(6), 
+                Add(TimeSpan.FromHours(6),
                     new[] { Table.Communal(8), Table.Communal(11) },
                     Array.Empty<Reservation>());
                 Add(TimeSpan.FromHours(6),
@@ -34,6 +34,14 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Add(TimeSpan.FromHours(6),
                     new[] { Table.Communal(11) },
                     new[] { Some.Reservation.WithQuantity(11).TheDayAfter() });
+                Add(TimeSpan.FromHours(2.5),
+                    new[] { Table.Standard(12) },
+                    new[] { Some.Reservation.WithQuantity(11).AddDate(
+                        TimeSpan.FromHours(-2.5)) });
+                Add(TimeSpan.FromHours(1),
+                    new[] { Table.Standard(14) },
+                    new[] { Some.Reservation.WithQuantity(9).AddDate(
+                        TimeSpan.FromHours(1)) });
             }
         }
 

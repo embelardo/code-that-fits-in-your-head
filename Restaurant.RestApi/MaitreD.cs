@@ -31,8 +31,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (candidate is null)
                 throw new ArgumentNullException(nameof(candidate));
 
+            var seating = new Seating(SeatingDuration, candidate);
             var relevantReservations =
-                existingReservations.Where(candidate.Overlaps);
+                existingReservations.Where(seating.Overlaps);
             var availableTables = Allocate(relevantReservations);
             return availableTables.Any(t => t.Fits(candidate.Quantity));
         }
