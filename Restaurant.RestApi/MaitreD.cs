@@ -29,7 +29,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 throw new ArgumentNullException(nameof(candidate));
 
             var relevantReservations =
-                existingReservations.Where(r => candidate.At <= r.At);
+                existingReservations.Where(r =>
+                    candidate.At <= r.At && r.At <= candidate.At);
 
             List<Table> availableTables = Tables.ToList();
             foreach (var r in relevantReservations)
