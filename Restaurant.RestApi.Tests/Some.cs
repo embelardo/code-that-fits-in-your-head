@@ -7,9 +7,12 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 {
     public static class Some
     {
+        public readonly static DateTime Now =
+            new DateTime(2022, 4, 1, 20, 15, 0);
+
         public readonly static Reservation Reservation =
             new Reservation(
-                new DateTime(2022, 4, 1, 20, 15, 0),
+                Now,
                 "x@example.net",
                 "",
                 1);

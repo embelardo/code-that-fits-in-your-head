@@ -35,7 +35,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var reservations = await Repository
                 .ReadReservations(r.At)
                 .ConfigureAwait(false);
-            if (!MaitreD.WillAccept(reservations, r))
+            if (!MaitreD.WillAccept(DateTime.Now, reservations, r))
                 return new StatusCodeResult(
                     StatusCodes.Status500InternalServerError);
 

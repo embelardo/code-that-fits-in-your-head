@@ -35,6 +35,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public IEnumerable<Table> Tables { get; }
 
         public bool WillAccept(
+            DateTime now,
             IEnumerable<Reservation> existingReservations,
             Reservation candidate)
         {
@@ -42,6 +43,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 throw new ArgumentNullException(nameof(existingReservations));
             if (candidate is null)
                 throw new ArgumentNullException(nameof(candidate));
+            if (candidate.At < now)
+                return false;
             // Reject reservation if it's outside of opening hours
             if (candidate.At.TimeOfDay < OpensAt ||
                 LastSeating < candidate.At.TimeOfDay)
