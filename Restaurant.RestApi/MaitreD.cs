@@ -8,17 +8,25 @@ namespace Ploeh.Samples.Restaurant.RestApi
 {
     public sealed class MaitreD
     {
-        public MaitreD(TimeSpan seatingDuration, params Table[] tables) :
-            this(seatingDuration, tables.AsEnumerable())
+        public MaitreD(
+            TimeSpan opensAt,
+            TimeSpan seatingDuration,
+            params Table[] tables) :
+            this(opensAt, seatingDuration, tables.AsEnumerable())
         {
         }
 
-        public MaitreD(TimeSpan seatingDuration, IEnumerable<Table> tables)
+        public MaitreD(
+            TimeSpan opensAt,
+            TimeSpan seatingDuration,
+            IEnumerable<Table> tables)
         {
+            OpensAt = opensAt;
             SeatingDuration = seatingDuration;
             Tables = tables;
         }
 
+        public TimeSpan OpensAt { get; }
         public TimeSpan SeatingDuration { get; }
         public IEnumerable<Table> Tables { get; }
 
@@ -30,6 +38,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 throw new ArgumentNullException(nameof(existingReservations));
             if (candidate is null)
                 throw new ArgumentNullException(nameof(candidate));
+            if (candidate.At.TimeOfDay < OpensAt)
+                return false;
 
             var seating = new Seating(SeatingDuration, candidate);
             var relevantReservations =

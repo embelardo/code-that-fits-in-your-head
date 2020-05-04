@@ -30,7 +30,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 new SqlReservationsRepository(connStr));
 
             services.AddSingleton(
-                new MaitreD(TimeSpan.FromHours(6), Table.Communal(10)));
+                new MaitreD(
+                    TimeSpan.FromHours(18),
+                    TimeSpan.FromHours(6),
+                    Table.Communal(10)));
         }
 
         public static void Configure(
