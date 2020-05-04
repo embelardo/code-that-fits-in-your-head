@@ -28,6 +28,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var connStr = Configuration.GetConnectionString("Restaurant");
             services.AddSingleton<IReservationsRepository>(
                 new SqlReservationsRepository(connStr));
+
+            services.AddSingleton(
+                new MaitreD(TimeSpan.FromHours(6), Table.Communal(10)));
         }
 
         public static void Configure(

@@ -12,15 +12,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
     [ApiController, Route("[controller]")]
     public class ReservationsController
     {
-        private readonly MaitreD maitreD;
-
-        public ReservationsController(IReservationsRepository repository)
+        public ReservationsController(
+            IReservationsRepository repository,
+            MaitreD maitreD)
         {
             Repository = repository;
-            maitreD = new MaitreD(TimeSpan.FromHours(6), Table.Communal(10));
+            MaitreD = maitreD;
         }
 
         public IReservationsRepository Repository { get; }
+        public MaitreD MaitreD { get; }
 
         public async Task<ActionResult> Post(ReservationDto dto)
         {
@@ -34,7 +35,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var reservations = await Repository
                 .ReadReservations(r.At)
                 .ConfigureAwait(false);
-            if (!maitreD.WillAccept(reservations, r))
+            if (!MaitreD.WillAccept(reservations, r))
                 return new StatusCodeResult(
                     StatusCodes.Status500InternalServerError);
 

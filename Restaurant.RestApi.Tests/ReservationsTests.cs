@@ -42,7 +42,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int quantity)
         {
             var db = new FakeDatabase();
-            var sut = new ReservationsController(db);
+            var sut = new ReservationsController(db, Some.MaitreD);
 
             var dto = new ReservationDto
             {

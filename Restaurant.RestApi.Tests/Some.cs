@@ -13,5 +13,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 "x@example.net",
                 "",
                 1);
+
+        public readonly static MaitreD MaitreD =
+            new MaitreD(TimeSpan.FromHours(6), Table.Communal(10));
     }
 }
