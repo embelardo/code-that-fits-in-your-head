@@ -17,6 +17,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public readonly static MaitreD MaitreD =
             new MaitreD(
                 TimeSpan.FromHours(16),
+                TimeSpan.FromHours(21),
                 TimeSpan.FromHours(12),
                 Table.Communal(10));
     }

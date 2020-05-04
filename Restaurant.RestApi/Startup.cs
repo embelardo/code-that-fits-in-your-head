@@ -32,6 +32,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             services.AddSingleton(
                 new MaitreD(
                     TimeSpan.FromHours(18),
+                    TimeSpan.FromHours(21),
                     TimeSpan.FromHours(6),
                     Table.Communal(10)));
         }
