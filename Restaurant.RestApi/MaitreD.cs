@@ -45,9 +45,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 throw new ArgumentNullException(nameof(candidate));
             if (candidate.At < now)
                 return false;
-            // Reject reservation if it's outside of opening hours
-            if (candidate.At.TimeOfDay < OpensAt ||
-                LastSeating < candidate.At.TimeOfDay)
+            if (IsOutsideOfOpeningHours(candidate))
                 return false;
 
             var seating = new Seating(SeatingDuration, candidate);
@@ -55,6 +53,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 existingReservations.Where(seating.Overlaps);
             var availableTables = Allocate(relevantReservations);
             return availableTables.Any(t => t.Fits(candidate.Quantity));
+        }
+
+        private bool IsOutsideOfOpeningHours(Reservation reservation)
+        {
+            return reservation.At.TimeOfDay < OpensAt
+                || LastSeating < reservation.At.TimeOfDay;
         }
 
         private IEnumerable<Table> Allocate(
