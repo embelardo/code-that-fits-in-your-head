@@ -15,55 +15,61 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             "CA1812: Avoid uninstantiated internal classes",
             Justification = "This class is instantiated via Reflection.")]
         private class AcceptTestCases :
-            TheoryData<TimeSpan, TimeSpan, IEnumerable<Table>, IEnumerable<Reservation>>
+            TheoryData<MaitreD, IEnumerable<Reservation>>
         {
             public AcceptTestCases()
             {
-                Add(TimeSpan.FromHours(18),
-                    TimeSpan.FromHours(6),
-                    new[] { Table.Communal(12) },
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(6),
+                        new[] { Table.Communal(12) }),
                     Array.Empty<Reservation>());
-                Add(TimeSpan.FromHours(18),
-                    TimeSpan.FromHours(6),
-                    new[] { Table.Communal(8), Table.Communal(11) },
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(6),
+                        new[] { Table.Communal(8), Table.Communal(11) }),
                     Array.Empty<Reservation>());
-                Add(TimeSpan.FromHours(18),
-                    TimeSpan.FromHours(6),
-                    new[] { Table.Communal(2), Table.Communal(11) },
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(6),
+                        new[] { Table.Communal(2), Table.Communal(11) }),
                     new[] { Some.Reservation.WithQuantity(2) });
-                Add(TimeSpan.FromHours(18),
-                    TimeSpan.FromHours(6),
-                    new[] { Table.Communal(11) },
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(6),
+                        new[] { Table.Communal(11) }),
                     new[] { Some.Reservation.WithQuantity(11).TheDayBefore() });
-                Add(TimeSpan.FromHours(18),
-                    TimeSpan.FromHours(6),
-                    new[] { Table.Communal(11) },
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(6),
+                        new[] { Table.Communal(11) }),
                     new[] { Some.Reservation.WithQuantity(11).TheDayAfter() });
-                Add(TimeSpan.FromHours(18),
-                    TimeSpan.FromHours(2.5),
-                    new[] { Table.Standard(12) },
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(2.5),
+                        new[] { Table.Standard(12) }),
                     new[] { Some.Reservation.WithQuantity(11).AddDate(
                         TimeSpan.FromHours(-2.5)) });
-                Add(TimeSpan.FromHours(18),
-                    TimeSpan.FromHours(1),
-                    new[] { Table.Standard(14) },
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(1),
+                        new[] { Table.Standard(14) }),
                     new[] { Some.Reservation.WithQuantity(9).AddDate(
                         TimeSpan.FromHours(1)) });
             }
         }
 
+        [SuppressMessage(
+            "Design",
+            "CA1062:Validate arguments of public methods",
+            Justification = "Parametrised test.")]
         [Theory, ClassData(typeof(AcceptTestCases))]
         public void Accept(
-            TimeSpan opensAt,
-            TimeSpan seatingDuration,
-            IEnumerable<Table> tables,
+            MaitreD sut,
             IEnumerable<Reservation> reservations)
         {
-            var sut = new MaitreD(opensAt, seatingDuration, tables);
-
             var r = Some.Reservation.WithQuantity(11);
             var actual = sut.WillAccept(reservations, r);
-
             Assert.True(actual);
         }
 
