@@ -72,49 +72,53 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             "CA1812: Avoid uninstantiated internal classes",
             Justification = "This class is instantiated via Reflection.")]
         private class RejectTestCases :
-            TheoryData<TimeSpan, TimeSpan, IEnumerable<Table>, IEnumerable<Reservation>>
+            TheoryData<MaitreD, IEnumerable<Reservation>>
         {
             public RejectTestCases()
             {
-                Add(TimeSpan.FromHours(18),
-                    TimeSpan.FromHours(6),
-                    new[] { Table.Communal(6), Table.Communal(6) },
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(6),
+                        new[] { Table.Communal(6), Table.Communal(6) }),
                     Array.Empty<Reservation>());
-                Add(TimeSpan.FromHours(18),
-                    TimeSpan.FromHours(6),
-                    new[] { Table.Standard(12) },
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(6),
+                        new[] { Table.Standard(12) }),
                     new[] { Some.Reservation.WithQuantity(1) });
-                Add(TimeSpan.FromHours(18),
-                    TimeSpan.FromHours(6),
-                    new[] { Table.Standard(11) },
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(6),
+                        new[] { Table.Standard(11) }),
                     new[] { Some.Reservation.WithQuantity(1).OneHourBefore() });
-                Add(TimeSpan.FromHours(18),
-                    TimeSpan.FromHours(6),
-                    new[] { Table.Standard(12) },
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(6),
+                        new[] { Table.Standard(12) }),
                     new[] { Some.Reservation.WithQuantity(2).OneHourLater() });
                 /* Some.Reservation.At is the time of the 'hard-coded'
                  * reservation in the test below. Adding 30 minutes to it means
                  * that the restaurant opens 30 minutes later than the desired
                  * reservation time, and therefore must be rejected. */
-                Add(Some.Reservation.At.AddMinutes(30).TimeOfDay,
-                    TimeSpan.FromHours(6),
-                    new[] { Table.Standard(12) },
+                Add(new MaitreD(
+                        Some.Reservation.At.AddMinutes(30).TimeOfDay,
+                        TimeSpan.FromHours(6),
+                        new[] { Table.Standard(12) }),
                     Array.Empty<Reservation>());
             }
         }
 
+        [SuppressMessage(
+            "Design",
+            "CA1062:Validate arguments of public methods",
+            Justification = "Parametrised test.")]
         [Theory, ClassData(typeof(RejectTestCases))]
         public void Reject(
-            TimeSpan opensAt,
-            TimeSpan seatingDuration,
-            IEnumerable<Table> tables,
+            MaitreD sut,
             IEnumerable<Reservation> reservations)
         {
-            var sut = new MaitreD(opensAt, seatingDuration, tables);
-
             var r = Some.Reservation.WithQuantity(11);
             var actual = sut.WillAccept(reservations, r);
-
             Assert.False(actual);
         }
     }
