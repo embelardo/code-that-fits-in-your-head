@@ -179,16 +179,16 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return reservation;
         }
 
-        [SuppressMessage(
-            "Usage",
-            "CA2234:Pass system uri objects instead of strings",
-            Justification = "URL isn't passed as variable, but as literal.")]
-        [Fact]
-        public async Task GetAbsentReservation()
+        [Theory]
+        [InlineData("E56C0B933E91463685579CE1215F6956")]
+        [InlineData("foo")]
+        public async Task GetAbsentReservation(string id)
         {
             using var service = new RestaurantApiFactory();
-            var resp = await service.CreateClient()
-                .GetAsync("/reservations/E56C0B933E91463685579CE1215F6956");
+
+            var url = new Uri($"/reservations/{id}", UriKind.Relative);
+            var resp = await service.CreateClient().GetAsync(url);
+
             Assert.Equal(HttpStatusCode.NotFound, resp.StatusCode);
         }
     }

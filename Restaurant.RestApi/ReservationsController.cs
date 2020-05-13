@@ -66,10 +66,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
         [HttpGet("{id}")]
         public async Task<ActionResult> Get(string id)
         {
-            var rid = new Guid(id);
+            if (!Guid.TryParse(id, out var rid))
+                return new NotFoundResult();
+
             Reservation? r =
                 await Repository.ReadReservation(rid).ConfigureAwait(false);
-
             if (r is null)
                 return new NotFoundResult();
 
