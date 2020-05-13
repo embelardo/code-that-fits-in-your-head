@@ -159,6 +159,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 $"Actual status code: {postResp.StatusCode}.");
             var actual = await ParseReservationContent(getResp);
             Assert.Equal(expected, actual, new ReservationDtoComparer());
+            Assert.DoesNotContain(address.ToString(), char.IsUpper);
         }
 
         private static Uri FindReservationAddress(HttpResponseMessage response)

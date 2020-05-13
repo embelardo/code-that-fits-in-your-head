@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
-    [ApiController, Route("[controller]")]
+    [ApiController, Route("reservations")]
     public class ReservationsController
     {
         public ReservationsController(
