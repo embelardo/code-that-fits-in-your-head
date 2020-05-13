@@ -69,11 +69,15 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var rid = new Guid(id);
             Reservation? r =
                 await Repository.ReadReservation(rid).ConfigureAwait(false);
+
+            if (r is null)
+                return new NotFoundResult();
+
             return new OkObjectResult(
                 new ReservationDto
                 {
                     Id = id,
-                    At = r!.At.ToString("o"),
+                    At = r.At.ToString("o"),
                     Email = r.Email,
                     Name = r.Name,
                     Quantity = r.Quantity
