@@ -24,6 +24,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             using var conn = new SqlConnection(ConnectionString);
             using var cmd = new SqlCommand(createReservationSql, conn);
+            cmd.Parameters.Add(new SqlParameter("@Id", reservation.Id));
             cmd.Parameters.Add(new SqlParameter("@At", reservation.At));
             cmd.Parameters.Add(new SqlParameter("@Name", reservation.Name));
             cmd.Parameters.Add(new SqlParameter("@Email", reservation.Email));
@@ -35,9 +36,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
         }
 
         private const string createReservationSql = @"
-            INSERT INTO
-                [dbo].[Reservations] ([At], [Name], [Email], [Quantity])
-            VALUES (@At, @Name, @Email, @Quantity)";
+            INSERT INTO [dbo].[Reservations] (
+                [PublicId], [At], [Name], [Email], [Quantity])
+            VALUES (@Id, @At, @Name, @Email, @Quantity)";
 
         public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
             DateTime dateTime)
@@ -54,6 +55,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             while (rdr.Read())
                 result.Add(
                     new Reservation(
+                        Guid.NewGuid(),
                         (DateTime)rdr["At"],
                         (string)rdr["Name"],
                         (string)rdr["Email"],
@@ -66,5 +68,30 @@ namespace Ploeh.Samples.Restaurant.RestApi
             SELECT [At], [Name], [Email], [Quantity]
             FROM [dbo].[Reservations]
             WHERE CONVERT(DATE, [At]) = @At";
+
+        public async Task<Reservation?> ReadReservation(Guid id)
+        {
+            const string readByIdSql = @"
+                SELECT [At], [Name], [Email], [Quantity]
+                FROM [dbo].[Reservations]
+                WHERE [PublicId] = @id";
+
+            using var conn = new SqlConnection(ConnectionString);
+            using var cmd = new SqlCommand(readByIdSql, conn);
+            cmd.Parameters.AddWithValue("@id", id);
+
+            await conn.OpenAsync().ConfigureAwait(false);
+            using var rdr =
+                await cmd.ExecuteReaderAsync().ConfigureAwait(false);
+            if (!rdr.Read())
+                return null;
+
+            return new Reservation(
+                id,
+                (DateTime)rdr["At"],
+                (string)rdr["Name"],
+                (string)rdr["Email"],
+                (int)rdr["Quantity"]);
+        }
     }
 }

@@ -30,5 +30,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return Task.FromResult<IReadOnlyCollection<Reservation>>(
                 this.Where(r => min <= r.At && r.At <= max).ToList());
         }
+
+        public Task<Reservation?> ReadReservation(Guid id)
+        {
+            var reservation = this.FirstOrDefault(r => r.Id == id);
+            return Task.FromResult((Reservation?)reservation);
+        }
     }
 }

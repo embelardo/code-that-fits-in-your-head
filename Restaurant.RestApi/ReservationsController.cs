@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,12 +24,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public IReservationsRepository Repository { get; }
         public MaitreD MaitreD { get; }
 
+        [HttpPost]
         public async Task<ActionResult> Post(ReservationDto dto)
         {
             if (dto is null)
                 throw new ArgumentNullException(nameof(dto));
 
-            Reservation? r = dto.Validate();
+            Reservation? r = dto.Validate(Guid.NewGuid());
             if (r is null)
                 return new BadRequestResult();
 
@@ -41,7 +43,41 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             await Repository.Create(r).ConfigureAwait(false);
 
-            return new NoContentResult();
+            return Reservation201Created(r);
+        }
+
+        [SuppressMessage(
+            "Globalization",
+            "CA1305:Specify IFormatProvider",
+            Justification = "Guids aren't culture-specific.")]
+        private static ActionResult Reservation201Created(Reservation r)
+        {
+            return new CreatedAtActionResult(
+                nameof(Get),
+                null,
+                new { id = r.Id.ToString("N") },
+                null);
+        }
+
+        [SuppressMessage(
+            "Globalization",
+            "CA1305:Specify IFormatProvider",
+            Justification = "ToString(\"o\") is already culture-neutral.")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult> Get(string id)
+        {
+            var rid = new Guid(id);
+            Reservation? r =
+                await Repository.ReadReservation(rid).ConfigureAwait(false);
+            return new OkObjectResult(
+                new ReservationDto
+                {
+                    Id = id,
+                    At = r!.At.ToString("o"),
+                    Email = r.Email,
+                    Name = r.Name,
+                    Quantity = r.Quantity
+                });
         }
     }
 }

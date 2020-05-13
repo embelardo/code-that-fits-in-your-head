@@ -11,5 +11,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         Task<IReadOnlyCollection<Reservation>> ReadReservations(
             DateTime dateTime);
+
+        Task<Reservation?> ReadReservation(Guid id);
     }
 }

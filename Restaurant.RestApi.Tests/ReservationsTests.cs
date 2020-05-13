@@ -46,6 +46,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             var dto = new ReservationDto
             {
+                Id = "B50DF5B1-F484-4D99-88F9-1915087AF568",
                 At = at,
                 Email = email,
                 Name = name,
@@ -54,6 +55,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             await sut.Post(dto);
 
             var expected = new Reservation(
+                Guid.Parse(dto.Id),
                 DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
                 dto.Email,
                 dto.Name ?? "",
@@ -127,6 +129,54 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.True(
                 response.IsSuccessStatusCode,
                 $"Actual status code: {response.StatusCode}.");
+        }
+
+        [Theory]
+        [InlineData(
+            "2023-06-09 19:10", "adur@example.net", "Adrienne Ursa", 2)]
+        [InlineData("2023-07-13 18:55", "emol@example.gov", "Emma Olsen", 5)]
+        public async Task ReadSuccessfulReservation(
+            string date,
+            string email,
+            string name,
+            int quantity)
+        {
+            using var service = new RestaurantApiFactory();
+            var expected = new ReservationDto
+            {
+                At = date,
+                Email = email,
+                Name = name,
+                Quantity = quantity
+            };
+            var postResp = await service.PostReservation(expected);
+            Uri address = FindReservationAddress(postResp);
+
+            var getResp = await service.CreateClient().GetAsync(address);
+
+            Assert.True(
+                getResp.IsSuccessStatusCode,
+                $"Actual status code: {postResp.StatusCode}.");
+            var actual = await ParseReservationContent(getResp);
+            Assert.Equal(expected, actual, new ReservationDtoComparer());
+        }
+
+        private static Uri FindReservationAddress(HttpResponseMessage response)
+        {
+            return response.Headers.Location;
+        }
+
+        private static async Task<ReservationDto> ParseReservationContent(
+            HttpResponseMessage actual)
+        {
+            var json = await actual.Content.ReadAsStringAsync();
+            var reservation = JsonSerializer.Deserialize<ReservationDto>(
+                json,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+            return reservation;
         }
     }
 }
