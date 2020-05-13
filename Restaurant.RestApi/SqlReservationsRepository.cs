@@ -55,7 +55,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             while (rdr.Read())
                 result.Add(
                     new Reservation(
-                        Guid.NewGuid(),
+                        (Guid)rdr["PublicId"],
                         (DateTime)rdr["At"],
                         (string)rdr["Name"],
                         (string)rdr["Email"],
@@ -65,7 +65,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         }
 
         private const string readByRangeSql = @"
-            SELECT [At], [Name], [Email], [Quantity]
+            SELECT [PublicId], [At], [Name], [Email], [Quantity]
             FROM [dbo].[Reservations]
             WHERE CONVERT(DATE, [At]) = @At";
 
