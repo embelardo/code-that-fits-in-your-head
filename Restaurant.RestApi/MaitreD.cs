@@ -9,8 +9,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
     public sealed class MaitreD
     {
         public MaitreD(
-            TimeSpan opensAt,
-            TimeSpan lastSeating,
+            TimeOfDay opensAt,
+            TimeOfDay lastSeating,
             TimeSpan seatingDuration,
             params Table[] tables) :
             this(opensAt, lastSeating, seatingDuration, tables.AsEnumerable())
@@ -18,8 +18,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
         }
 
         public MaitreD(
-            TimeSpan opensAt,
-            TimeSpan lastSeating,
+            TimeOfDay opensAt,
+            TimeOfDay lastSeating,
             TimeSpan seatingDuration,
             IEnumerable<Table> tables)
         {
@@ -29,8 +29,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Tables = tables;
         }
 
-        public TimeSpan OpensAt { get; }
-        public TimeSpan LastSeating { get; }
+        public TimeOfDay OpensAt { get; }
+        public TimeOfDay LastSeating { get; }
         public TimeSpan SeatingDuration { get; }
         public IEnumerable<Table> Tables { get; }
 
