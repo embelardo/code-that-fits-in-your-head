@@ -93,5 +93,19 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 (string)rdr["Email"],
                 (int)rdr["Quantity"]);
         }
+
+        public async Task Delete(Guid id)
+        {
+            const string deleteSql = @"
+                DELETE [dbo].[Reservations]
+                WHERE [PublicId] = @id";
+
+            using var conn = new SqlConnection(ConnectionString);
+            using var cmd = new SqlCommand(deleteSql, conn);
+            cmd.Parameters.AddWithValue("@id", id);
+
+            await conn.OpenAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+        }
     }
 }

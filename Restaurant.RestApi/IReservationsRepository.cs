@@ -13,5 +13,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             DateTime dateTime);
 
         Task<Reservation?> ReadReservation(Guid id);
+
+        Task Delete(Guid id);
     }
 }

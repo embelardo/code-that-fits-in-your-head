@@ -91,5 +91,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
                     Quantity = r.Quantity
                 });
         }
+
+        [HttpDelete("{id}")]
+        public async Task Delete(string id)
+        {
+            var rid = new Guid(id);
+            await Repository.Delete(rid).ConfigureAwait(false);
+        }
     }
 }

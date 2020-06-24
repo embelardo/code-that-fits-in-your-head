@@ -36,5 +36,14 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var reservation = this.FirstOrDefault(r => r.Id == id);
             return Task.FromResult((Reservation?)reservation);
         }
+
+        public Task Delete(Guid id)
+        {
+            var reservation = this.SingleOrDefault(r => r.Id == id);
+            if (reservation is { })
+                Remove(reservation);
+
+            return Task.CompletedTask;
+        }
     }
 }

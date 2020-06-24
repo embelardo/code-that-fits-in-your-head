@@ -198,5 +198,34 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             Assert.Equal(HttpStatusCode.NotFound, resp.StatusCode);
         }
+
+        [Theory]
+        [InlineData("2023-06-24 18:47", "c@example.net", "Nick Klimenko", 2)]
+        [InlineData("2023-07-12 18:50", "emot@example.gov", "Emma Otting", 5)]
+        public async Task DeleteReservation(
+            string at,
+            string email,
+            string name,
+            int quantity)
+        {
+            using var service = new RestaurantApiFactory();
+            var dto = new ReservationDto
+            {
+                At = at,
+                Email = email,
+                Name = name,
+                Quantity = quantity
+            };
+            var postResp = await service.PostReservation(dto);
+            Uri address = FindReservationAddress(postResp);
+
+            var deleteResp = await service.CreateClient().DeleteAsync(address);
+
+            Assert.True(
+                deleteResp.IsSuccessStatusCode,
+                $"Actual status code: {deleteResp.StatusCode}.");
+            var getResp = await service.CreateClient().GetAsync(address);
+            Assert.Equal(HttpStatusCode.NotFound, getResp.StatusCode);
+        }
     }
 }
