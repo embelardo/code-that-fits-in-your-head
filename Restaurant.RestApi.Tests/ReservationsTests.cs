@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -226,6 +227,21 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 $"Actual status code: {deleteResp.StatusCode}.");
             var getResp = await service.CreateClient().GetAsync(address);
             Assert.Equal(HttpStatusCode.NotFound, getResp.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("bar")]
+        [InlineData("79F53E9D9A66458AB79E11DA130BF1D8")]
+        public async Task DeleteAbsentReservation(string id)
+        {
+            using var service = new RestaurantApiFactory();
+
+            var url = new Uri($"/reservations/{id}", UriKind.Relative);
+            var resp = await service.CreateClient().DeleteAsync(url);
+
+            Assert.True(
+                resp.IsSuccessStatusCode,
+                $"Actual status code: {resp.StatusCode}.");
         }
     }
 }

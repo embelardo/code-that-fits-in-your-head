@@ -95,8 +95,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
         [HttpDelete("{id}")]
         public async Task Delete(string id)
         {
-            var rid = new Guid(id);
-            await Repository.Delete(rid).ConfigureAwait(false);
+            if (Guid.TryParse(id, out var rid))
+               await Repository.Delete(rid).ConfigureAwait(false);
         }
     }
 }
