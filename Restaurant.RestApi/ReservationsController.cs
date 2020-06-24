@@ -38,8 +38,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 .ReadReservations(r.At)
                 .ConfigureAwait(false);
             if (!MaitreD.WillAccept(DateTime.Now, reservations, r))
-                return new StatusCodeResult(
-                    StatusCodes.Status500InternalServerError);
+                return new ObjectResult("No tables available.")
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
 
             await Repository.Create(r).ConfigureAwait(false);
 

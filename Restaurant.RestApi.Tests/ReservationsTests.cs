@@ -104,6 +104,12 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Equal(
                 HttpStatusCode.InternalServerError,
                 response.StatusCode);
+            Assert.NotNull(response.Content);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Contains(
+                "tables",
+                content,
+                StringComparison.OrdinalIgnoreCase);
         }
 
         [Fact]
