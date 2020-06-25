@@ -328,5 +328,30 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             Assert.IsAssignableFrom<NotFoundResult>(actual);
         }
+
+        [SuppressMessage(
+            "Globalization",
+            "CA1305:Specify IFormatProvider",
+            Justification = "ToString(\"o\") is already culture-neutral.")]
+        [Fact]
+        public async Task PutConflictingIds()
+        {
+            var db = new FakeDatabase { Some.Reservation };
+            var sut = new ReservationsController(db, Some.MaitreD);
+
+            var dto = new ReservationDto
+            {
+                Id = Guid.NewGuid().ToString("N"),
+                At = Some.Reservation.At.ToString("o"),
+                Email = Some.Reservation.Email,
+                Name = "Qux",
+                Quantity = Some.Reservation.Quantity
+            };
+            var id = Some.Reservation.Id.ToString("N");
+            await sut.Put(id, dto);
+
+            var r = Assert.Single(db);
+            Assert.Equal(Some.Reservation.WithName("Qux"), r);
+        }
     }
 }
