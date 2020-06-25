@@ -97,8 +97,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             if (dto is null)
                 throw new ArgumentNullException(nameof(dto));
+            if (!Guid.TryParse(id, out var rid))
+                return new NotFoundResult();
 
-            Reservation? r = dto.Validate(new Guid(id));
+            Reservation? r = dto.Validate(rid);
             if (r is null)
                 return new BadRequestResult();
 

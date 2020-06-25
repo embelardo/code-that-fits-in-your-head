@@ -1,4 +1,5 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Collections.Generic;
@@ -305,6 +306,27 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 new { at, email, name, quantity });
 
             Assert.Equal(HttpStatusCode.BadRequest, putResp.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("bas")]
+        public async Task PutInvalidId(string invalidId)
+        {
+            var db = new FakeDatabase();
+            var sut = new ReservationsController(db, Some.MaitreD);
+
+            var dummyDto = new ReservationDto
+            {
+                At = "2024-06-25 18:19",
+                Email = "thorne@example.com",
+                Name = "Tracy Thorne",
+                Quantity = 2
+            };
+            var actual = await sut.Put(invalidId, dummyDto);
+
+            Assert.IsAssignableFrom<NotFoundResult>(actual);
         }
     }
 }
