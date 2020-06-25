@@ -353,5 +353,24 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var r = Assert.Single(db);
             Assert.Equal(Some.Reservation.WithName("Qux"), r);
         }
+
+        [Fact]
+        public async Task PutAbsentReservation()
+        {
+            var db = new FakeDatabase();
+            var sut = new ReservationsController(db, Some.MaitreD);
+
+            var dto = new ReservationDto
+            {
+                At = "2023-11-23 18:21",
+                Email = "tori@example.org",
+                Name = "Tori Amos",
+                Quantity = 9
+            };
+            var id = "7a4d6e05a6ae41a3a7d00943be05048c";
+            var actual = await sut.Put(id, dto);
+
+            Assert.IsAssignableFrom<NotFoundResult>(actual);
+        }
     }
 }

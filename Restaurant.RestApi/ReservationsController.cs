@@ -105,6 +105,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (r is null)
                 return new BadRequestResult();
 
+            var existing =
+                await Repository.ReadReservation(rid).ConfigureAwait(false);
+            if (existing is null)
+                return new NotFoundResult();
+
             await Repository.Update(r).ConfigureAwait(false);
 
             return new OkResult();
