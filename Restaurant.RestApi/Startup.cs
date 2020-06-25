@@ -29,19 +29,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
             services.AddSingleton<IReservationsRepository>(
                 new SqlReservationsRepository(connStr));
 
-            var settings = new Settings.RestaurantSettings();
-            Configuration.Bind("Restaurant", settings);
-            services.AddSingleton(settings.ToMaitreD());
+            var restaurantSettings = new Settings.RestaurantSettings();
+            Configuration.Bind("Restaurant", restaurantSettings);
+            services.AddSingleton(restaurantSettings.ToMaitreD());
 
-            services.AddSingleton<IPostOffice>(new NullPostOffice());
-        }
-
-        private class NullPostOffice : IPostOffice
-        {
-            public Task EmailReservationCreated(Reservation reservation)
-            {
-                return Task.CompletedTask;
-            }
+            var smtpSettings = new Settings.SmtpSettings();
+            Configuration.Bind("Smtp", smtpSettings);
+            services.AddSingleton(smtpSettings.ToPostOffice());
         }
 
         public static void Configure(
