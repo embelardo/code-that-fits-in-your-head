@@ -30,7 +30,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (dto is null)
                 throw new ArgumentNullException(nameof(dto));
 
-            Reservation? r = dto.Validate(Guid.NewGuid());
+            var id = dto.ParseId() ?? Guid.NewGuid();
+            Reservation? r = dto.Validate(id);
             if (r is null)
                 return new BadRequestResult();
 
@@ -100,7 +101,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (!Guid.TryParse(id, out var rid))
                 return new NotFoundResult();
 
-            dto.Id = null;
             Reservation? r = dto.Validate(rid);
             if (r is null)
                 return new BadRequestResult();
