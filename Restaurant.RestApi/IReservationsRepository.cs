@@ -14,6 +14,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         Task<Reservation?> ReadReservation(Guid id);
 
+        Task Update(Reservation reservation);
+
         Task Delete(Guid id);
     }
 }

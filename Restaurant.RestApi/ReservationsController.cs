@@ -92,6 +92,21 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 });
         }
 
+        [HttpPut("{id}")]
+        public async Task Put(string id, ReservationDto dto)
+        {
+            if (dto is null)
+                throw new ArgumentNullException(nameof(dto));
+
+            var r = new Reservation(
+                new Guid(id),
+                DateTime.Parse(dto.At!, CultureInfo.InvariantCulture),
+                dto.Email!,
+                dto.Name!,
+                dto.Quantity);
+            await Repository.Update(r).ConfigureAwait(false);
+        }
+
         [HttpDelete("{id}")]
         public async Task Delete(string id)
         {

@@ -94,6 +94,31 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 (int)rdr["Quantity"]);
         }
 
+        public async Task Update(Reservation reservation)
+        {
+            if (reservation is null)
+                throw new ArgumentNullException(nameof(reservation));
+
+            const string updateSql = @"
+                UPDATE [dbo].[Reservations]
+                SET [At]     = @at,
+                    [Name]     = @name,
+                    [Email]    = @email,
+                    [Quantity] = @quantity
+                WHERE [PublicId] = @id";
+
+            using var conn = new SqlConnection(ConnectionString);
+            using var cmd = new SqlCommand(updateSql, conn);
+            cmd.Parameters.AddWithValue("@id", reservation.Id);
+            cmd.Parameters.AddWithValue("@at", reservation.At);
+            cmd.Parameters.AddWithValue("@name", reservation.Name);
+            cmd.Parameters.AddWithValue("@email", reservation.Email);
+            cmd.Parameters.AddWithValue("@quantity", reservation.Quantity);
+
+            await conn.OpenAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+        }
+
         public async Task Delete(Guid id)
         {
             const string deleteSql = @"

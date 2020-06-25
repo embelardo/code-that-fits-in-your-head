@@ -43,5 +43,17 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             content.Headers.ContentType.MediaType = "application/json";
             return await client.PostAsync("reservations", content);
         }
+
+        public async Task<HttpResponseMessage> PutReservation(
+            Uri address,
+            object reservation)
+        {
+            var client = CreateClient();
+
+            string json = JsonSerializer.Serialize(reservation);
+            using var content = new StringContent(json);
+            content.Headers.ContentType.MediaType = "application/json";
+            return await client.PutAsync(address, content);
+        }
     }
 }

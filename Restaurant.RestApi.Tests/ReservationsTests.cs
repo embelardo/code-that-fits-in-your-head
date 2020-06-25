@@ -243,5 +243,37 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 resp.IsSuccessStatusCode,
                 $"Actual status code: {resp.StatusCode}.");
         }
+
+        [Theory]
+        [InlineData("2022-06-01 18:47", "b@example.net", "Björk", 2, 5)]
+        [InlineData("2022-02-10 19:32", "e@example.gov", "Epica", 5, 4)]
+        public async Task UpdateReservation(
+            string at,
+            string email,
+            string name,
+            int quantity,
+            int newQuantity)
+        {
+            using var service = new RestaurantApiFactory();
+            var dto = new ReservationDto
+            {
+                At = at,
+                Email = email,
+                Name = name,
+                Quantity = quantity
+            };
+            var postResp = await service.PostReservation(dto);
+            Uri address = FindReservationAddress(postResp);
+
+            dto.Quantity = newQuantity;
+            var putResp = await service.PutReservation(address, dto);
+
+            Assert.True(
+                putResp.IsSuccessStatusCode,
+                $"Actual status code: {putResp.StatusCode}.");
+            var getResp = await service.CreateClient().GetAsync(address);
+            var actual = await ParseReservationContent(getResp);
+            Assert.Equal(dto, actual, new ReservationDtoComparer());
+        }
     }
 }

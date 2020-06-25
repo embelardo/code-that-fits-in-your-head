@@ -37,6 +37,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return Task.FromResult((Reservation?)reservation);
         }
 
+        public async Task Update(Reservation reservation)
+        {
+            if (reservation is null)
+                throw new ArgumentNullException(nameof(reservation));
+
+            await Delete(reservation.Id);
+            await Create(reservation);
+        }
+
         public Task Delete(Guid id)
         {
             var reservation = this.SingleOrDefault(r => r.Id == id);
