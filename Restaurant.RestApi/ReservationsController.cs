@@ -110,6 +110,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (existing is null)
                 return new NotFoundResult();
 
+            var reservations = await Repository
+                .ReadReservations(r.At)
+                .ConfigureAwait(false);
+            if (!MaitreD.WillAccept(DateTime.Now, reservations, r))
+                return NoTables500InternalServerError();
+
             await Repository.Update(r).ConfigureAwait(false);
 
             return new OkResult();
