@@ -275,5 +275,36 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var actual = await ParseReservationContent(getResp);
             Assert.Equal(dto, actual, new ReservationDtoComparer());
         }
+
+        [Theory]
+        [InlineData(null, "led@example.net", "Light Expansion Dread", 2)]
+        [InlineData("not a date", "cygnet@example.edu", "Committee", 9)]
+        [InlineData("2023-12-29 19:00", null, "Quince", 3)]
+        [InlineData("2022-10-10 19:10", "4@example.org", "4 Beard", 0)]
+        [InlineData("2045-01-31 18:45", "svn@example.com", "Severin", -1)]
+        public async Task PutInvalidReservation(
+            string at,
+            string email,
+            string name,
+            int quantity)
+        {
+            using var service = new RestaurantApiFactory();
+            var dto = new ReservationDto
+            {
+                At = "2022-03-22 19:00",
+                Email = "soylent@example.net",
+                Name = ":wumpscut:",
+                Quantity = 1
+            };
+            var postResp = await service.PostReservation(dto);
+            postResp.EnsureSuccessStatusCode();
+            Uri address = FindReservationAddress(postResp);
+
+            var putResp = await service.PutReservation(
+                address,
+                new { at, email, name, quantity });
+
+            Assert.Equal(HttpStatusCode.BadRequest, putResp.StatusCode);
+        }
     }
 }

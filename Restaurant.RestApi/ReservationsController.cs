@@ -93,18 +93,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
         }
 
         [HttpPut("{id}")]
-        public async Task Put(string id, ReservationDto dto)
+        public async Task<ActionResult> Put(string id, ReservationDto dto)
         {
             if (dto is null)
                 throw new ArgumentNullException(nameof(dto));
 
-            var r = new Reservation(
-                new Guid(id),
-                DateTime.Parse(dto.At!, CultureInfo.InvariantCulture),
-                dto.Email!,
-                dto.Name!,
-                dto.Quantity);
+            Reservation? r = dto.Validate(new Guid(id));
+            if (r is null)
+                return new BadRequestResult();
+
             await Repository.Update(r).ConfigureAwait(false);
+
+            return new OkResult();
         }
 
         [HttpDelete("{id}")]
