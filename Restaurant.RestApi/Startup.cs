@@ -32,6 +32,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var settings = new Settings.RestaurantSettings();
             Configuration.Bind("Restaurant", settings);
             services.AddSingleton(settings.ToMaitreD());
+
+            services.AddSingleton<IPostOffice>(new NullPostOffice());
+        }
+
+        private class NullPostOffice : IPostOffice
+        {
+            public Task EmailReservationCreated(Reservation reservation)
+            {
+                return Task.CompletedTask;
+            }
         }
 
         public static void Configure(

@@ -15,13 +15,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
     {
         public ReservationsController(
             IReservationsRepository repository,
+            IPostOffice postOffice,
             MaitreD maitreD)
         {
             Repository = repository;
+            PostOffice = postOffice;
             MaitreD = maitreD;
         }
 
         public IReservationsRepository Repository { get; }
+        public IPostOffice PostOffice { get; }
         public MaitreD MaitreD { get; }
 
         [HttpPost]
@@ -42,6 +45,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 return NoTables500InternalServerError();
 
             await Repository.Create(r).ConfigureAwait(false);
+            await PostOffice.EmailReservationCreated(r).ConfigureAwait(false);
 
             return Reservation201Created(r);
         }

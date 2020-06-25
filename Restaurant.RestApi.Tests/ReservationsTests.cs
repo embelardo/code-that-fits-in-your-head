@@ -45,7 +45,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int quantity)
         {
             var db = new FakeDatabase();
-            var sut = new ReservationsController(db, Some.MaitreD);
+            var postOffice = new SpyPostOffice();
+            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
             var dto = new ReservationDto
             {
@@ -64,6 +65,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 dto.Name ?? "",
                 dto.Quantity);
             Assert.Contains(expected, db);
+            Assert.Contains(expected, postOffice);
         }
 
         [Theory]
@@ -316,7 +318,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task PutInvalidId(string invalidId)
         {
             var db = new FakeDatabase();
-            var sut = new ReservationsController(db, Some.MaitreD);
+            var postOffice = new SpyPostOffice();
+            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
             var dummyDto = new ReservationDto
             {
@@ -338,7 +341,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task PutConflictingIds()
         {
             var db = new FakeDatabase { Some.Reservation };
-            var sut = new ReservationsController(db, Some.MaitreD);
+            var postOffice = new SpyPostOffice();
+            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
             var dto = new ReservationDto
             {
@@ -359,7 +363,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task PutAbsentReservation()
         {
             var db = new FakeDatabase();
-            var sut = new ReservationsController(db, Some.MaitreD);
+            var postOffice = new SpyPostOffice();
+            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
             var dto = new ReservationDto
             {
@@ -387,7 +392,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 .TheDayAfter()
                 .WithQuantity(10);
             var db = new FakeDatabase { r1, r2 };
-            var sut = new ReservationsController(db, Some.MaitreD);
+            var postOffice = new SpyPostOffice();
+            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
             var dto = new ReservationDto
             {
