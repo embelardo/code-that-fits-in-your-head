@@ -403,5 +403,28 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 StatusCodes.Status500InternalServerError,
                 oRes.StatusCode);
         }
+
+        [Fact]
+        public async Task EditReservationOnSameDayNearCapacity()
+        {
+            using var service = new RestaurantApiFactory();
+            var dto = new ReservationDto
+            {
+                At = "2023-04-10 20:01",
+                Email = "aol@example.gov",
+                Name = "Anette Olzon",
+                Quantity = 5
+            };
+            var postResp = await service.PostReservation(dto);
+            postResp.EnsureSuccessStatusCode();
+            Uri address = FindReservationAddress(postResp);
+
+            dto.Quantity++;
+            var putResp = await service.PutReservation(address, dto);
+
+            Assert.True(
+                putResp.IsSuccessStatusCode,
+                $"Actual status code: {putResp.StatusCode}.");
+        }
     }
 }

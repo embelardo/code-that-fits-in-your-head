@@ -101,8 +101,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (!Guid.TryParse(id, out var rid))
                 return new NotFoundResult();
 
-            Reservation? r = dto.Validate(rid);
-            if (r is null)
+            Reservation? res = dto.Validate(rid);
+            if (res is null)
                 return new BadRequestResult();
 
             var existing =
@@ -111,12 +111,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 return new NotFoundResult();
 
             var reservations = await Repository
-                .ReadReservations(r.At)
+                .ReadReservations(res.At)
                 .ConfigureAwait(false);
-            if (!MaitreD.WillAccept(DateTime.Now, reservations, r))
+            reservations = reservations.Where(r => r.Id != res.Id).ToList();
+            if (!MaitreD.WillAccept(DateTime.Now, reservations, res))
                 return NoTables500InternalServerError();
 
-            await Repository.Update(r).ConfigureAwait(false);
+            await Repository.Update(res).ConfigureAwait(false);
 
             return new OkResult();
         }
