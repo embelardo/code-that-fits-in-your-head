@@ -16,5 +16,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             return Task.CompletedTask;
         }
+
+        public Task EmailReservationDeleted(Reservation reservation)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

@@ -250,6 +250,22 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 $"Actual status code: {resp.StatusCode}.");
         }
 
+        [Fact]
+        public async Task DeleteSendsEmail()
+        {
+            var r = Some.Reservation;
+            var db = new FakeDatabase { r };
+            var postOffice = new SpyPostOffice();
+            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
+
+            await sut.Delete(r.Id.ToString("N"));
+
+            var expected = new SpyPostOffice.Observation(
+                SpyPostOffice.Event.Deleted,
+                r);
+            Assert.Contains(expected, postOffice);
+        }
+
         [Theory]
         [InlineData("2022-06-01 18:47", "b@example.net", "Björk", 2, 5)]
         [InlineData("2022-02-10 19:32", "e@example.gov", "Epica", 5, 4)]

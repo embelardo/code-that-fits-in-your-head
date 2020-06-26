@@ -39,7 +39,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             using var msg = new MailMessage(FromAddress, reservation.Email);
             msg.Subject = $"Your reservation for {reservation.Quantity}.";
-            msg.Body = CreateBody(reservation);
+            msg.Body = CreateBodyForCreated(reservation);
 
             using var client = new SmtpClient();
             client.UseDefaultCredentials = false;
@@ -51,11 +51,45 @@ namespace Ploeh.Samples.Restaurant.RestApi
             await client.SendMailAsync(msg).ConfigureAwait(false);
         }
 
-        private static string CreateBody(Reservation reservation)
+        private static string CreateBodyForCreated(Reservation reservation)
         {
             var sb = new StringBuilder();
 
             sb.Append("Thank you for your reservation. ");
+            sb.AppendLine("Here's the details about your reservation:");
+            sb.AppendLine();
+            sb.AppendLine($"At: {reservation.At}.");
+            sb.AppendLine($"Party size: {reservation.Quantity}.");
+            sb.AppendLine($"Name: {reservation.Name}.");
+            sb.AppendLine($"Email: {reservation.Email}.");
+
+            return sb.ToString();
+        }
+        public async Task EmailReservationDeleted(Reservation reservation)
+        {
+            if (reservation is null)
+                throw new ArgumentNullException(nameof(reservation));
+
+            using var msg = new MailMessage(FromAddress, reservation.Email);
+            msg.Subject =
+                $"Your reservation for {reservation.Quantity} was cancelled.";
+            msg.Body = CreateBodyForDeleted(reservation);
+
+            using var client = new SmtpClient();
+            client.UseDefaultCredentials = false;
+            client.Credentials = new NetworkCredential(userName, password);
+            client.Host = Host;
+            client.Port = Port;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.EnableSsl = true;
+            await client.SendMailAsync(msg).ConfigureAwait(false);
+        }
+
+        private static string CreateBodyForDeleted(Reservation reservation)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append("Your reservation was cancelled. ");
             sb.AppendLine("Here's the details about your reservation:");
             sb.AppendLine();
             sb.AppendLine($"At: {reservation.At}.");

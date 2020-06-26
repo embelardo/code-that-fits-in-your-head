@@ -130,7 +130,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public async Task Delete(string id)
         {
             if (Guid.TryParse(id, out var rid))
-               await Repository.Delete(rid).ConfigureAwait(false);
+            {
+                var r = await Repository.ReadReservation(rid)
+                    .ConfigureAwait(false);
+                await Repository.Delete(rid).ConfigureAwait(false);
+                await PostOffice.EmailReservationDeleted(r!)
+                    .ConfigureAwait(false);
+            }
         }
     }
 }
