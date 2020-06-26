@@ -134,8 +134,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 var r = await Repository.ReadReservation(rid)
                     .ConfigureAwait(false);
                 await Repository.Delete(rid).ConfigureAwait(false);
-                await PostOffice.EmailReservationDeleted(r!)
-                    .ConfigureAwait(false);
+                if (r is { })
+                    await PostOffice.EmailReservationDeleted(r)
+                        .ConfigureAwait(false);
             }
         }
     }
