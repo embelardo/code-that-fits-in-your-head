@@ -21,10 +21,17 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return Task.CompletedTask;
         }
 
+        public Task EmailReservationUpdated(Reservation reservation)
+        {
+            Add(new Observation(Event.Updated, reservation));
+            return Task.CompletedTask;
+        }
+
         internal enum Event
         {
             Created = 0,
-            Deleted = 1
+            Updated = 1,
+            Deleted = 2
         }
 
         internal sealed class Observation

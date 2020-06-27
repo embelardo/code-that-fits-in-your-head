@@ -11,5 +11,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         Task EmailReservationCreated(Reservation reservation);
 
         Task EmailReservationDeleted(Reservation reservation);
+
+        Task EmailReservationUpdated(Reservation reservation);
     }
 }

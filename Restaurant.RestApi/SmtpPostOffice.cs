@@ -116,5 +116,40 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return
                 HashCode.Combine(Host, Port, FromAddress, userName, password);
         }
+
+        public async Task EmailReservationUpdated(Reservation reservation)
+        {
+            if (reservation is null)
+                throw new ArgumentNullException(nameof(reservation));
+
+            using var msg = new MailMessage(FromAddress, reservation.Email);
+            msg.Subject =
+                $"Your reservation for {reservation.Quantity} changed.";
+            msg.Body = CreateBodyForUpdated(reservation);
+
+            using var client = new SmtpClient();
+            client.UseDefaultCredentials = false;
+            client.Credentials = new NetworkCredential(userName, password);
+            client.Host = Host;
+            client.Port = Port;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.EnableSsl = true;
+            await client.SendMailAsync(msg).ConfigureAwait(false);
+        }
+
+        private static string CreateBodyForUpdated(Reservation reservation)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append("Your reservation changed. ");
+            sb.AppendLine("Here's the details about your reservation:");
+            sb.AppendLine();
+            sb.AppendLine($"At: {reservation.At}.");
+            sb.AppendLine($"Party size: {reservation.Quantity}.");
+            sb.AppendLine($"Name: {reservation.Name}.");
+            sb.AppendLine($"Email: {reservation.Email}.");
+
+            return sb.ToString();
+        }
     }
 }

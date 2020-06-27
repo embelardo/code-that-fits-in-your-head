@@ -464,5 +464,34 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 putResp.IsSuccessStatusCode,
                 $"Actual status code: {putResp.StatusCode}.");
         }
+
+        [SuppressMessage(
+            "Globalization",
+            "CA1305:Specify IFormatProvider",
+            Justification = "ToString(\"o\") is already culture-neutral.")]
+        [Theory]
+        [InlineData("ploeh")]
+        [InlineData("fnaah")]
+        public async Task PutSendsEmail(string newName)
+        {
+            var r = Some.Reservation;
+            var db = new FakeDatabase { r };
+            var postOffice = new SpyPostOffice();
+            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
+
+            var dto = new ReservationDto
+            {
+                At = r.At.ToString("o"),
+                Email = r.Email,
+                Name = newName,
+                Quantity = r.Quantity
+            };
+            await sut.Put(r.Id.ToString("N"), dto);
+
+            var expected = new SpyPostOffice.Observation(
+                SpyPostOffice.Event.Updated,
+                r.WithName(newName));
+            Assert.Contains(expected, postOffice);
+        }
     }
 }

@@ -122,6 +122,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 return NoTables500InternalServerError();
 
             await Repository.Update(res).ConfigureAwait(false);
+            await PostOffice.EmailReservationUpdated(res).ConfigureAwait(false);
 
             return new OkResult();
         }
