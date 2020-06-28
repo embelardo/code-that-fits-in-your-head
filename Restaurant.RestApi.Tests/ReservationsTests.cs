@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
@@ -492,6 +493,39 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 SpyPostOffice.Event.Updated,
                 r.WithName(newName));
             Assert.Contains(expected, postOffice);
+        }
+
+        [SuppressMessage(
+            "Globalization",
+            "CA1305:Specify IFormatProvider",
+            Justification = "ToString(\"o\") is already culture-neutral.")]
+        [Theory]
+        [InlineData("foo@example.com")]
+        [InlineData("bar@example.gov")]
+        public async Task PutSendsEmailToOldAddresOnChange(string newEmail)
+        {
+            var r = Some.Reservation;
+            var db = new FakeDatabase { r };
+            var postOffice = new SpyPostOffice();
+            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
+
+            var dto = new ReservationDto
+            {
+                At = r.At.ToString("o"),
+                Email = newEmail,
+                Name = r.Name,
+                Quantity = r.Quantity
+            };
+            await sut.Put(r.Id.ToString("N"), dto);
+
+            var expected = new[] {
+                new SpyPostOffice.Observation(
+                    SpyPostOffice.Event.Updating,
+                    r),
+                new SpyPostOffice.Observation(
+                    SpyPostOffice.Event.Updated,
+                    r.WithEmail(newEmail)) }.ToHashSet();
+            Assert.Superset(expected, postOffice.ToHashSet());
         }
     }
 }

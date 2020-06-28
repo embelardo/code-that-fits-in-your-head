@@ -22,6 +22,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return Task.CompletedTask;
         }
 
+        public Task EmailReservationUpdating(Reservation reservation)
+        {
+            return Task.CompletedTask;
+        }
+
         public Task EmailReservationUpdated(Reservation reservation)
         {
             return Task.CompletedTask;
