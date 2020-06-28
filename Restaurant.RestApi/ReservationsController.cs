@@ -121,8 +121,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (!MaitreD.WillAccept(DateTime.Now, reservations, res))
                 return NoTables500InternalServerError();
 
-            await PostOffice.EmailReservationUpdating(existing)
-                .ConfigureAwait(false);
+            if (existing.Email != res.Email)
+                await PostOffice.EmailReservationUpdating(existing)
+                    .ConfigureAwait(false);
             await Repository.Update(res).ConfigureAwait(false);
             await PostOffice.EmailReservationUpdated(res).ConfigureAwait(false);
 
