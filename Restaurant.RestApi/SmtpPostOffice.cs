@@ -37,18 +37,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (reservation is null)
                 throw new ArgumentNullException(nameof(reservation));
 
-            using var msg = new MailMessage(FromAddress, reservation.Email);
-            msg.Subject = $"Your reservation for {reservation.Quantity}.";
-            msg.Body = CreateBodyForCreated(reservation);
+            var subject = $"Your reservation for {reservation.Quantity}.";
+            var body = CreateBodyForCreated(reservation);
+            var email = reservation.Email;
 
-            using var client = new SmtpClient();
-            client.UseDefaultCredentials = false;
-            client.Credentials = new NetworkCredential(userName, password);
-            client.Host = Host;
-            client.Port = Port;
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.EnableSsl = true;
-            await client.SendMailAsync(msg).ConfigureAwait(false);
+            await Send(subject, body, email).ConfigureAwait(false);
         }
 
         private static string CreateBodyForCreated(Reservation reservation)
@@ -70,19 +63,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (reservation is null)
                 throw new ArgumentNullException(nameof(reservation));
 
-            using var msg = new MailMessage(FromAddress, reservation.Email);
-            msg.Subject =
+            var subject =
                 $"Your reservation for {reservation.Quantity} was cancelled.";
-            msg.Body = CreateBodyForDeleted(reservation);
+            var body = CreateBodyForDeleted(reservation);
+            var email = reservation.Email;
 
-            using var client = new SmtpClient();
-            client.UseDefaultCredentials = false;
-            client.Credentials = new NetworkCredential(userName, password);
-            client.Host = Host;
-            client.Port = Port;
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.EnableSsl = true;
-            await client.SendMailAsync(msg).ConfigureAwait(false);
+            await Send(subject, body, email).ConfigureAwait(false);
         }
 
         private static string CreateBodyForDeleted(Reservation reservation)
@@ -100,41 +86,17 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return sb.ToString();
         }
 
-        public override bool Equals(object? obj)
-        {
-            return obj is SmtpPostOffice other &&
-                   Host == other.Host &&
-                   Port == other.Port &&
-                   FromAddress == other.FromAddress &&
-                   userName == other.userName &&
-                   password == other.password;
-                   
-        }
-
-        public override int GetHashCode()
-        {
-            return
-                HashCode.Combine(Host, Port, FromAddress, userName, password);
-        }
-
         public async Task EmailReservationUpdating(Reservation reservation)
         {
             if (reservation is null)
                 throw new ArgumentNullException(nameof(reservation));
 
-            using var msg = new MailMessage(FromAddress, reservation.Email);
-            msg.Subject =
+            var subject =
                 $"Your reservation for {reservation.Quantity} is changing.";
-            msg.Body = CreateBodyForUpdating(reservation);
+            var body = CreateBodyForUpdating(reservation);
+            var email = reservation.Email;
 
-            using var client = new SmtpClient();
-            client.UseDefaultCredentials = false;
-            client.Credentials = new NetworkCredential(userName, password);
-            client.Host = Host;
-            client.Port = Port;
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.EnableSsl = true;
-            await client.SendMailAsync(msg).ConfigureAwait(false);
+            await Send(subject, body, email).ConfigureAwait(false);
         }
 
         private static string CreateBodyForUpdating(Reservation reservation)
@@ -157,19 +119,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (reservation is null)
                 throw new ArgumentNullException(nameof(reservation));
 
-            using var msg = new MailMessage(FromAddress, reservation.Email);
-            msg.Subject =
+            var subject =
                 $"Your reservation for {reservation.Quantity} changed.";
-            msg.Body = CreateBodyForUpdated(reservation);
+            var body = CreateBodyForUpdated(reservation);
+            var email = reservation.Email;
 
-            using var client = new SmtpClient();
-            client.UseDefaultCredentials = false;
-            client.Credentials = new NetworkCredential(userName, password);
-            client.Host = Host;
-            client.Port = Port;
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.EnableSsl = true;
-            await client.SendMailAsync(msg).ConfigureAwait(false);
+            await Send(subject, body, email).ConfigureAwait(false);
         }
 
         private static string CreateBodyForUpdated(Reservation reservation)
@@ -185,6 +140,38 @@ namespace Ploeh.Samples.Restaurant.RestApi
             sb.AppendLine($"Email: {reservation.Email}.");
 
             return sb.ToString();
+        }
+
+        private async Task Send(string subject, string body, string email)
+        {
+            using var msg = new MailMessage(FromAddress, email);
+            msg.Subject = subject;
+            msg.Body = body;
+            using var client = new SmtpClient();
+            client.UseDefaultCredentials = false;
+            client.Credentials = new NetworkCredential(userName, password);
+            client.Host = Host;
+            client.Port = Port;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.EnableSsl = true;
+            await client.SendMailAsync(msg).ConfigureAwait(false);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is SmtpPostOffice other &&
+                   Host == other.Host &&
+                   Port == other.Port &&
+                   FromAddress == other.FromAddress &&
+                   userName == other.userName &&
+                   password == other.password;
+                   
+        }
+
+        public override int GetHashCode()
+        {
+            return
+                HashCode.Combine(Host, Port, FromAddress, userName, password);
         }
     }
 }
