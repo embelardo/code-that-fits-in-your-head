@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restaurant.RestApi.SqlIntegrationTests", "Restaurant.RestApi.SqlIntegrationTests\Restaurant.RestApi.SqlIntegrationTests.csproj", "{A2DC6000-6D95-4377-A02F-749F9CC8E2EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{E6644478-745C-44E5-B1E2-F2DAB8BB9C28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6644478-745C-44E5-B1E2-F2DAB8BB9C28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6644478-745C-44E5-B1E2-F2DAB8BB9C28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2DC6000-6D95-4377-A02F-749F9CC8E2EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2DC6000-6D95-4377-A02F-749F9CC8E2EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2DC6000-6D95-4377-A02F-749F9CC8E2EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2DC6000-6D95-4377-A02F-749F9CC8E2EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
