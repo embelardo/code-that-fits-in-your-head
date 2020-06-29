@@ -113,8 +113,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             using var cmd = new SqlCommand(updateSql, conn);
             cmd.Parameters.AddWithValue("@id", reservation.Id);
             cmd.Parameters.AddWithValue("@at", reservation.At);
-            cmd.Parameters.AddWithValue("@name", reservation.Name);
-            cmd.Parameters.AddWithValue("@email", reservation.Email);
+            cmd.Parameters.AddWithValue("@name", reservation.Name.ToString());
+            cmd.Parameters.AddWithValue("@email", reservation.Email.ToString());
             cmd.Parameters.AddWithValue("@quantity", reservation.Quantity);
 
             await conn.OpenAsync().ConfigureAwait(false);
