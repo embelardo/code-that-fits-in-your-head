@@ -64,8 +64,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 new Reservation(
                     Guid.Parse(dto.Id),
                     DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
-                    dto.Email,
-                    dto.Name ?? "",
+                    new Email(dto.Email),
+                    new Name(dto.Name ?? ""),
                     dto.Quantity));
             Assert.Contains(expected.Reservation, db);
             Assert.Contains(expected, postOffice);
@@ -381,7 +381,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             {
                 Id = Guid.NewGuid().ToString("N"),
                 At = Some.Reservation.At.ToString("o"),
-                Email = Some.Reservation.Email,
+                Email = Some.Reservation.Email.ToString(),
                 Name = "Qux",
                 Quantity = Some.Reservation.Quantity
             };
@@ -389,7 +389,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             await sut.Put(id, dto);
 
             var r = Assert.Single(db);
-            Assert.Equal(Some.Reservation.WithName("Qux"), r);
+            Assert.Equal(Some.Reservation.WithName(new Name("Qux")), r);
         }
 
         [Fact]
@@ -431,8 +431,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var dto = new ReservationDto
             {
                 At = r2.At.ToString("o"),
-                Email = r1.Email,
-                Name = r1.Name,
+                Email = r1.Email.ToString(),
+                Name = r1.Name.ToString(),
                 Quantity = r1.Quantity
             };
             var actual = await sut.Put(r1.Id.ToString("N"), dto);
@@ -483,7 +483,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var dto = new ReservationDto
             {
                 At = r.At.ToString("o"),
-                Email = r.Email,
+                Email = r.Email.ToString(),
                 Name = newName,
                 Quantity = r.Quantity
             };
@@ -491,7 +491,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             var expected = new SpyPostOffice.Observation(
                 SpyPostOffice.Event.Updated,
-                r.WithName(newName));
+                r.WithName(new Name(newName)));
             Assert.Contains(expected, postOffice);
             Assert.DoesNotContain(
                 postOffice,
@@ -516,7 +516,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             {
                 At = r.At.ToString("o"),
                 Email = newEmail,
-                Name = r.Name,
+                Name = r.Name.ToString(),
                 Quantity = r.Quantity
             };
             await sut.Put(r.Id.ToString("N"), dto);
@@ -527,7 +527,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                     r),
                 new SpyPostOffice.Observation(
                     SpyPostOffice.Event.Updated,
-                    r.WithEmail(newEmail)) }.ToHashSet();
+                    r.WithEmail(new Email(newEmail))) }.ToHashSet();
             Assert.Superset(expected, postOffice.ToHashSet());
         }
     }

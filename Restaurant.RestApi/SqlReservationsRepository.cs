@@ -57,8 +57,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                     new Reservation(
                         (Guid)rdr["PublicId"],
                         (DateTime)rdr["At"],
-                        (string)rdr["Name"],
-                        (string)rdr["Email"],
+                        new Email((string)rdr["Name"]),
+                        new Name((string)rdr["Email"]),
                         (int)rdr["Quantity"]));
 
             return result.AsReadOnly();
@@ -89,8 +89,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new Reservation(
                 id,
                 (DateTime)rdr["At"],
-                (string)rdr["Name"],
-                (string)rdr["Email"],
+                new Email((string)rdr["Name"]),
+                new Name((string)rdr["Email"]),
                 (int)rdr["Quantity"]);
         }
 

@@ -91,8 +91,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 {
                     Id = id,
                     At = r.At.ToString("o"),
-                    Email = r.Email,
-                    Name = r.Name,
+                    Email = r.Email.ToString(),
+                    Name = r.Name.ToString(),
                     Quantity = r.Quantity
                 });
         }

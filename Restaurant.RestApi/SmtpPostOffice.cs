@@ -39,7 +39,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             var subject = $"Your reservation for {reservation.Quantity}.";
             var body = CreateBodyForCreated(reservation);
-            var email = reservation.Email;
+            var email = reservation.Email.ToString();
 
             await Send(subject, body, email).ConfigureAwait(false);
         }
@@ -66,7 +66,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var subject =
                 $"Your reservation for {reservation.Quantity} was cancelled.";
             var body = CreateBodyForDeleted(reservation);
-            var email = reservation.Email;
+            var email = reservation.Email.ToString();
 
             await Send(subject, body, email).ConfigureAwait(false);
         }
@@ -94,7 +94,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var subject =
                 $"Your reservation for {reservation.Quantity} is changing.";
             var body = CreateBodyForUpdating(reservation);
-            var email = reservation.Email;
+            var email = reservation.Email.ToString();
 
             await Send(subject, body, email).ConfigureAwait(false);
         }
@@ -122,7 +122,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var subject =
                 $"Your reservation for {reservation.Quantity} changed.";
             var body = CreateBodyForUpdated(reservation);
-            var email = reservation.Email;
+            var email = reservation.Email.ToString();
 
             await Send(subject, body, email).ConfigureAwait(false);
         }

@@ -14,8 +14,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             new Reservation(
                 new Guid(0x81416928, 0xC236, 0x4EBF, 0xA4, 0x50, 0x24, 0x95, 0xA4, 0xDA, 0x92, 0x30),
                 Now,
-                "x@example.net",
-                "",
+                new Email("x@example.net"),
+                new Name(""),
                 1);
 
         public readonly static MaitreD MaitreD =

@@ -1,5 +1,6 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
-using System;
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿using System;
+using System.Collections.Generic;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
@@ -8,8 +9,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public Reservation(
             Guid id,
             DateTime at,
-            string email,
-            string name,
+            Email email,
+            Name name,
             int quantity)
         {
             if (quantity < 1)
@@ -26,8 +27,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         public Guid Id { get; }
         public DateTime At { get; }
-        public string Email { get; }
-        public string Name { get; }
+        public Email Email { get; }
+        public Name Name { get; }
         public int Quantity { get; }
 
         public Reservation WithDate(DateTime newAt)
@@ -35,12 +36,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new Reservation(Id, newAt, Email, Name, Quantity);
         }
 
-        public Reservation WithEmail(string newEmail)
+        public Reservation WithEmail(Email newEmail)
         {
             return new Reservation(Id, At, newEmail, Name, Quantity);
         }
 
-        public Reservation WithName(string newName)
+        public Reservation WithName(Name newName)
         {
             return new Reservation(Id, At, Email, newName, Quantity);
         }
@@ -55,8 +56,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return obj is Reservation reservation &&
                    Id.Equals(reservation.Id) &&
                    At == reservation.At &&
-                   Email == reservation.Email &&
-                   Name == reservation.Name &&
+                   EqualityComparer<Email>.Default.Equals(Email, reservation.Email) &&
+                   EqualityComparer<Name>.Default.Equals(Name, reservation.Name) &&
                    Quantity == reservation.Quantity;
         }
 
