@@ -19,7 +19,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
         {
             var builder = new SqlConnectionStringBuilder(
                 ConnectionStrings.Reservations);
-            builder.InitialCatalog = "Master";
+            builder.InitialCatalog = "master";
             
             using var conn = new SqlConnection(builder.ConnectionString);
             using var cmd = new SqlCommand();
@@ -78,7 +78,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
 
             var builder = new SqlConnectionStringBuilder(
                 ConnectionStrings.Reservations);
-            builder.InitialCatalog = "Master";
+            builder.InitialCatalog = "master";
             using var conn = new SqlConnection(builder.ConnectionString);
             using var cmd = new SqlCommand(dropCmd, conn);
             conn.Open();
