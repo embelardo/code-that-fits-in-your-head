@@ -18,7 +18,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="AddGuidColumnToReservations.sql" />
+    <None Remove="RestaurantDbSchema.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AdditionalFiles Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="AddGuidColumnToReservations.sql" />
+    <EmbeddedResource Include="RestaurantDbSchema.sql" />
   </ItemGroup>
 
   <ItemGroup>

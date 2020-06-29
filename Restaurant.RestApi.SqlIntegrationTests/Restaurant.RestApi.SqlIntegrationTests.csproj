@@ -36,4 +36,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Restaurant.RestApi\Restaurant.RestApi.csproj" />
+  </ItemGroup>
+
 </Project>

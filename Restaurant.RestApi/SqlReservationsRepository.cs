@@ -26,8 +26,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
             using var cmd = new SqlCommand(createReservationSql, conn);
             cmd.Parameters.Add(new SqlParameter("@Id", reservation.Id));
             cmd.Parameters.Add(new SqlParameter("@At", reservation.At));
-            cmd.Parameters.Add(new SqlParameter("@Name", reservation.Name));
-            cmd.Parameters.Add(new SqlParameter("@Email", reservation.Email));
+            cmd.Parameters.Add(
+                new SqlParameter("@Name", reservation.Name.ToString()));
+            cmd.Parameters.Add(
+                new SqlParameter("@Email", reservation.Email.ToString()));
             cmd.Parameters.Add(
                 new SqlParameter("@Quantity", reservation.Quantity));
 
