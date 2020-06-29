@@ -24,14 +24,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             using var conn = new SqlConnection(ConnectionString);
             using var cmd = new SqlCommand(createReservationSql, conn);
-            cmd.Parameters.Add(new SqlParameter("@Id", reservation.Id));
-            cmd.Parameters.Add(new SqlParameter("@At", reservation.At));
-            cmd.Parameters.Add(
-                new SqlParameter("@Name", reservation.Name.ToString()));
-            cmd.Parameters.Add(
-                new SqlParameter("@Email", reservation.Email.ToString()));
-            cmd.Parameters.Add(
-                new SqlParameter("@Quantity", reservation.Quantity));
+            cmd.Parameters.AddWithValue("@Id", reservation.Id);
+            cmd.Parameters.AddWithValue("@At", reservation.At);
+            cmd.Parameters.AddWithValue("@Name", reservation.Name.ToString());
+            cmd.Parameters.AddWithValue("@Email", reservation.Email.ToString());
+            cmd.Parameters.AddWithValue("@Quantity", reservation.Quantity);
 
             await conn.OpenAsync().ConfigureAwait(false);
             await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
