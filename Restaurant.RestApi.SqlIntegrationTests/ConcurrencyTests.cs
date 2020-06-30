@@ -28,12 +28,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
         {
             date = date.Date.AddHours(18.5);
             using var service = new RestaurantService();
-            var initialResp =
-                await service.PostReservation(new ReservationDtoBuilder()
-                    .WithDate(date)
-                    .WithQuantity(9)
-                    .Build());
-            initialResp.EnsureSuccessStatusCode();
+            await service.PostReservation(date, 9);
 
             var task1 = service.PostReservation(new ReservationDtoBuilder()
                 .WithDate(date)
