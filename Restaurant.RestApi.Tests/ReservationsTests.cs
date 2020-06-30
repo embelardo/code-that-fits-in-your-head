@@ -373,9 +373,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
-            var dto = (ReservationDto)Some.Reservation
+            var dto = Some.Reservation
                 .WithId(Guid.NewGuid())
-                .WithName(new Name("Qux"));
+                .WithName(new Name("Qux"))
+                .ToDto();
             var id = Some.Reservation.Id.ToString("N");
             await sut.Put(id, dto);
 
@@ -415,7 +416,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
-            var dto = (ReservationDto)r1.WithDate(r2.At);
+            var dto = r1.WithDate(r2.At).ToDto();
             var actual = await sut.Put(r1.Id.ToString("N"), dto);
 
             var oRes = Assert.IsAssignableFrom<ObjectResult>(actual);
@@ -457,7 +458,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
-            var dto = (ReservationDto)r.WithName(new Name(newName));
+            var dto = r.WithName(new Name(newName)).ToDto();
             await sut.Put(r.Id.ToString("N"), dto);
 
             var expected = new SpyPostOffice.Observation(
@@ -479,7 +480,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
-            var dto = (ReservationDto)r.WithEmail(new Email(newEmail));
+            var dto = r.WithEmail(new Email(newEmail)).ToDto();
             await sut.Put(r.Id.ToString("N"), dto);
 
             var expected = new[] {
