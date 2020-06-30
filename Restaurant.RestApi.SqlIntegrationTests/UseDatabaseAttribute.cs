@@ -80,7 +80,14 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
                 IF EXISTS (SELECT name
                     FROM master.dbo.sysdatabases
                     WHERE name = N'RestaurantIntegrationTest')
-                DROP DATABASE[RestaurantIntegrationTest];";
+
+                BEGIN
+                    -- This closes existing connections:
+                    ALTER DATABASE [RestaurantIntegrationTest]
+                    SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+
+                    DROP DATABASE [RestaurantIntegrationTest]
+                END";
 
             var builder = new SqlConnectionStringBuilder(
                 ConnectionStrings.Reservations);
