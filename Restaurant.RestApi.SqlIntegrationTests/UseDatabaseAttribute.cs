@@ -17,6 +17,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
             Justification = "No user input, but resource stream.")]
         public override void Before(MethodInfo methodUnderTest)
         {
+            DeleteDatabase();
+
             var builder = new SqlConnectionStringBuilder(
                 ConnectionStrings.Reservations);
             builder.InitialCatalog = "master";
@@ -69,7 +71,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
         public override void After(MethodInfo methodUnderTest)
         {
             base.After(methodUnderTest);
+            DeleteDatabase();
+        }
 
+        private static void DeleteDatabase()
+        {
             var dropCmd = @"
                 IF EXISTS (SELECT name
                     FROM master.dbo.sysdatabases
