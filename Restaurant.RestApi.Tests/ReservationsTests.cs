@@ -23,14 +23,21 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task PostValidReservation()
         {
             using var service = new RestaurantApiFactory();
-            var response = await service.PostReservation(new {
-                at = "2023-03-10 19:00",
-                email = "katinka@example.com",
-                name = "Katinka Ingabogovinanana",
-                quantity = 2 });
+
+            var expected = new ReservationDto
+            {
+                At = "2023-03-10 19:00",
+                Email = "katinka@example.com",
+                Name = "Katinka Ingabogovinanana",
+                Quantity = 2
+            };
+            var response = await service.PostReservation(expected);
+
             Assert.True(
                 response.IsSuccessStatusCode,
                 $"Actual status code: {response.StatusCode}.");
+            var actual = await ParseReservationContent(response);
+            Assert.Equal(expected, actual, new ReservationDtoComparer());
         }
 
         [Theory]

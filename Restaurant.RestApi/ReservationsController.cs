@@ -68,7 +68,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 nameof(Get),
                 null,
                 new { id = r.Id.ToString("N") },
-                null);
+                r.ToDto());
         }
 
         [HttpGet("{id}")]
