@@ -71,10 +71,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 null);
         }
 
-        [SuppressMessage(
-            "Globalization",
-            "CA1305:Specify IFormatProvider",
-            Justification = "ToString(\"o\") is already culture-neutral.")]
         [HttpGet("{id}")]
         public async Task<ActionResult> Get(string id)
         {
@@ -86,15 +82,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (r is null)
                 return new NotFoundResult();
 
-            return new OkObjectResult(
-                new ReservationDto
-                {
-                    Id = id,
-                    At = r.At.ToString("o"),
-                    Email = r.Email.ToString(),
-                    Name = r.Name.ToString(),
-                    Quantity = r.Quantity
-                });
+            return new OkObjectResult((ReservationDto)r);
         }
 
         [HttpPut("{id}")]

@@ -366,10 +366,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.IsAssignableFrom<NotFoundResult>(actual);
         }
 
-        [SuppressMessage(
-            "Globalization",
-            "CA1305:Specify IFormatProvider",
-            Justification = "ToString(\"o\") is already culture-neutral.")]
         [Fact]
         public async Task PutConflictingIds()
         {
@@ -377,14 +373,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
-            var dto = new ReservationDto
-            {
-                Id = Guid.NewGuid().ToString("N"),
-                At = Some.Reservation.At.ToString("o"),
-                Email = Some.Reservation.Email.ToString(),
-                Name = "Qux",
-                Quantity = Some.Reservation.Quantity
-            };
+            var dto = (ReservationDto)Some.Reservation
+                .WithId(Guid.NewGuid())
+                .WithName(new Name("Qux"));
             var id = Some.Reservation.Id.ToString("N");
             await sut.Put(id, dto);
 
@@ -412,10 +403,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.IsAssignableFrom<NotFoundResult>(actual);
         }
 
-        [SuppressMessage(
-            "Globalization",
-            "CA1305:Specify IFormatProvider",
-            Justification = "ToString(\"o\") is already culture-neutral.")]
         [Fact]
         public async Task ChangeDateToSoldOutDate()
         {
@@ -428,13 +415,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
-            var dto = new ReservationDto
-            {
-                At = r2.At.ToString("o"),
-                Email = r1.Email.ToString(),
-                Name = r1.Name.ToString(),
-                Quantity = r1.Quantity
-            };
+            var dto = (ReservationDto)r1.WithDate(r2.At);
             var actual = await sut.Put(r1.Id.ToString("N"), dto);
 
             var oRes = Assert.IsAssignableFrom<ObjectResult>(actual);
@@ -466,10 +447,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 $"Actual status code: {putResp.StatusCode}.");
         }
 
-        [SuppressMessage(
-            "Globalization",
-            "CA1305:Specify IFormatProvider",
-            Justification = "ToString(\"o\") is already culture-neutral.")]
         [Theory]
         [InlineData("ploeh")]
         [InlineData("fnaah")]
@@ -480,13 +457,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
-            var dto = new ReservationDto
-            {
-                At = r.At.ToString("o"),
-                Email = r.Email.ToString(),
-                Name = newName,
-                Quantity = r.Quantity
-            };
+            var dto = (ReservationDto)r.WithName(new Name(newName));
             await sut.Put(r.Id.ToString("N"), dto);
 
             var expected = new SpyPostOffice.Observation(
@@ -498,10 +469,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 o => o.Event == SpyPostOffice.Event.Updating);
         }
 
-        [SuppressMessage(
-            "Globalization",
-            "CA1305:Specify IFormatProvider",
-            Justification = "ToString(\"o\") is already culture-neutral.")]
         [Theory]
         [InlineData("foo@example.com")]
         [InlineData("bar@example.gov")]
@@ -512,13 +479,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
-            var dto = new ReservationDto
-            {
-                At = r.At.ToString("o"),
-                Email = newEmail,
-                Name = r.Name.ToString(),
-                Quantity = r.Quantity
-            };
+            var dto = (ReservationDto)r.WithEmail(new Email(newEmail));
             await sut.Put(r.Id.ToString("N"), dto);
 
             var expected = new[] {
