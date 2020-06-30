@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
@@ -38,6 +39,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (r is null)
                 return new BadRequestResult();
 
+            using var scope = new TransactionScope(
+                TransactionScopeAsyncFlowOption.Enabled);
             var reservations = await Repository
                 .ReadReservations(r.At)
                 .ConfigureAwait(false);
@@ -46,6 +49,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             await Repository.Create(r).ConfigureAwait(false);
             await PostOffice.EmailReservationCreated(r).ConfigureAwait(false);
+            scope.Complete();
 
             return Reservation201Created(r);
         }
