@@ -316,8 +316,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 putResp.IsSuccessStatusCode,
                 $"Actual status code: {putResp.StatusCode}.");
             var getResp = await service.CreateClient().GetAsync(address);
-            var actual = await ParseReservationContent(getResp);
-            Assert.Equal(dto, actual, new ReservationDtoComparer());
+            var persisted = await ParseReservationContent(getResp);
+            Assert.Equal(dto, persisted, new ReservationDtoComparer());
+            var actual = await ParseReservationContent(putResp);
+            Assert.Equal(persisted, actual, new ReservationDtoComparer());
         }
 
         [Theory]
