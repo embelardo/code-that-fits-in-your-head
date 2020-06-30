@@ -41,14 +41,45 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
             return await client.PostAsync(address, content);
         }
 
-        public async Task<Uri> PostReservation(DateTime date, int quantity)
+        public async Task<(Uri, ReservationDto)> PostReservation(
+            DateTime date,
+            int quantity)
         {
             var resp = await PostReservation(new ReservationDtoBuilder()
                 .WithDate(date)
                 .WithQuantity(quantity)
                 .Build());
             resp.EnsureSuccessStatusCode();
-            return resp.Headers.Location;
+
+            var dto = await ParseReservationContent(resp);
+
+            return (resp.Headers.Location, dto);
+        }
+
+        private static async Task<ReservationDto> ParseReservationContent(
+            HttpResponseMessage msg)
+        {
+            var json = await msg.Content.ReadAsStringAsync();
+            var reservation = JsonSerializer.Deserialize<ReservationDto>(
+                json,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+            return reservation;
+        }
+
+        public async Task<HttpResponseMessage> PutReservation(
+            Uri address,
+            object reservation)
+        {
+            var client = CreateClient();
+
+            string json = JsonSerializer.Serialize(reservation);
+            using var content = new StringContent(json);
+            content.Headers.ContentType.MediaType = "application/json";
+
+            return await client.PutAsync(address, content);
         }
     }
 }

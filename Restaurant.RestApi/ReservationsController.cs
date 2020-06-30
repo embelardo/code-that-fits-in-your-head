@@ -101,6 +101,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (res is null)
                 return new BadRequestResult();
 
+            using var scope = new TransactionScope(
+                TransactionScopeAsyncFlowOption.Enabled);
+
             var existing =
                 await Repository.ReadReservation(rid).ConfigureAwait(false);
             if (existing is null)
@@ -118,6 +121,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                     .ConfigureAwait(false);
             await Repository.Update(res).ConfigureAwait(false);
             await PostOffice.EmailReservationUpdated(res).ConfigureAwait(false);
+
+            scope.Complete();
 
             return new OkObjectResult(res.ToDto());
         }

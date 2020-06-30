@@ -45,5 +45,36 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
                 actual,
                 msg => msg.StatusCode == HttpStatusCode.InternalServerError);
         }
+
+        [Fact]
+        public async Task NoOverbookingPutRace()
+        {
+            var start = DateTimeOffset.UtcNow;
+            var timeOut = TimeSpan.FromSeconds(30);
+            var i = 0;
+            while (DateTimeOffset.UtcNow - start < timeOut)
+                await PutTwoConcurrentLiminalReservations(
+                    start.DateTime.AddDays(++i));
+        }
+
+        private static async Task PutTwoConcurrentLiminalReservations(
+            DateTime date)
+        {
+            date = date.Date.AddHours(18.5);
+            using var service = new RestaurantService();
+            var (address1, dto1) = await service.PostReservation(date, 4);
+            var (address2, dto2) = await service.PostReservation(date, 4);
+
+            dto1.Quantity += 2;
+            dto2.Quantity += 2;
+            var task1 = service.PutReservation(address1, dto1);
+            var task2 = service.PutReservation(address2, dto2);
+            var actual = await Task.WhenAll(task1, task2);
+
+            Assert.Single(actual, msg => msg.IsSuccessStatusCode);
+            Assert.Single(
+                actual,
+                msg => msg.StatusCode == HttpStatusCode.InternalServerError);
+        }
     }
 }
