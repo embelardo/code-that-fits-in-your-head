@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -31,6 +33,43 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Equal(
                 "application/json",
                 response.Content.Headers.ContentType?.MediaType);
+        }
+
+        [Fact]
+        public async Task HomeReturnsCorrectLinks()
+        {
+            using var service = new RestaurantApiFactory();
+            var client = service.CreateClient();
+
+            var response =
+                await client.GetAsync(new Uri("", UriKind.Relative));
+
+            var actual = await ParseHomeContent(response);
+            var expected = new HashSet<string?>(new[]
+            {
+                "urn:reservations"
+            });
+            Assert.Superset(
+                expected,
+                actual.Links.Select(l => l.Rel).ToHashSet());
+            Assert.All(
+                actual.Links,
+                l => Assert.True(
+                    Uri.TryCreate(l.Href, UriKind.Absolute, out var _),
+                    $"Actual value: {l.Href}."));
+        }
+
+        private static async Task<HomeDto> ParseHomeContent(
+            HttpResponseMessage response)
+        {
+            var json = await response.Content.ReadAsStringAsync();
+            var home = JsonSerializer.Deserialize<HomeDto>(
+                json,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+            return home;
         }
     }
 }
