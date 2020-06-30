@@ -18,8 +18,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Justification = "URL isn't passed as variable, but as literal.")]
         public async Task HomeReturnsJson()
         {
-            using var factory = new WebApplicationFactory<Startup>();
-            var client = factory.CreateClient();
+            using var service = new RestaurantApiFactory();
+            var client = service.CreateClient();
 
             using var request = new HttpRequestMessage(HttpMethod.Get, "");
             request.Headers.Accept.ParseAdd("application/json");
