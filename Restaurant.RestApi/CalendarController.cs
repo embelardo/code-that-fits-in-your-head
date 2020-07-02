@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +14,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
         [HttpGet("{year}")]
         public ActionResult Get(int year)
         {
-            var days = Enumerable.Repeat(new DayDto(), 365).ToArray();
+            var daysInYear = new GregorianCalendar().GetDaysInYear(year);
+            var days = Enumerable.Repeat(new DayDto(), daysInYear).ToArray();
             return new OkObjectResult(
                 new CalendarDto { Year = year, Days = days });
         }

@@ -2,6 +2,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -51,10 +52,12 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         }
 
         [Theory]
-        [InlineData(2019)]
-        [InlineData(2020)]
-        [InlineData(2040)]
-        public void GetYear(int year)
+        [InlineData(2000, 366)]
+        [InlineData(2019, 365)]
+        [InlineData(2020, 366)]
+        [InlineData(2040, 366)]
+        [InlineData(2100, 365)]
+        public void GetYear(int year, int expectedDays)
         {
             var sut = new CalendarController();
 
@@ -63,7 +66,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
             Assert.Equal(year, dto.Year);
-            Assert.InRange(dto?.Days?.Length ?? 0, 365, 366);
+            Assert.Equal(expectedDays, dto?.Days?.Length);
         }
     }
 }
