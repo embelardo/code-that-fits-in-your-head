@@ -1,7 +1,10 @@
 ﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -12,6 +15,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetCurrentYear()
         {
+            var currentYear = DateTime.Now.Year;
             using var service = new RestaurantApiFactory();
 
             var response = await service.GetCurrentYear();
@@ -19,6 +23,30 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.True(
                 response.IsSuccessStatusCode,
                 $"Actual status code: {response.StatusCode}.");
+            var actual = await ParseCalendarContent(response);
+            AssertCurrentYear(currentYear, actual.Year);
+        }
+
+        private static async Task<CalendarDto> ParseCalendarContent(
+            HttpResponseMessage response)
+        {
+            var json = await response.Content.ReadAsStringAsync();
+            var calendar = JsonSerializer.Deserialize<CalendarDto>(
+                json,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+            return calendar;
+        }
+
+        private static void AssertCurrentYear(int expected, int actual)
+        {
+            /* If a test runs just at midnight on December 31, the year could
+             * increment during execution. Thus, while the current year is the
+             * most reasonable expectation, the next year should also pass the
+             * test. */
+            Assert.InRange(actual, expected, expected + 1);
         }
     }
 }

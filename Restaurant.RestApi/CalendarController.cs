@@ -11,8 +11,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
     public class CalendarController
     {
         [HttpGet]
-        public void Get()
+        public ActionResult Get()
         {
+            return new OkObjectResult(
+                new CalendarDto { Year = DateTime.Now.Year });
         }
     }
 }
