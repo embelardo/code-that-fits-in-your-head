@@ -52,11 +52,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Superset(
                 expected,
                 actual.Links.Select(l => l.Rel).ToHashSet());
-            Assert.All(
-                actual.Links,
-                l => Assert.True(
-                    Uri.TryCreate(l.Href, UriKind.Absolute, out var _),
-                    $"Actual value: {l.Href}."));
+            Assert.All(actual.Links, AssertHrefAbsoluteUrl);
         }
 
         private static async Task<HomeDto> ParseHomeContent(
@@ -70,6 +66,13 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 });
             return home;
+        }
+
+        private static void AssertHrefAbsoluteUrl(LinkDto dto)
+        {
+            Assert.True(
+                Uri.TryCreate(dto.Href, UriKind.Absolute, out var _),
+                $"Not an absolute URL: {dto.Href}.");
         }
     }
 }
