@@ -63,6 +63,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
             Assert.Equal(year, dto.Year);
+            Assert.InRange(dto?.Days?.Length ?? 0, 365, 366);
         }
     }
 }
