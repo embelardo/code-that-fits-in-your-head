@@ -52,14 +52,14 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         }
 
         [Theory]
-        [InlineData(2000, 366)]
-        [InlineData(2019, 365)]
-        [InlineData(2020, 366)]
-        [InlineData(2040, 366)]
-        [InlineData(2100, 365)]
-        public void GetYear(int year, int expectedDays)
+        [InlineData(2000, 366, 10)]
+        [InlineData(2019, 365, 20)]
+        [InlineData(2020, 366,  5)]
+        [InlineData(2040, 366, 10)]
+        [InlineData(2100, 365,  8)]
+        public void GetYear(int year, int expectedDays, int tableSize)
         {
-            var sut = new CalendarController();
+            var sut = new CalendarController(Table.Communal(tableSize));
 
             var actual = sut.Get(year);
 
@@ -72,6 +72,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Equal(
                 expectedDays,
                 days.Select(d => d.Date).Distinct().Count());
+            Assert.All(
+                dto.Days.Select(d => d.MaximumPartySize),
+                i => Assert.Equal(tableSize, i));
         }
     }
 }

@@ -4,5 +4,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
     public class DayDto
     {
         public string? Date { get; set; }
+        public int MaximumPartySize { get; set; }
     }
 }

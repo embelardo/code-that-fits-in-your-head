@@ -31,11 +31,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             var restaurantSettings = new Settings.RestaurantSettings();
             Configuration.Bind("Restaurant", restaurantSettings);
-            services.AddSingleton(restaurantSettings.ToMaitreD());
+            var maitreD = restaurantSettings.ToMaitreD();
+            services.AddSingleton(maitreD);
 
             var smtpSettings = new Settings.SmtpSettings();
             Configuration.Bind("Smtp", smtpSettings);
             services.AddSingleton(smtpSettings.ToPostOffice());
+
+            services.AddSingleton(maitreD.Tables.First());
         }
 
         public static void Configure(
