@@ -49,9 +49,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             {
                 "urn:reservations"
             });
-            Assert.Superset(
-                expected,
-                actual.Links.Select(l => l.Rel).ToHashSet());
+            var actualRels = actual.Links.Select(l => l.Rel).ToHashSet();
+            Assert.Superset(expected, actualRels);
             Assert.All(actual.Links, AssertHrefAbsoluteUrl);
         }
 
