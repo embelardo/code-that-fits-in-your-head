@@ -33,12 +33,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Configuration.Bind("Restaurant", restaurantSettings);
             var maitreD = restaurantSettings.ToMaitreD();
             services.AddSingleton(maitreD);
+            
+            services.AddSingleton(maitreD.Tables.First());
 
             var smtpSettings = new Settings.SmtpSettings();
             Configuration.Bind("Smtp", smtpSettings);
             services.AddSingleton(smtpSettings.ToPostOffice());
 
-            services.AddSingleton(maitreD.Tables.First());
+            var calendarEnabled = new CalendarFlag(
+                Configuration.GetValue<bool>("EnableCalendar"));
+            services.AddSingleton(calendarEnabled);
         }
 
         public static void Configure(

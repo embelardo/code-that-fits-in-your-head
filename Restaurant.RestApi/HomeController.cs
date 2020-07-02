@@ -10,13 +10,23 @@ namespace Ploeh.Samples.Restaurant.RestApi
     [Route("")]
     public class HomeController : ControllerBase
     {
+        private readonly bool enableCalendar;
+
+        public HomeController(CalendarFlag calendarFlag)
+        {
+            if (calendarFlag is null)
+                throw new ArgumentNullException(nameof(calendarFlag));
+
+            enableCalendar = calendarFlag.Enabled;
+        }
+
         public IActionResult Get()
         {
-            return Ok(new HomeDto { Links = new[]
-            {
-                CreateReservationsLink(),
-                CreateYearLink()
-            } });
+            var links = new List<LinkDto>();
+            links.Add(CreateReservationsLink());
+            if (enableCalendar)
+                links.Add(CreateYearLink());
+            return Ok(new HomeDto { Links = links.ToArray() });
         }
 
         private LinkDto CreateReservationsLink()

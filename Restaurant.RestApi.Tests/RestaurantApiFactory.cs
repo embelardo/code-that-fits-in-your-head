@@ -26,6 +26,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 services.RemoveAll<IReservationsRepository>();
                 services.AddSingleton<IReservationsRepository>(
                     new FakeDatabase());
+
+                services.RemoveAll<CalendarFlag>();
+                services.AddSingleton(new CalendarFlag(true));
             });
         }
 
