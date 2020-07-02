@@ -3,5 +3,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
 {
     public class DayDto
     {
+        public string? Date { get; set; }
     }
 }
