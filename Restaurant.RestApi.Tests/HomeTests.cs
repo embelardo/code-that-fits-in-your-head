@@ -47,7 +47,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var expected = new HashSet<string?>(new[]
             {
                 "urn:reservations",
-                "urn:year"
+                "urn:year",
+                "urn:month"
             });
             var actual = await ParseHomeContent(response);
             var actualRels = actual.Links.Select(l => l.Rel).ToHashSet();

@@ -25,7 +25,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var links = new List<LinkDto>();
             links.Add(CreateReservationsLink());
             if (enableCalendar)
+            {
                 links.Add(CreateYearLink());
+                links.Add(CreateMonthLink());
+            }
             return Ok(new HomeDto { Links = links.ToArray() });
         }
 
@@ -69,6 +72,28 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new LinkDto
             {
                 Rel = "urn:year",
+                Href = href
+            };
+        }
+
+        private LinkDto CreateMonthLink()
+        {
+            var controllerName = nameof(CalendarController);
+            var controller = controllerName.Remove(
+                controllerName.LastIndexOf(
+                    "Controller",
+                    StringComparison.Ordinal));
+
+            var href = Url.Action(
+                nameof(CalendarController.Get),
+                controller,
+                new { year = DateTime.Now.Year },
+                Url.ActionContext.HttpContext.Request.Scheme,
+                Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
+
+            return new LinkDto
+            {
+                Rel = "urn:month",
                 Href = href
             };
         }
