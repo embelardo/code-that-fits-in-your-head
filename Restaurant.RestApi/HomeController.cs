@@ -52,7 +52,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var href = Url.Action(
                 nameof(CalendarController.Get),
                 controller,
-                null,
+                new { year = DateTime.Now.Year },
                 Url.ActionContext.HttpContext.Request.Scheme,
                 Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
 

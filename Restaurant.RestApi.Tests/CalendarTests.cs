@@ -1,4 +1,5 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +48,21 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
              * most reasonable expectation, the next year should also pass the
              * test. */
             Assert.InRange(actual, expected, expected + 1);
+        }
+
+        [Theory]
+        [InlineData(2019)]
+        [InlineData(2020)]
+        [InlineData(2040)]
+        public void GetYear(int year)
+        {
+            var sut = new CalendarController();
+
+            var actual = sut.Get(year);
+
+            var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
+            var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
+            Assert.Equal(year, dto.Year);
         }
     }
 }
