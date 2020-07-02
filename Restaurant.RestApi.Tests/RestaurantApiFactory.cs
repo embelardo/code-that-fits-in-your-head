@@ -55,5 +55,35 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             content.Headers.ContentType.MediaType = "application/json";
             return await client.PutAsync(address, content);
         }
+
+        public async Task<HttpResponseMessage> GetCurrentYear()
+        {
+            var client = CreateClient();
+
+            var homeResponse =
+                await client.GetAsync(new Uri("", UriKind.Relative));
+            homeResponse.EnsureSuccessStatusCode();
+            var homeRepresentation = await ParseHomeContent(homeResponse);
+            var yearAddress =
+                homeRepresentation.Links.Single(l => l.Rel == "urn:year").Href;
+            if (yearAddress is null)
+                throw new InvalidOperationException(
+                    "Address for current year not found.");
+
+            return await client.GetAsync(new Uri(yearAddress));
+        }
+
+        private static async Task<HomeDto> ParseHomeContent(
+            HttpResponseMessage response)
+        {
+            var json = await response.Content.ReadAsStringAsync();
+            var home = JsonSerializer.Deserialize<HomeDto>(
+                json,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+            return home;
+        }
     }
 }
