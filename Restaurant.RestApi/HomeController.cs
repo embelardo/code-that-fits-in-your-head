@@ -14,7 +14,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             return Ok(new HomeDto { Links = new[]
             {
-                CreateReservationsLink()
+                CreateReservationsLink(),
+                CreateYearLink()
             } });
         }
 
@@ -36,6 +37,28 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new LinkDto
             {
                 Rel = "urn:reservations",
+                Href = href
+            };
+        }
+
+        private LinkDto CreateYearLink()
+        {
+            var controllerName = nameof(ReservationsController);
+            var actionName = controllerName.Remove(
+                controllerName.LastIndexOf(
+                    "Controller",
+                    StringComparison.Ordinal));
+
+            var href = Url.Action(
+                nameof(ReservationsController.Post),
+                actionName,
+                null,
+                Url.ActionContext.HttpContext.Request.Scheme,
+                Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
+
+            return new LinkDto
+            {
+                Rel = "urn:year",
                 Href = href
             };
         }
