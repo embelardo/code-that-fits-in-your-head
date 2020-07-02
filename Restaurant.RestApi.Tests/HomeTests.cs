@@ -44,11 +44,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var response =
                 await client.GetAsync(new Uri("", UriKind.Relative));
 
-            var actual = await ParseHomeContent(response);
             var expected = new HashSet<string?>(new[]
             {
                 "urn:reservations"
             });
+            var actual = await ParseHomeContent(response);
             var actualRels = actual.Links.Select(l => l.Rel).ToHashSet();
             Assert.Superset(expected, actualRels);
             Assert.All(actual.Links, AssertHrefAbsoluteUrl);
