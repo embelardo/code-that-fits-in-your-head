@@ -49,16 +49,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
         }
 
         [HttpGet("{year}/{month}/{day}")]
-#pragma warning disable CA1801 // Review unused parameters
         public ActionResult Get(int year, int month, int day)
-#pragma warning restore CA1801 // Review unused parameters
         {
+            var days = new[] { MakeDay(new DateTime(year, month, day), 0) };
             return new OkObjectResult(
                 new CalendarDto
                 {
-                    Year = DateTime.Now.Year,
-                    Month = DateTime.Now.Month,
-                    Day = DateTime.Now.Day
+                    Year = year,
+                    Month = month,
+                    Day = day,
+                    Days = days
                 });
         }
 
