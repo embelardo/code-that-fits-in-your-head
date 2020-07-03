@@ -28,6 +28,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             {
                 links.Add(CreateYearLink());
                 links.Add(CreateMonthLink());
+                links.Add(CreateDayLink());
             }
             return Ok(new HomeDto { Links = links.ToArray() });
         }
@@ -94,6 +95,28 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new LinkDto
             {
                 Rel = "urn:month",
+                Href = href
+            };
+        }
+
+        private LinkDto CreateDayLink()
+        {
+            var controllerName = nameof(CalendarController);
+            var controller = controllerName.Remove(
+                controllerName.LastIndexOf(
+                    "Controller",
+                    StringComparison.Ordinal));
+
+            var href = Url.Action(
+                nameof(CalendarController.Get),
+                controller,
+                new { year = DateTime.Now.Year, month = DateTime.Now.Month },
+                Url.ActionContext.HttpContext.Request.Scheme,
+                Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
+
+            return new LinkDto
+            {
+                Rel = "urn:day",
                 Href = href
             };
         }
