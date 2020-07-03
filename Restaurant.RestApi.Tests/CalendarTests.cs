@@ -101,11 +101,29 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 AddYear(2020, 366,  5);
                 AddYear(2040, 366, 10);
                 AddYear(2100, 365,  8);
+                AddMonth(2020, 7, 31, 10);
+                AddMonth(2020, 6, 30, 12);
+                AddMonth(2020, 2, 29, 10);
+                AddMonth(2021, 2, 28, 11);
             }
 
             private void AddYear(int year, int expectedDays, int tableSize)
             {
                 Add(sut => sut.Get(year), year, null, expectedDays, tableSize);
+            }
+
+            private void AddMonth(
+                int year,
+                int month,
+                int expectedDays,
+                int tableSize)
+            {
+                Add(
+                    sut => sut.Get(year, month),
+                    year,
+                    month,
+                    expectedDays,
+                    tableSize);
             }
         }
 

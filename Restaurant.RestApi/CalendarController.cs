@@ -31,15 +31,20 @@ namespace Ploeh.Samples.Restaurant.RestApi
         }
 
         [HttpGet("{year}/{month}")]
-#pragma warning disable CA1801 // Review unused parameters
         public ActionResult Get(int year, int month)
-#pragma warning restore CA1801 // Review unused parameters
         {
+            var daysInMonth =
+                new GregorianCalendar().GetDaysInMonth(year, month);
+            var firstDay = new DateTime(year, month, 1);
+            var days = Enumerable.Range(0, daysInMonth)
+                .Select(i => MakeDay(firstDay, i))
+                .ToArray();
             return new OkObjectResult(
                 new CalendarDto
                 {
-                    Year = DateTime.Now.Year,
-                    Month = DateTime.Now.Month
+                    Year = year,
+                    Month = month,
+                    Days = days
                 });
         }
 
