@@ -26,7 +26,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.True(
                 response.IsSuccessStatusCode,
                 $"Actual status code: {response.StatusCode}.");
-            var actual = await ParseCalendarContent(response);
+            var actual = await response.ParseJsonContent<CalendarDto>();
             AssertCurrentYear(currentYear, actual.Year);
             Assert.Null(actual.Month);
             Assert.Null(actual.Day);
@@ -45,7 +45,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.True(
                 response.IsSuccessStatusCode,
                 $"Actual status code: {response.StatusCode}.");
-            var actual = await ParseCalendarContent(response);
+            var actual = await response.ParseJsonContent<CalendarDto>();
             AssertCurrentYear(currentYear, actual.Year);
             AssertCurrentMonth(currentMonth, actual.Month);
             Assert.Null(actual.Day);
@@ -65,23 +65,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.True(
                 response.IsSuccessStatusCode,
                 $"Actual status code: {response.StatusCode}.");
-            var actual = await ParseCalendarContent(response);
+            var actual = await response.ParseJsonContent<CalendarDto>();
             AssertCurrentYear(currentYear, actual.Year);
             AssertCurrentMonth(currentMonth, actual.Month);
             AssertCurrentDay(currentDay, actual.Day);
-        }
-
-        private static async Task<CalendarDto> ParseCalendarContent(
-            HttpResponseMessage response)
-        {
-            var json = await response.Content.ReadAsStringAsync();
-            var calendar = JsonSerializer.Deserialize<CalendarDto>(
-                json,
-                new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
-            return calendar;
         }
 
         private static void AssertCurrentYear(int expected, int actual)

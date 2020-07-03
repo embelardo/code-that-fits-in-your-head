@@ -36,7 +36,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.True(
                 response.IsSuccessStatusCode,
                 $"Actual status code: {response.StatusCode}.");
-            var actual = await ParseReservationContent(response);
+            var actual = await response.ParseJsonContent<ReservationDto>();
             Assert.Equal(expected, actual, new ReservationDtoComparer());
         }
 
@@ -178,7 +178,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.True(
                 getResp.IsSuccessStatusCode,
                 $"Actual status code: {postResp.StatusCode}.");
-            var actual = await ParseReservationContent(getResp);
+            var actual = await getResp.ParseJsonContent<ReservationDto>();
             Assert.Equal(expected, actual, new ReservationDtoComparer());
             Assert.DoesNotContain(address.ToString(), char.IsUpper);
         }
@@ -186,19 +186,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         private static Uri FindReservationAddress(HttpResponseMessage response)
         {
             return response.Headers.Location;
-        }
-
-        private static async Task<ReservationDto> ParseReservationContent(
-            HttpResponseMessage actual)
-        {
-            var json = await actual.Content.ReadAsStringAsync();
-            var reservation = JsonSerializer.Deserialize<ReservationDto>(
-                json,
-                new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
-            return reservation;
         }
 
         [Theory]
@@ -316,9 +303,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 putResp.IsSuccessStatusCode,
                 $"Actual status code: {putResp.StatusCode}.");
             var getResp = await service.CreateClient().GetAsync(address);
-            var persisted = await ParseReservationContent(getResp);
+            var persisted = await getResp.ParseJsonContent<ReservationDto>();
             Assert.Equal(dto, persisted, new ReservationDtoComparer());
-            var actual = await ParseReservationContent(putResp);
+            var actual = await putResp.ParseJsonContent<ReservationDto>();
             Assert.Equal(persisted, actual, new ReservationDtoComparer());
         }
 

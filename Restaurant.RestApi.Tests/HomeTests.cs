@@ -51,23 +51,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 "urn:month",
                 "urn:day"
             });
-            var actual = await ParseHomeContent(response);
+            var actual = await response.ParseJsonContent<HomeDto>();
             var actualRels = actual.Links.Select(l => l.Rel).ToHashSet();
             Assert.Superset(expected, actualRels);
             Assert.All(actual.Links, AssertHrefAbsoluteUrl);
-        }
-
-        private static async Task<HomeDto> ParseHomeContent(
-            HttpResponseMessage response)
-        {
-            var json = await response.Content.ReadAsStringAsync();
-            var home = JsonSerializer.Deserialize<HomeDto>(
-                json,
-                new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
-            return home;
         }
 
         private static void AssertHrefAbsoluteUrl(LinkDto dto)
