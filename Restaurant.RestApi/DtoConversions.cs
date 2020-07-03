@@ -9,10 +9,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
 {
     public static class DtoConversions
     {
-        [SuppressMessage(
-            "Globalization",
-            "CA1305:Specify IFormatProvider",
-            Justification = "ToString(\"o\") is already culture-neutral.")]
         public static ReservationDto ToDto(this Reservation reservation)
         {
             if (reservation is null)
@@ -21,7 +17,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new ReservationDto
             {
                 Id = reservation.Id.ToString("N"),
-                At = reservation.At.ToString("o"),
+                At = reservation.At.ToIso8601DateTimeString(),
                 Email = reservation.Email.ToString(),
                 Name = reservation.Name.ToString(),
                 Quantity = reservation.Quantity
