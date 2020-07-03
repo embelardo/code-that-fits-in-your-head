@@ -91,24 +91,32 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             "Performance",
             "CA1812: Avoid uninstantiated internal classes",
             Justification = "This class is instantiated via Reflection.")]
-        private class CalendarTestCases : TheoryData<int, int, int>
+        private class CalendarTestCases : TheoryData<Func<CalendarController, ActionResult>, int, int, int>
         {
             public CalendarTestCases()
             {
-                Add(2000, 366, 10);
-                Add(2019, 365, 20);
-                Add(2020, 366,  5);
-                Add(2040, 366, 10);
-                Add(2100, 365,  8);
+                Add(sut => sut.Get(2000), 2000, 366, 10);
+                Add(sut => sut.Get(2019), 2019, 365, 20);
+                Add(sut => sut.Get(2020), 2020, 366,  5);
+                Add(sut => sut.Get(2040), 2040, 366, 10);
+                Add(sut => sut.Get(2100), 2100, 365,  8);
             }
         }
 
+        [SuppressMessage(
+            "Design",
+            "CA1062:Validate arguments of public methods",
+            Justification = "Parametrised test.")]
         [Theory, ClassData(typeof(CalendarTestCases))]
-        public void GetYear(int year, int expectedDays, int tableSize)
+        public void GetYear(
+            Func<CalendarController, ActionResult> act,
+            int year,
+            int expectedDays,
+            int tableSize)
         {
             var sut = new CalendarController(Table.Communal(tableSize));
 
-            var actual = sut.Get(year);
+            var actual = act(sut);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
