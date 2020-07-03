@@ -66,8 +66,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             return new DayDto
             {
-                Date = origin.AddDays(offset)
-                    .ToString("o", CultureInfo.InvariantCulture),
+                Date = origin.AddDays(offset).ToIso8601DateString(),
                 MaximumPartySize = table.Seats
             };
         }
