@@ -135,7 +135,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             "CA1812: Avoid uninstantiated internal classes",
             Justification = "This class is instantiated via Reflection.")]
         private class CalendarTestCases :
-            TheoryData<Func<CalendarController, ActionResult>, int, int?, int, int>
+            TheoryData<Func<CalendarController, ActionResult>, int, int?, int?, int, int>
         {
             public CalendarTestCases()
             {
@@ -152,7 +152,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             private void AddYear(int year, int expectedDays, int tableSize)
             {
-                Add(sut => sut.Get(year), year, null, expectedDays, tableSize);
+                Add(sut => sut.Get(year), year, null, null, expectedDays, tableSize);
             }
 
             private void AddMonth(
@@ -165,6 +165,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                     sut => sut.Get(year, month),
                     year,
                     month,
+                    null,
                     expectedDays,
                     tableSize);
             }
@@ -179,6 +180,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Func<CalendarController, ActionResult> act,
             int year,
             int? month,
+            int? day,
             int expectedDays,
             int tableSize)
         {
@@ -190,6 +192,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
             Assert.Equal(year, dto.Year);
             Assert.Equal(month, dto.Month);
+            Assert.Equal(day, dto.Day);
             Assert.NotNull(dto.Days);
             var days = dto.Days;
             Assert.Equal(expectedDays, days?.Length);
