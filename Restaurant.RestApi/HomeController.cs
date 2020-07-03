@@ -87,7 +87,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var href = Url.Action(
                 nameof(CalendarController.Get),
                 controller,
-                new { year = DateTime.Now.Year },
+                new { year = DateTime.Now.Year, month = DateTime.Now.Month },
                 Url.ActionContext.HttpContext.Request.Scheme,
                 Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
 

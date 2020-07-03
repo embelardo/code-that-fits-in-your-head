@@ -76,6 +76,23 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return await client.GetAsync(new Uri(yearAddress));
         }
 
+        public async Task<HttpResponseMessage> GetCurrentMonth()
+        {
+            var client = CreateClient();
+
+            var homeResponse =
+                await client.GetAsync(new Uri("", UriKind.Relative));
+            homeResponse.EnsureSuccessStatusCode();
+            var homeRepresentation = await ParseHomeContent(homeResponse);
+            var yearAddress =
+                homeRepresentation.Links.Single(l => l.Rel == "urn:month").Href;
+            if (yearAddress is null)
+                throw new InvalidOperationException(
+                    "Address for current month not found.");
+
+            return await client.GetAsync(new Uri(yearAddress));
+        }
+
         private static async Task<HomeDto> ParseHomeContent(
             HttpResponseMessage response)
         {

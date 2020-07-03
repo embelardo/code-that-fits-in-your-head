@@ -7,6 +7,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
     {
         public int Year { get; set; }
 
+        public int? Month { get; set; }
+
         [SuppressMessage(
             "Performance",
             "CA1819:Properties should not return arrays",
