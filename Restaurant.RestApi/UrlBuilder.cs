@@ -1,4 +1,4 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -35,12 +35,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 throw new ArgumentNullException(nameof(newController));
 
             const string controllerSuffix = "controller";
-            return new UrlBuilder(
-                action,
-                newController.Remove(newController.LastIndexOf(
-                    controllerSuffix,
-                    StringComparison.OrdinalIgnoreCase)),
-                values);
+
+            var index = newController.LastIndexOf(
+                controllerSuffix,
+                StringComparison.OrdinalIgnoreCase);
+            if (0 <= index)
+                newController = newController.Remove(index);
+            return new UrlBuilder(action, newController, values);
         }
 
         public UrlBuilder WithValues(object newValues)
@@ -59,6 +60,19 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 values,
                 url.ActionContext.HttpContext.Request.Scheme,
                 url.ActionContext.HttpContext.Request.Host.ToUriComponent());
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is UrlBuilder builder &&
+                   action == builder.action &&
+                   controller == builder.controller &&
+                   EqualityComparer<object?>.Default.Equals(values, builder.values);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(action, controller, values);
         }
     }
 }
