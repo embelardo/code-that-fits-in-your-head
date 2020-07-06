@@ -57,18 +57,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private LinkDto CreateYearLink()
         {
-            var controllerName = nameof(CalendarController);
-            var controller = controllerName.Remove(
-                controllerName.LastIndexOf(
-                    "Controller",
-                    StringComparison.Ordinal));
-
-            var href = Url.Action(
-                nameof(CalendarController.Get),
-                controller,
-                new { year = DateTime.Now.Year },
-                Url.ActionContext.HttpContext.Request.Scheme,
-                Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
+            var href = new UrlBuilder()
+                .WithAction(nameof(CalendarController.Get))
+                .WithController(nameof(CalendarController))
+                .WithValues(new { year = DateTime.Now.Year })
+                .BuildAbsolute(Url);
 
             return new LinkDto
             {
@@ -79,18 +72,15 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private LinkDto CreateMonthLink()
         {
-            var controllerName = nameof(CalendarController);
-            var controller = controllerName.Remove(
-                controllerName.LastIndexOf(
-                    "Controller",
-                    StringComparison.Ordinal));
-
-            var href = Url.Action(
-                nameof(CalendarController.Get),
-                controller,
-                new { year = DateTime.Now.Year, month = DateTime.Now.Month },
-                Url.ActionContext.HttpContext.Request.Scheme,
-                Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
+            var href = new UrlBuilder()
+                .WithAction(nameof(CalendarController.Get))
+                .WithController(nameof(CalendarController))
+                .WithValues(new
+                {
+                    year = DateTime.Now.Year,
+                    month = DateTime.Now.Month
+                })
+                .BuildAbsolute(Url);
 
             return new LinkDto
             {
@@ -101,23 +91,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private LinkDto CreateDayLink()
         {
-            var controllerName = nameof(CalendarController);
-            var controller = controllerName.Remove(
-                controllerName.LastIndexOf(
-                    "Controller",
-                    StringComparison.Ordinal));
-
-            var href = Url.Action(
-                nameof(CalendarController.Get),
-                controller,
-                new
+            var href = new UrlBuilder()
+                .WithAction(nameof(CalendarController.Get))
+                .WithController(nameof(CalendarController))
+                .WithValues(new
                 {
                     year = DateTime.Now.Year,
                     month = DateTime.Now.Month,
                     day = DateTime.Now.Day
-                },
-                Url.ActionContext.HttpContext.Request.Scheme,
-                Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
+                })
+                .BuildAbsolute(Url);
 
             return new LinkDto
             {
