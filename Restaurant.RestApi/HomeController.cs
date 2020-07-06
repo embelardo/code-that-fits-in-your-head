@@ -23,62 +23,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public IActionResult Get()
         {
             var links = new List<LinkDto>();
-            links.Add(CreateReservationsLink());
+            links.Add(Url.LinkToReservations());
             if (enableCalendar)
             {
-                links.Add(CreateYearLink());
-                links.Add(CreateMonthLink());
-                links.Add(CreateDayLink());
+                links.Add(Url.LinkToYear(DateTime.Now.Year));
+                links.Add(
+                    Url.LinkToMonth(DateTime.Now.Year, DateTime.Now.Month));
+                links.Add(Url.LinkToDay(
+                    DateTime.Now.Year,
+                    DateTime.Now.Month,
+                    DateTime.Now.Day));
             }
             return Ok(new HomeDto { Links = links.ToArray() });
-        }
-
-        private LinkDto CreateReservationsLink()
-        {
-            return new UrlBuilder()
-                .WithAction(nameof(ReservationsController.Post))
-                .WithController(nameof(ReservationsController))
-                .BuildAbsolute(Url)
-                .Link("urn:reservations");
-        }
-
-        private LinkDto CreateYearLink()
-        {
-            return new UrlBuilder()
-                .WithAction(nameof(CalendarController.Get))
-                .WithController(nameof(CalendarController))
-                .WithValues(new { year = DateTime.Now.Year })
-                .BuildAbsolute(Url)
-                .Link("urn:year");
-        }
-
-        private LinkDto CreateMonthLink()
-        {
-            return new UrlBuilder()
-                .WithAction(nameof(CalendarController.Get))
-                .WithController(nameof(CalendarController))
-                .WithValues(new
-                {
-                    year = DateTime.Now.Year,
-                    month = DateTime.Now.Month
-                })
-                .BuildAbsolute(Url)
-                .Link("urn:month");
-        }
-
-        private LinkDto CreateDayLink()
-        {
-            return new UrlBuilder()
-                .WithAction(nameof(CalendarController.Get))
-                .WithController(nameof(CalendarController))
-                .WithValues(new
-                {
-                    year = DateTime.Now.Year,
-                    month = DateTime.Now.Month,
-                    day = DateTime.Now.Day
-                })
-                .BuildAbsolute(Url)
-                .Link("urn:day");
         }
     }
 }
