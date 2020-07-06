@@ -61,41 +61,23 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
         public async Task<HttpResponseMessage> GetCurrentYear()
         {
-            var client = CreateClient();
-
-            var homeResponse =
-                await client.GetAsync(new Uri("", UriKind.Relative));
-            homeResponse.EnsureSuccessStatusCode();
-            var homeRepresentation =
-                await homeResponse.ParseJsonContent<HomeDto>();
-            var yearAddress =
-                homeRepresentation.Links.Single(l => l.Rel == "urn:year").Href;
-            if (yearAddress is null)
-                throw new InvalidOperationException(
-                    "Address for current year not found.");
-
-            return await client.GetAsync(new Uri(yearAddress));
+            var yearAddress = await FindAddress("urn:year");
+            return await CreateClient().GetAsync(yearAddress);
         }
 
         public async Task<HttpResponseMessage> GetCurrentMonth()
         {
-            var client = CreateClient();
-
-            var homeResponse =
-                await client.GetAsync(new Uri("", UriKind.Relative));
-            homeResponse.EnsureSuccessStatusCode();
-            var homeRepresentation =
-                await homeResponse.ParseJsonContent<HomeDto>();
-            var yearAddress =
-                homeRepresentation.Links.Single(l => l.Rel == "urn:month").Href;
-            if (yearAddress is null)
-                throw new InvalidOperationException(
-                    "Address for current month not found.");
-
-            return await client.GetAsync(new Uri(yearAddress));
+            var monthAddress = await FindAddress("urn:month");
+            return await CreateClient().GetAsync(monthAddress);
         }
 
         public async Task<HttpResponseMessage> GetCurrentDay()
+        {
+            var dayAddress = await FindAddress("urn:day");
+            return await CreateClient().GetAsync(dayAddress);
+        }
+
+        private async Task<Uri> FindAddress(string rel)
         {
             var client = CreateClient();
 
@@ -104,13 +86,13 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             homeResponse.EnsureSuccessStatusCode();
             var homeRepresentation =
                 await homeResponse.ParseJsonContent<HomeDto>();
-            var yearAddress =
-                homeRepresentation.Links.Single(l => l.Rel == "urn:day").Href;
-            if (yearAddress is null)
+            var address =
+                homeRepresentation.Links.Single(l => l.Rel == rel).Href;
+            if (address is null)
                 throw new InvalidOperationException(
-                    "Address for current day not found.");
+                    $"Address for relationship typ {rel} not found.");
 
-            return await client.GetAsync(new Uri(yearAddress));
+            return new Uri(address);
         }
     }
 }
