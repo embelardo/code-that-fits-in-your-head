@@ -49,17 +49,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new UrlBuilder(action, controller, newValues);
         }
 
-        public string BuildAbsolute(IUrlHelper url)
+        public Uri BuildAbsolute(IUrlHelper url)
         {
             if (url is null)
                 throw new ArgumentNullException(nameof(url));
 
-            return url.Action(
+            var actionUrl = url.Action(
                 action,
                 controller,
                 values,
                 url.ActionContext.HttpContext.Request.Scheme,
                 url.ActionContext.HttpContext.Request.Host.ToUriComponent());
+            return new Uri(actionUrl);
         }
 
         public override bool Equals(object? obj)

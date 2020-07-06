@@ -43,7 +43,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new LinkDto
             {
                 Rel = "urn:reservations",
-                Href = href
+                Href = href.ToString()
             };
         }
 
@@ -58,7 +58,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new LinkDto
             {
                 Rel = "urn:year",
-                Href = href
+                Href = href.ToString()
             };
         }
 
@@ -77,7 +77,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new LinkDto
             {
                 Rel = "urn:month",
-                Href = href
+                Href = href.ToString()
             };
         }
 
@@ -97,7 +97,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new LinkDto
             {
                 Rel = "urn:day",
-                Href = href
+                Href = href.ToString()
             };
         }
     }
