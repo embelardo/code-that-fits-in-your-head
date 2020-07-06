@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi.Tests
 {
-    public class RestaurantApiFactory : WebApplicationFactory<Startup>
+    public class SelfHostedService : WebApplicationFactory<Startup>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

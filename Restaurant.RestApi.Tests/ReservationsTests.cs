@@ -22,7 +22,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task PostValidReservation()
         {
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
 
             var expected = new ReservationDto
             {
@@ -90,7 +90,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             string name,
             int quantity)
         {
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
             var response = await service.PostReservation(
                 new { at, email, name, quantity });
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -99,7 +99,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task OverbookAttempt()
         {
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
             await service.PostReservation(new
             {
                 at = "2022-03-18 17:30",
@@ -130,7 +130,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task BookTableWhenFreeSeatingIsAvailable()
         {
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
             await service.PostReservation(new
             {
                 at = "2023-01-02 18:15",
@@ -162,7 +162,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             string name,
             int quantity)
         {
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
             var expected = new ReservationDto
             {
                 At = date,
@@ -193,7 +193,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData("foo")]
         public async Task GetAbsentReservation(string id)
         {
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
 
             var url = new Uri($"/reservations/{id}", UriKind.Relative);
             var resp = await service.CreateClient().GetAsync(url);
@@ -210,7 +210,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             string name,
             int quantity)
         {
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
             var dto = new ReservationDto
             {
                 At = at,
@@ -235,7 +235,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData("79F53E9D9A66458AB79E11DA130BF1D8")]
         public async Task DeleteAbsentReservation(string id)
         {
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
 
             var url = new Uri($"/reservations/{id}", UriKind.Relative);
             var resp = await service.CreateClient().DeleteAsync(url);
@@ -285,7 +285,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int quantity,
             int newQuantity)
         {
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
             var dto = new ReservationDto
             {
                 At = at,
@@ -321,7 +321,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             string name,
             int quantity)
         {
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
             var dto = new ReservationDto
             {
                 At = "2022-03-22 19:00",
@@ -424,7 +424,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task EditReservationOnSameDayNearCapacity()
         {
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
             var dto = new ReservationDto
             {
                 At = "2023-04-10 20:01",

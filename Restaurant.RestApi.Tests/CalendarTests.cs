@@ -19,7 +19,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task GetCurrentYear()
         {
             var currentYear = DateTime.Now.Year;
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
 
             var response = await service.GetCurrentYear();
 
@@ -38,7 +38,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var now = DateTime.Now;
             var currentYear = now.Year;
             var currentMonth = now.Month;
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
 
             var response = await service.GetCurrentMonth();
 
@@ -58,7 +58,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var currentYear = now.Year;
             var currentMonth = now.Month;
             var currentDay = now.Day;
-            using var service = new RestaurantApiFactory();
+            using var service = new SelfHostedService();
 
             var response = await service.GetCurrentDay();
 
