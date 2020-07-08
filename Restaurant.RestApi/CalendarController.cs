@@ -29,7 +29,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new OkObjectResult(
                 new CalendarDto
                 {
-                    Links = Array.Empty<LinkDto>(),
+                    Links = new[]
+                    {
+                        new LinkDto { Rel = "previous" },
+                        new LinkDto { Rel = "next" }
+                    },
                     Year = year,
                     Days = days });
         }
@@ -46,7 +50,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new OkObjectResult(
                 new CalendarDto
                 {
-                    Links = Array.Empty<LinkDto>(),
+                    Links = new[]
+                    {
+                        new LinkDto { Rel = "previous" },
+                        new LinkDto { Rel = "next" }
+                    },
                     Year = year,
                     Month = month,
                     Days = days
@@ -60,7 +68,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new OkObjectResult(
                 new CalendarDto
                 {
-                    Links = Array.Empty<LinkDto>(),
+                    Links = new[]
+                    {
+                        new LinkDto { Rel = "previous" },
+                        new LinkDto { Rel = "next" }
+                    },
                     Year = year,
                     Month = month,
                     Day = day,

@@ -123,6 +123,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         private static void AssertLinks(CalendarDto actual)
         {
             Assert.NotNull(actual.Links);
+            Assert.Single(actual.Links, l => l.Rel == "previous");
+            Assert.Single(actual.Links, l => l.Rel == "next");
         }
 
         [SuppressMessage(
