@@ -260,6 +260,28 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 actual.Day);
         }
 
+        [Theory]
+        [InlineData(1990, 3, 28)]
+        [InlineData(2020, 7,  1)]
+        [InlineData(2020, 7, 10)]
+        [InlineData(2020, 7, 17)]
+        [InlineData(2050, 2,  9)]
+        public async Task GetSpecificDay(int year, int month, int day)
+        {
+            using var service = new SelfHostedService();
+
+            var response = await service.GetDay(year, month, day);
+
+            Assert.True(
+                response.IsSuccessStatusCode,
+                $"Actual status code: {response.StatusCode}.");
+            var actual = await response.ParseJsonContent<CalendarDto>();
+            Assert.Equal(year, actual.Year);
+            Assert.Equal(month, actual.Month);
+            Assert.Equal(day, actual.Day);
+            AssertLinks(actual);
+        }
+
         private static void AssertOneOf(
             int expected1,
             int expected2,

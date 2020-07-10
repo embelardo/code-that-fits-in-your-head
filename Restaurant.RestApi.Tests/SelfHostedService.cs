@@ -244,6 +244,52 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return await client.GetAsync(new Uri(address));
         }
 
+        public async Task<HttpResponseMessage> GetDay(
+            int year,
+            int month,
+            int day)
+        {
+            var target = new DateTime(year, month, day);
+            var resp = await GetCurrentDay();
+            resp.EnsureSuccessStatusCode();
+            var dto = await resp.ParseJsonContent<CalendarDto>();
+            var date = new DateTime(dto.Year, dto.Month!.Value, dto.Day!.Value);
+            if (target == date)
+                return resp;
+            else if (date < target)
+            {
+                var client = CreateClient();
+                do
+                {
+                    var address = dto.Links.Single(l => l.Rel == "next").Href;
+                    if (address is null)
+                        throw new InvalidOperationException(
+                            "Address for relationship type next not found.");
+                    resp = await client.GetAsync(new Uri(address));
+                    resp.EnsureSuccessStatusCode();
+                    dto = await resp.ParseJsonContent<CalendarDto>();
+                    date = new DateTime(dto.Year, dto.Month!.Value, dto.Day!.Value);
+                } while (target != date);
+                return resp;
+            }
+            else
+            {
+                var client = CreateClient();
+                do
+                {
+                    var address = dto.Links.Single(l => l.Rel == "previous").Href;
+                    if (address is null)
+                        throw new InvalidOperationException(
+                            "Address for relationship type previous not found.");
+                    resp = await client.GetAsync(new Uri(address));
+                    resp.EnsureSuccessStatusCode();
+                    dto = await resp.ParseJsonContent<CalendarDto>();
+                    date = new DateTime(dto.Year, dto.Month!.Value, dto.Day!.Value);
+                } while (target != date);
+                return resp;
+            }
+        }
+
         private async Task<Uri> FindAddress(string rel)
         {
             var client = CreateClient();

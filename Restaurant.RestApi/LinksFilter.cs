@@ -82,6 +82,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 };
             }
             else
+            {
+                var date = new DateTime(dto.Year, dto.Month.Value, dto.Day.Value);
+                var previousDay = date.AddDays(-1);
+                var nextDay = date.AddDays(1);
                 dto.Links = new[]
                 {
                     new LinkDto
@@ -89,9 +93,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
                         Rel = "previous",
                         Href = url
                             .LinkToDay(
-                                dto.Year,
-                                dto.Month.Value,
-                                dto.Day.Value - 1)
+                                previousDay.Year,
+                                previousDay.Month,
+                                previousDay.Day)
                             .Href
                     },
                     new LinkDto
@@ -99,12 +103,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
                         Rel = "next",
                         Href = url
                             .LinkToDay(
-                                dto.Year,
-                                dto.Month.Value,
-                                dto.Day.Value + 1)
+                                nextDay.Year,
+                                nextDay.Month,
+                                nextDay.Day)
                             .Href
                     }
                 };
+            }
         }
     }
 }
