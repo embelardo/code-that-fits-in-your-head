@@ -166,6 +166,50 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return await client.GetAsync(new Uri(address));
         }
 
+        public async Task<HttpResponseMessage> GetMonth(int year, int month)
+        {
+            var target = new DateTime(year, month, 1);
+
+            var resp = await GetCurrentMonth();
+            resp.EnsureSuccessStatusCode();
+            var dto = await resp.ParseJsonContent<CalendarDto>();
+            var firstDay = new DateTime(dto.Year, dto.Month!.Value, 1);
+            if (dto.Year == year && dto.Month == month)
+                return resp;
+            else if (firstDay < target)
+            {
+                var client = CreateClient();
+                do
+                {
+                    var address = dto.Links.Single(l => l.Rel == "next").Href;
+                    if (address is null)
+                        throw new InvalidOperationException(
+                            "Address for relationship type next not found.");
+                    resp = await client.GetAsync(new Uri(address));
+                    resp.EnsureSuccessStatusCode();
+                    dto = await resp.ParseJsonContent<CalendarDto>();
+                    firstDay = new DateTime(dto.Year, dto.Month!.Value, 1);
+                } while (target != firstDay);
+                return resp;
+            }
+            else
+            {
+                var client = CreateClient();
+                do
+                {
+                    var address = dto.Links.Single(l => l.Rel == "previous").Href;
+                    if (address is null)
+                        throw new InvalidOperationException(
+                            "Address for relationship type previous not found.");
+                    resp = await client.GetAsync(new Uri(address));
+                    resp.EnsureSuccessStatusCode();
+                    dto = await resp.ParseJsonContent<CalendarDto>();
+                    firstDay = new DateTime(dto.Year, dto.Month!.Value, 1);
+                } while (target != firstDay);
+                return resp;
+            }
+        }
+
         public async Task<HttpResponseMessage> GetCurrentDay()
         {
             var dayAddress = await FindAddress("urn:day");
