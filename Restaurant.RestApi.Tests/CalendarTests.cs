@@ -120,6 +120,30 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         }
 
         [Fact]
+        public async Task GetNextMonth()
+        {
+            using var service = new SelfHostedService();
+
+            var before = DateTime.Now;
+            var response = await service.GetNextMonth();
+            var after = DateTime.Now;
+
+            Assert.True(
+                response.IsSuccessStatusCode,
+                $"Actual status code: {response.StatusCode}.");
+            var actual = await response.ParseJsonContent<CalendarDto>();
+            AssertOneOf(
+                before.AddMonths(1).Year,
+                after.AddMonths(1).Year,
+                actual.Year);
+            AssertOneOf(
+                before.AddMonths(1).Month,
+                after.AddMonths(1).Month,
+                actual.Month);
+            Assert.Null(actual.Day);
+        }
+
+        [Fact]
         public async Task GetCurrentDay()
         {
             using var service = new SelfHostedService();
