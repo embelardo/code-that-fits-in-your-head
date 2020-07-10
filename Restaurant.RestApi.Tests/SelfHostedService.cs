@@ -133,6 +133,20 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return await CreateClient().GetAsync(dayAddress);
         }
 
+        public async Task<HttpResponseMessage> GetPreviousDay()
+        {
+            var currentResp = await GetCurrentDay();
+            currentResp.EnsureSuccessStatusCode();
+            var dto = await currentResp.ParseJsonContent<CalendarDto>();
+            var address = dto.Links.Single(l => l.Rel == "previous").Href;
+            if (address is null)
+                throw new InvalidOperationException(
+                    "Address for relationship type previous not found.");
+
+            var client = CreateClient();
+            return await client.GetAsync(new Uri(address));
+        }
+
         private async Task<Uri> FindAddress(string rel)
         {
             var client = CreateClient();
