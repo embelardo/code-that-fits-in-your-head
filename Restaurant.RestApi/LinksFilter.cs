@@ -44,50 +44,62 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private static void AddLinks(CalendarDto dto, IUrlHelper url)
         {
-            if (dto.Month is null)
+            var period = dto.ToPeriod();
+            var previous = period.Accept(new PreviousPeriodVisitor());
+            var next = period.Accept(new NextPeriodVisitor());
+
+            dto.Links = new[]
             {
-                var date = new DateTime(dto.Year, 1, 1);
-                var previousYear = date.AddYears(-1);
-                var nextYear = date.AddYears(1);
-                dto.Links = new[]
-                {
-                    url.LinkToYear(previousYear.Year, "previous"),
-                    url.LinkToYear(nextYear.Year, "next")
-                };
+                url.LinkToPeriod(previous, "previous"),
+                url.LinkToPeriod(next, "next")
+            };
+        }
+
+        private class PreviousPeriodVisitor : IPeriodVisitor<IPeriod>
+        {
+            public IPeriod VisitYear(int year)
+            {
+                var date = new DateTime(year, 1, 1);
+                var previous = date.AddYears(-1);
+                return Period.Year(previous.Year);
             }
-            else if (dto.Day is null)
+
+            public IPeriod VisitMonth(int year, int month)
             {
-                var date = new DateTime(dto.Year, dto.Month.Value, 1);
-                var previousMonth = date.AddMonths(-1);
-                var nextMonth = date.AddMonths(1);
-                dto.Links = new[]
-                {
-                    url.LinkToMonth(
-                        previousMonth.Year,
-                        previousMonth.Month,
-                        "previous"),
-                    url.LinkToMonth(nextMonth.Year, nextMonth.Month, "next")
-                };
+                var date = new DateTime(year, month, 1);
+                var previous = date.AddMonths(-1);
+                return Period.Month(previous.Year, previous.Month);
             }
-            else
+
+            public IPeriod VisitDay(int year, int month, int day)
             {
-                var date =
-                    new DateTime(dto.Year, dto.Month.Value, dto.Day.Value);
-                var previousDay = date.AddDays(-1);
-                var nextDay = date.AddDays(1);
-                dto.Links = new[]
-                {
-                    url.LinkToDay(
-                        previousDay.Year,
-                        previousDay.Month,
-                        previousDay.Day,
-                        "previous"),
-                    url.LinkToDay(
-                        nextDay.Year,
-                        nextDay.Month,
-                        nextDay.Day,
-                        "next")
-                };
+                var date = new DateTime(year, month, day);
+                var previous = date.AddDays(-1);
+                return Period.Day(previous.Year, previous.Month, previous.Day);
+            }
+        }
+
+        private class NextPeriodVisitor : IPeriodVisitor<IPeriod>
+        {
+            public IPeriod VisitYear(int year)
+            {
+                var date = new DateTime(year, 1, 1);
+                var next = date.AddYears(1);
+                return Period.Year(next.Year);
+            }
+
+            public IPeriod VisitMonth(int year, int month)
+            {
+                var date = new DateTime(year, month, 1);
+                var next = date.AddMonths(1);
+                return Period.Month(next.Year, next.Month);
+            }
+
+            public IPeriod VisitDay(int year, int month, int day)
+            {
+                var date = new DateTime(year, month, day);
+                var next = date.AddDays(1);
+                return Period.Day(next.Year, next.Month, next.Day);
             }
         }
     }

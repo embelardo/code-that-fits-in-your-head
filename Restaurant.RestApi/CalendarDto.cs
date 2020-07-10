@@ -18,5 +18,15 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public int? Day { get; set; }
 
         public DayDto[]? Days { get; set; }
+
+        internal IPeriod ToPeriod()
+        {
+            if (Month is null)
+                return Period.Year(Year);
+            else if (Day is null)
+                return Period.Month(Year, Month.Value);
+            else
+                return Period.Day(Year, Month.Value, Day.Value);
+        }
     }
 }

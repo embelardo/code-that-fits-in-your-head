@@ -85,5 +85,35 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 .BuildAbsolute(url)
                 .Link(rel);
         }
+
+        internal static LinkDto LinkToPeriod(
+            this IUrlHelper url,
+            IPeriod period,
+            string rel)
+        {
+            var values = period.Accept(new ValuesVisitor());
+            return calendar
+                .WithValues(values)
+                .BuildAbsolute(url)
+                .Link(rel);
+        }
+
+        private class ValuesVisitor : IPeriodVisitor<object>
+        {
+            public object VisitYear(int year)
+            {
+                return new { year };
+            }
+
+            public object VisitMonth(int year, int month)
+            {
+                return new { year, month };
+            }
+
+            public object VisitDay(int year, int month, int day)
+            {
+                return new { year, month, day };
+            }
+        }
     }
 }
