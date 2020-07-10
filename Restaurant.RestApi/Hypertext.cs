@@ -30,10 +30,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         internal static LinkDto LinkToYear(this IUrlHelper url, int year)
         {
+            return url.LinkToYear(year, "urn:year");
+        }
+
+        internal static LinkDto LinkToYear(
+            this IUrlHelper url,
+            int year,
+            string rel)
+        {
             return calendar
                 .WithValues(new { year })
                 .BuildAbsolute(url)
-                .Link("urn:year");
+                .Link(rel);
         }
 
         internal static LinkDto LinkToMonth(
@@ -41,10 +49,19 @@ namespace Ploeh.Samples.Restaurant.RestApi
             int year,
             int month)
         {
+            return url.LinkToMonth(year, month, "urn:month");
+        }
+
+        internal static LinkDto LinkToMonth(
+            this IUrlHelper url,
+            int year,
+            int month,
+            string rel)
+        {
             return calendar
                 .WithValues(new { year, month })
                 .BuildAbsolute(url)
-                .Link("urn:month");
+                .Link(rel);
         }
 
         internal static LinkDto LinkToDay(
@@ -53,10 +70,20 @@ namespace Ploeh.Samples.Restaurant.RestApi
             int month,
             int day)
         {
+            return url.LinkToDay(year, month, day, "urn:day");
+        }
+
+        internal static LinkDto LinkToDay(
+            this IUrlHelper url,
+            int year,
+            int month,
+            int day,
+            string rel)
+        {
             return calendar
                 .WithValues(new { year, month, day })
                 .BuildAbsolute(url)
-                .Link("urn:day");
+                .Link(rel);
         }
     }
 }

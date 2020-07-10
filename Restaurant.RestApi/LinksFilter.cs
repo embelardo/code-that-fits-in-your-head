@@ -47,16 +47,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (dto.Month is null)
                 dto.Links = new[]
                 {
-                    new LinkDto
-                    {
-                        Rel = "previous",
-                        Href = url.LinkToYear(dto.Year - 1).Href
-                    },
-                    new LinkDto
-                    {
-                        Rel = "next",
-                        Href = url.LinkToYear(dto.Year + 1).Href
-                    }
+                    url.LinkToYear(dto.Year - 1, "previous"),
+                    url.LinkToYear(dto.Year + 1, "next")
                 };
             else if (dto.Day is null)
             {
@@ -65,49 +57,31 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 var nextMonth = firstDay.AddMonths(1);
                 dto.Links = new[]
                 {
-                    new LinkDto
-                    {
-                        Rel = "previous",
-                        Href = url
-                            .LinkToMonth(previousMonth.Year, previousMonth.Month)
-                            .Href
-                    },
-                    new LinkDto
-                    {
-                        Rel = "next",
-                        Href = url
-                            .LinkToMonth(nextMonth.Year, nextMonth.Month)
-                            .Href
-                    }
+                    url.LinkToMonth(
+                        previousMonth.Year,
+                        previousMonth.Month,
+                        "previous"),
+                    url.LinkToMonth(nextMonth.Year, nextMonth.Month, "next")
                 };
             }
             else
             {
-                var date = new DateTime(dto.Year, dto.Month.Value, dto.Day.Value);
+                var date =
+                    new DateTime(dto.Year, dto.Month.Value, dto.Day.Value);
                 var previousDay = date.AddDays(-1);
                 var nextDay = date.AddDays(1);
                 dto.Links = new[]
                 {
-                    new LinkDto
-                    {
-                        Rel = "previous",
-                        Href = url
-                            .LinkToDay(
-                                previousDay.Year,
-                                previousDay.Month,
-                                previousDay.Day)
-                            .Href
-                    },
-                    new LinkDto
-                    {
-                        Rel = "next",
-                        Href = url
-                            .LinkToDay(
-                                nextDay.Year,
-                                nextDay.Month,
-                                nextDay.Day)
-                            .Href
-                    }
+                    url.LinkToDay(
+                        previousDay.Year,
+                        previousDay.Month,
+                        previousDay.Day,
+                        "previous"),
+                    url.LinkToDay(
+                        nextDay.Year,
+                        nextDay.Month,
+                        nextDay.Day,
+                        "next")
                 };
             }
         }
