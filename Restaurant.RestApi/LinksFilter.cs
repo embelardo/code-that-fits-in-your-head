@@ -49,7 +49,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 new LinkDto
                 {
                     Rel = "previous",
-                    Href = url.LinkToYear(dto.Year).Href
+                    Href = url.LinkToYear(dto.Year - 1).Href
                 },
                 new LinkDto
                 {
