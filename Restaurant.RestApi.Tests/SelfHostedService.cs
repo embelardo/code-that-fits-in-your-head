@@ -65,6 +65,20 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return await CreateClient().GetAsync(yearAddress);
         }
 
+        public async Task<HttpResponseMessage> GetNextYear()
+        {
+            var currentResp = await GetCurrentYear();
+            currentResp.EnsureSuccessStatusCode();
+            var dto = await currentResp.ParseJsonContent<CalendarDto>();
+            var address = dto.Links.Single(l => l.Rel == "next").Href;
+            if (address is null)
+                throw new InvalidOperationException(
+                    "Address for relationship type next not found.");
+
+            var client = CreateClient();
+            return await client.GetAsync(new Uri(address));
+        }
+
         public async Task<HttpResponseMessage> GetCurrentMonth()
         {
             var monthAddress = await FindAddress("urn:month");
@@ -90,7 +104,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 homeRepresentation.Links.Single(l => l.Rel == rel).Href;
             if (address is null)
                 throw new InvalidOperationException(
-                    $"Address for relationship typ {rel} not found.");
+                    $"Address for relationship type {rel} not found.");
 
             return new Uri(address);
         }
