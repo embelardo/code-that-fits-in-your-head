@@ -44,19 +44,35 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private static void AddLinks(CalendarDto dto, IUrlHelper url)
         {
-            dto.Links = new[]
-            {
-                new LinkDto
+            if (dto.Month is null)
+                dto.Links = new[]
                 {
-                    Rel = "previous",
-                    Href = url.LinkToYear(dto.Year - 1).Href
-                },
-                new LinkDto
+                    new LinkDto
+                    {
+                        Rel = "previous",
+                        Href = url.LinkToYear(dto.Year - 1).Href
+                    },
+                    new LinkDto
+                    {
+                        Rel = "next",
+                        Href = url.LinkToYear(dto.Year + 1).Href
+                    }
+                };
+            else
+                dto.Links = new[]
                 {
-                    Rel = "next",
-                    Href = url.LinkToYear(dto.Year + 1).Href
-                }
-            };
+                    new LinkDto
+                    {
+                        Rel = "previous",
+                        Href =
+                            url.LinkToMonth(dto.Year, dto.Month.Value - 1).Href
+                    },
+                    new LinkDto
+                    {
+                        Rel = "next",
+                        Href = url.LinkToYear(dto.Year + 1).Href
+                    }
+                };
         }
     }
 }
