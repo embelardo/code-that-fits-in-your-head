@@ -76,6 +76,28 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Null(actual.Day);
         }
 
+        [Theory]
+        [InlineData(1999)]
+        [InlineData(2019)]
+        [InlineData(2020)]
+        [InlineData(2021)]
+        [InlineData(2050)]
+        public async Task GetSpecificYear(int year)
+        {
+            using var service = new SelfHostedService();
+
+            var response = await service.GetYear(year);
+
+            Assert.True(
+                response.IsSuccessStatusCode,
+                $"Actual status code: {response.StatusCode}.");
+            var actual = await response.ParseJsonContent<CalendarDto>();
+            Assert.Equal(year, actual.Year);
+            Assert.Null(actual.Month);
+            Assert.Null(actual.Day);
+            AssertLinks(actual);
+        }
+
         [Fact]
         public async Task GetCurrentMonth()
         {
