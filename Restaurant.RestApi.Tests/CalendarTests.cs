@@ -301,6 +301,12 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             var next = Assert.Single(actual.Links, l => l.Rel == "next");
             AssertHrefAbsoluteUrl(next);
+
+            Assert.NotNull(actual.Days);
+            var dayLinks = actual.Days
+                .SelectMany(d => d.Links.Where(l => l.Rel == "urn:day"));
+            Assert.Equal(actual.Days!.Length, dayLinks.Count());
+            Assert.All(dayLinks, AssertHrefAbsoluteUrl);
         }
 
         private static void AssertHrefAbsoluteUrl(LinkDto dto)
