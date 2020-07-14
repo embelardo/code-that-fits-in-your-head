@@ -249,45 +249,20 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int month,
             int day)
         {
-            var target = new DateTime(year, month, day);
-            var resp = await GetCurrentDay();
+            var resp = await GetYear(year);
             resp.EnsureSuccessStatusCode();
             var dto = await resp.ParseJsonContent<CalendarDto>();
-            var date = new DateTime(dto.Year, dto.Month!.Value, dto.Day!.Value);
-            if (target == date)
-                return resp;
-            else if (date < target)
-            {
-                var client = CreateClient();
-                do
-                {
-                    var address = dto.Links.Single(l => l.Rel == "next").Href;
-                    if (address is null)
-                        throw new InvalidOperationException(
-                            "Address for relationship type next not found.");
-                    resp = await client.GetAsync(new Uri(address));
-                    resp.EnsureSuccessStatusCode();
-                    dto = await resp.ParseJsonContent<CalendarDto>();
-                    date = new DateTime(dto.Year, dto.Month!.Value, dto.Day!.Value);
-                } while (target != date);
-                return resp;
-            }
-            else
-            {
-                var client = CreateClient();
-                do
-                {
-                    var address = dto.Links.Single(l => l.Rel == "previous").Href;
-                    if (address is null)
-                        throw new InvalidOperationException(
-                            "Address for relationship type previous not found.");
-                    resp = await client.GetAsync(new Uri(address));
-                    resp.EnsureSuccessStatusCode();
-                    dto = await resp.ParseJsonContent<CalendarDto>();
-                    date = new DateTime(dto.Year, dto.Month!.Value, dto.Day!.Value);
-                } while (target != date);
-                return resp;
-            }
+
+            var target = new DateTime(year, month, day).ToIso8601DateString();
+            var dayCalendar = dto.Days.Single(d => d.Date == target);
+            var address =
+                dayCalendar.Links.Single(l => l.Rel == "urn:day").Href;
+            if (address is null)
+                throw new InvalidOperationException(
+                    "Address for relationship type urn:day not found.");
+
+            var client = CreateClient();
+            return await client.GetAsync(new Uri(address));
         }
 
         private async Task<Uri> FindAddress(string rel)
