@@ -23,7 +23,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers(opts => opts.Filters.Add<LinksFilter>());
+            services
+                .AddControllers(opts => opts.Filters.Add<LinksFilter>())
+                .AddJsonOptions(opts =>
+                    opts.JsonSerializerOptions.IgnoreNullValues = true);
 
             var connStr = Configuration.GetConnectionString("Restaurant");
             services.AddSingleton<IReservationsRepository>(
