@@ -94,30 +94,19 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var dto = await resp.ParseJsonContent<CalendarDto>();
             if (dto.Year == year)
                 return resp;
-            else if (dto.Year < year)
+
+            var rel = dto.Year < year ? "next" : "previous";
+            
+            var client = CreateClient();
+            do
             {
-                var client = CreateClient();
-                do
-                {
-                    var address = dto.Links.FindAddress("next");
-                    resp = await client.GetAsync(address);
-                    resp.EnsureSuccessStatusCode();
-                    dto = await resp.ParseJsonContent<CalendarDto>();
-                } while (dto.Year != year);
-                return resp;
-            }
-            else
-            {
-                var client = CreateClient();
-                do
-                {
-                    var address = dto.Links.FindAddress("previous");
-                    resp = await client.GetAsync(address);
-                    resp.EnsureSuccessStatusCode();
-                    dto = await resp.ParseJsonContent<CalendarDto>();
-                } while (dto.Year != year);
-                return resp;
-            }
+                var address = dto.Links.FindAddress(rel);
+                resp = await client.GetAsync(address);
+                resp.EnsureSuccessStatusCode();
+                dto = await resp.ParseJsonContent<CalendarDto>();
+            } while (dto.Year != year);
+            
+            return resp;
         }
 
         public async Task<HttpResponseMessage> GetCurrentMonth()
