@@ -386,7 +386,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             "CA1062:Validate arguments of public methods",
             Justification = "Parametrised test.")]
         [Theory, ClassData(typeof(CalendarTestCases))]
-        public void GetYear(
+        public void GetCalendar(
             Func<CalendarController, ActionResult> act,
             int year,
             int? month,
