@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
-    [ApiController, Route("calendar")]
+    [Route("calendar")]
     public class CalendarController
     {
         private readonly Table table;
