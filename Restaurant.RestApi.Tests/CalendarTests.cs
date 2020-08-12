@@ -303,10 +303,16 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             AssertHrefAbsoluteUrl(next);
 
             Assert.NotNull(actual.Days);
+
             var dayLinks = actual.Days
                 .SelectMany(d => d.Links.Where(l => l.Rel == "urn:day"));
             Assert.Equal(actual.Days!.Length, dayLinks.Count());
             Assert.All(dayLinks, AssertHrefAbsoluteUrl);
+
+            var monthLinks = actual.Days
+                .SelectMany(d => d.Links.Where(l => l.Rel == "urn:month"));
+            Assert.Equal(actual.Days!.Length, monthLinks.Count());
+            Assert.All(monthLinks, AssertHrefAbsoluteUrl);
         }
 
         private static void AssertHrefAbsoluteUrl(LinkDto dto)
