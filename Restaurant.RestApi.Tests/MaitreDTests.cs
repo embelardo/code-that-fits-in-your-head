@@ -172,5 +172,41 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var actual = sut.WillAccept(now, reservations, r);
             Assert.False(actual);
         }
+
+        [SuppressMessage(
+            "Performance",
+            "CA1812: Avoid uninstantiated internal classes",
+            Justification = "This class is instantiated via Reflection.")]
+        private class ScheduleTestCases :
+            TheoryData<MaitreD, IEnumerable<Reservation>, IEnumerable<Occurrence<Table[]>>>
+        {
+            public ScheduleTestCases()
+            {
+                // No reservations, so no occurrences:
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(21),
+                        TimeSpan.FromHours(6),
+                        Table.Communal(12)),
+                    Array.Empty<Reservation>(),
+                    Array.Empty<Occurrence<Table[]>>());
+            }
+        }
+
+        [SuppressMessage(
+            "Design",
+            "CA1062:Validate arguments of public methods",
+            Justification = "Parametrised test.")]
+        [Theory, ClassData(typeof(ScheduleTestCases))]
+        public void Schedule(
+            MaitreD sut,
+            IEnumerable<Reservation> reservations,
+            IEnumerable<Occurrence<Table[]>> expected)
+        {
+            var actual = sut.Schedule(reservations);
+            Assert.Equal(
+                expected.Select(o => o.Select(ts => ts.AsEnumerable())),
+                actual);
+        }
     }
 }

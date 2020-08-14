@@ -77,5 +77,15 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             return allocation;
         }
+
+#pragma warning disable CA1822 // Mark members as static
+        public IEnumerable<Occurrence<IEnumerable<Table>>> Schedule(
+#pragma warning restore CA1822 // Mark members as static
+#pragma warning disable CA1801 // Review unused parameters
+            IEnumerable<Reservation> reservations)
+#pragma warning restore CA1801 // Review unused parameters
+        {
+            yield break;
+        }
     }
 }
