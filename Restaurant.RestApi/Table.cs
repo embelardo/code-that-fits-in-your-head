@@ -24,16 +24,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new Table(new CommunalTable(seats));
         }
 
-        public bool IsStandard
-        {
-            get { return table.Accept(new IsStandardVisitor()); }
-        }
-
-        public bool IsCommunal
-        {
-            get { return !IsStandard; }
-        }
-
         internal bool Fits(int quantity)
         {
             return quantity <= table.Seats;
@@ -47,14 +37,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public override bool Equals(object? obj)
         {
             return obj is Table table &&
-                   this.table.Seats == table.table.Seats &&
-                   IsStandard == table.IsStandard &&
-                   IsCommunal == table.IsCommunal;
+                   Equals(this.table, table.table);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(table.Seats, IsStandard, IsCommunal);
+            return table.GetHashCode();
         }
 
         private interface ITable
@@ -96,6 +84,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
             {
                 return visitor.VisitStandard(Seats, reservation);
             }
+
+            public override bool Equals(object? obj)
+            {
+                return obj is StandardTable table &&
+                       seats == table.seats &&
+                       Equals(reservation, table.reservation);
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(seats, reservation);
+            }
         }
 
         private sealed class CommunalTable : ITable
@@ -117,22 +117,22 @@ namespace Ploeh.Samples.Restaurant.RestApi
             {
                 return visitor.VisitCommunal(seats, reservations);
             }
-        }
 
-        private sealed class IsStandardVisitor : ITableVisitor<bool>
-        {
-            public bool VisitStandard(int seats, Reservation? reservation)
+            public override bool Equals(object? obj)
             {
-                return true;
+                return obj is CommunalTable table &&
+                       seats == table.seats &&
+                       Enumerable.SequenceEqual(
+                           reservations,
+                           table.reservations);
             }
 
-            public bool VisitCommunal(
-                int seats,
-                IReadOnlyCollection<Reservation> reservations)
+            public override int GetHashCode()
             {
-                return false;
+                return HashCode.Combine(seats, reservations);
             }
         }
+
         private sealed class ReserveVisitor : ITableVisitor<Table>
         {
             private readonly Reservation reservation;
