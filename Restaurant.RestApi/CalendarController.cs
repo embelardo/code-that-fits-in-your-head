@@ -11,13 +11,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
     [Route("calendar")]
     public class CalendarController
     {
-        private readonly Table table;
-
-        public CalendarController(Table table)
-        {
-            this.table = table;
-        }
-
         [HttpGet("{year}")]
         public ActionResult Get(int year)
         {
@@ -66,12 +59,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 });
         }
 
-        private DayDto MakeDay(DateTime origin, int offset)
+        private static DayDto MakeDay(DateTime origin, int offset)
         {
             return new DayDto
             {
-                Date = origin.AddDays(offset).ToIso8601DateString(),
-                MaximumPartySize = table.Seats
+                Date = origin.AddDays(offset).ToIso8601DateString()
             };
         }
     }

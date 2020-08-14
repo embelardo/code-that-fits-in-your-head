@@ -34,10 +34,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             var restaurantSettings = new Settings.RestaurantSettings();
             Configuration.Bind("Restaurant", restaurantSettings);
-            var maitreD = restaurantSettings.ToMaitreD();
-            services.AddSingleton(maitreD);
-            
-            services.AddSingleton(maitreD.Tables.First());
+            services.AddSingleton(restaurantSettings.ToMaitreD());
 
             var smtpSettings = new Settings.SmtpSettings();
             Configuration.Bind("Smtp", smtpSettings);

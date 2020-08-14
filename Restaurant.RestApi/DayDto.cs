@@ -11,6 +11,5 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Justification = "DTO.")]
         public LinkDto[]? Links { get; set; }
         public string? Date { get; set; }
-        public int MaximumPartySize { get; set; }
     }
 }
