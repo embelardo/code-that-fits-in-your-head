@@ -47,9 +47,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return quantity <= Seats;
         }
 
-        internal Table Reserve(int seatsToReserve)
+        internal Table Reserve(Reservation reservation)
         {
-            return WithSeats(Seats - seatsToReserve);
+            return WithSeats(Seats - reservation.Quantity);
         }
 
         public override bool Equals(object? obj)

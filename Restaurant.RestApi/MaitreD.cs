@@ -72,7 +72,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 {
                     availableTables.Remove(table);
                     if (table.IsCommunal)
-                        availableTables.Add(table.Reserve(r.Quantity));
+                        availableTables.Add(table.Reserve(r));
                 }
             }
 
