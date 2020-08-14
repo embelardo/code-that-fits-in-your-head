@@ -51,7 +51,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         internal Table Reserve(Reservation reservation)
         {
-            return WithSeats(Seats - reservation.Quantity);
+            return table.Accept(new ReserveVisitor(reservation));
         }
 
         public override bool Equals(object? obj)
@@ -98,19 +98,22 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private sealed class CommunalTable : ITable
         {
+            private readonly int seats;
             private readonly IReadOnlyCollection<Reservation> reservations;
 
             public CommunalTable(int seats, params Reservation[] reservations)
             {
-                Seats = seats;
+                this.seats = seats;
                 this.reservations = reservations;
             }
 
-            public int Seats { get; }
+            public int Seats {
+                get { return seats - reservations.Sum(r => r.Quantity); } 
+            }
 
             public T Accept<T>(ITableVisitor<T> visitor)
             {
-                return visitor.VisitCommunal(Seats, reservations);
+                return visitor.VisitCommunal(seats, reservations);
             }
         }
 
@@ -149,6 +152,30 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 IReadOnlyCollection<Reservation> reservations)
             {
                 return false;
+            }
+        }
+        private sealed class ReserveVisitor : ITableVisitor<Table>
+        {
+            private readonly Reservation reservation;
+
+            public ReserveVisitor(Reservation reservation)
+            {
+                this.reservation = reservation;
+            }
+
+            public Table VisitCommunal(
+                int seats,
+                IReadOnlyCollection<Reservation> reservations)
+            {
+                return new Table(
+                    new CommunalTable(
+                        seats,
+                        reservations.Append(reservation).ToArray()));
+            }
+
+            public Table VisitStandard(int seats)
+            {
+                return new Table(new StandardTable(seats));
             }
         }
     }
