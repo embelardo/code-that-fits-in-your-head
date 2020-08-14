@@ -64,18 +64,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
         private IEnumerable<Table> Allocate(
             IEnumerable<Reservation> reservations)
         {
-            List<Table> availableTables = Tables.ToList();
+            List<Table> allocation = Tables.ToList();
             foreach (var r in reservations)
             {
-                var table = availableTables.Find(t => t.Fits(r.Quantity));
+                var table = allocation.Find(t => t.Fits(r.Quantity));
                 if (table is { })
                 {
-                    availableTables.Remove(table);
-                    availableTables.Add(table.Reserve(r));
+                    allocation.Remove(table);
+                    allocation.Add(table.Reserve(r));
                 }
             }
 
-            return availableTables;
+            return allocation;
         }
     }
 }
