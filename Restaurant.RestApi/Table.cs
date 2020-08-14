@@ -24,11 +24,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new Table(new CommunalTable(seats));
         }
 
-        public int Seats
-        {
-            get { return table.Seats; }
-        }
-
         public bool IsStandard
         {
             get { return table.Accept(new IsStandardVisitor()); }
@@ -41,7 +36,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         internal bool Fits(int quantity)
         {
-            return quantity <= Seats;
+            return quantity <= table.Seats;
         }
 
         internal Table Reserve(Reservation reservation)
@@ -52,14 +47,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public override bool Equals(object? obj)
         {
             return obj is Table table &&
-                   Seats == table.Seats &&
+                   this.table.Seats == table.table.Seats &&
                    IsStandard == table.IsStandard &&
                    IsCommunal == table.IsCommunal;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Seats, IsStandard, IsCommunal);
+            return HashCode.Combine(table.Seats, IsStandard, IsCommunal);
         }
 
         private interface ITable
@@ -78,20 +73,24 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private sealed class StandardTable : ITable
         {
+            private readonly int seats;
             private readonly Reservation? reservation;
 
             public StandardTable(int seats)
             {
-                Seats = seats;
+                this.seats = seats;
             }
 
             public StandardTable(int seats, Reservation reservation)
             {
-                Seats = seats;
+                this.seats = seats;
                 this.reservation = reservation;
             }
 
-            public int Seats { get; }
+            public int Seats
+            {
+                get { return reservation is { } ? 0 : seats; }
+            }
 
             public T Accept<T>(ITableVisitor<T> visitor)
             {
