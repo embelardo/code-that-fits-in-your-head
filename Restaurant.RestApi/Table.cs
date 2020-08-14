@@ -1,5 +1,7 @@
 /* Copyright (c) Mark Seemann 2020. All rights reserved. */
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
@@ -74,7 +76,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
         private interface ITableVisitor<T>
         {
             T VisitStandard(int seats);
-            T VisitCommunal(int seats);
+            T VisitCommunal(
+                int seats,
+                IReadOnlyCollection<Reservation> reservations);
         }
 
         private sealed class StandardTable : ITable
@@ -94,16 +98,19 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private sealed class CommunalTable : ITable
         {
-            public CommunalTable(int seats)
+            private readonly IReadOnlyCollection<Reservation> reservations;
+
+            public CommunalTable(int seats, params Reservation[] reservations)
             {
                 Seats = seats;
+                this.reservations = reservations;
             }
 
             public int Seats { get; }
 
             public T Accept<T>(ITableVisitor<T> visitor)
             {
-                return visitor.VisitCommunal(Seats);
+                return visitor.VisitCommunal(Seats, reservations);
             }
         }
 
@@ -121,9 +128,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 return new Table(new StandardTable(newSeats));
             }
 
-            public Table VisitCommunal(int seats)
+            public Table VisitCommunal(
+                int seats,
+                IReadOnlyCollection<Reservation> reservations)
             {
-                return new Table(new CommunalTable(newSeats));
+                return new Table(
+                    new CommunalTable(newSeats, reservations.ToArray()));
             }
         }
 
@@ -134,7 +144,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 return true;
             }
 
-            public bool VisitCommunal(int seats)
+            public bool VisitCommunal(
+                int seats,
+                IReadOnlyCollection<Reservation> reservations)
             {
                 return false;
             }
