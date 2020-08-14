@@ -39,11 +39,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             get { return !IsStandard; }
         }
 
-        public Table WithSeats(int newSeats)
-        {
-            return table.Accept(new CopyAndUpdateSeatsVisitor(newSeats));
-        }
-
         internal bool Fits(int quantity)
         {
             return quantity <= Seats;
@@ -122,29 +117,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             public T Accept<T>(ITableVisitor<T> visitor)
             {
                 return visitor.VisitCommunal(seats, reservations);
-            }
-        }
-
-        private sealed class CopyAndUpdateSeatsVisitor : ITableVisitor<Table>
-        {
-            private readonly int newSeats;
-
-            public CopyAndUpdateSeatsVisitor(int newSeats)
-            {
-                this.newSeats = newSeats;
-            }
-
-            public Table VisitStandard(int seats, Reservation? reservation)
-            {
-                return new Table(new StandardTable(newSeats));
-            }
-
-            public Table VisitCommunal(
-                int seats,
-                IReadOnlyCollection<Reservation> reservations)
-            {
-                return new Table(
-                    new CommunalTable(newSeats, reservations.ToArray()));
             }
         }
 
