@@ -26,7 +26,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         internal bool Fits(int quantity)
         {
-            return quantity <= table.Seats;
+            int remainingSeats = table.Accept(new RemainingSeatsVisitor());
+            return quantity <= remainingSeats;
         }
 
         internal Table Reserve(Reservation reservation)
@@ -47,7 +48,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private interface ITable
         {
-            int Seats { get; }
             T Accept<T>(ITableVisitor<T> visitor);
         }
 
@@ -75,14 +75,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 this.reservation = reservation;
             }
 
-            public int Seats
-            {
-                get { return reservation is { } ? 0 : seats; }
-            }
-
             public T Accept<T>(ITableVisitor<T> visitor)
             {
-                return visitor.VisitStandard(Seats, reservation);
+                return visitor.VisitStandard(seats, reservation);
             }
 
             public override bool Equals(object? obj)
@@ -107,10 +102,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             {
                 this.seats = seats;
                 this.reservations = reservations;
-            }
-
-            public int Seats {
-                get { return seats - reservations.Sum(r => r.Quantity); } 
             }
 
             public T Accept<T>(ITableVisitor<T> visitor)
@@ -155,6 +146,21 @@ namespace Ploeh.Samples.Restaurant.RestApi
             public Table VisitStandard(int seats, Reservation? reservation)
             {
                 return new Table(new StandardTable(seats, this.reservation));
+            }
+        }
+
+        private sealed class RemainingSeatsVisitor : ITableVisitor<int>
+        {
+            public int VisitCommunal(
+                int seats,
+                IReadOnlyCollection<Reservation> reservations)
+            {
+                return seats - reservations.Sum(r => r.Quantity);
+            }
+
+            public int VisitStandard(int seats, Reservation? reservation)
+            {
+                return reservation is null ? seats : 0;
             }
         }
     }
