@@ -75,7 +75,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private interface ITableVisitor<T>
         {
-            T VisitStandard(int seats);
+            T VisitStandard(int seats, Reservation? reservation);
             T VisitCommunal(
                 int seats,
                 IReadOnlyCollection<Reservation> reservations);
@@ -83,16 +83,24 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private sealed class StandardTable : ITable
         {
+            private readonly Reservation? reservation;
+
             public StandardTable(int seats)
             {
                 Seats = seats;
+            }
+
+            public StandardTable(int seats, Reservation reservation)
+            {
+                Seats = seats;
+                this.reservation = reservation;
             }
 
             public int Seats { get; }
 
             public T Accept<T>(ITableVisitor<T> visitor)
             {
-                return visitor.VisitStandard(Seats);
+                return visitor.VisitStandard(Seats, reservation);
             }
         }
 
@@ -126,7 +134,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 this.newSeats = newSeats;
             }
 
-            public Table VisitStandard(int seats)
+            public Table VisitStandard(int seats, Reservation? reservation)
             {
                 return new Table(new StandardTable(newSeats));
             }
@@ -142,7 +150,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private sealed class IsStandardVisitor : ITableVisitor<bool>
         {
-            public bool VisitStandard(int seats)
+            public bool VisitStandard(int seats, Reservation? reservation)
             {
                 return true;
             }
@@ -173,9 +181,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
                         reservations.Append(reservation).ToArray()));
             }
 
-            public Table VisitStandard(int seats)
+            public Table VisitStandard(int seats, Reservation? reservation)
             {
-                return new Table(new StandardTable(seats));
+                return new Table(new StandardTable(seats, this.reservation));
             }
         }
     }
