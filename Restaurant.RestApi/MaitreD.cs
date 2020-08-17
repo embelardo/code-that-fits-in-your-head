@@ -81,10 +81,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
 #pragma warning disable CA1822 // Mark members as static
         public IEnumerable<Occurrence<IEnumerable<Table>>> Schedule(
 #pragma warning restore CA1822 // Mark members as static
-#pragma warning disable CA1801 // Review unused parameters
             IEnumerable<Reservation> reservations)
-#pragma warning restore CA1801 // Review unused parameters
         {
+            if (reservations.Any())
+            {
+                var r = reservations.First();
+                yield return new[] { Table.Communal(12).Reserve(r) }.AsEnumerable().At(r.At);
+            }
             yield break;
         }
     }

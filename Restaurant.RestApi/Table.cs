@@ -30,7 +30,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return quantity <= remainingSeats;
         }
 
-        internal Table Reserve(Reservation reservation)
+        public Table Reserve(Reservation reservation)
         {
             return table.Accept(new ReserveVisitor(reservation));
         }

@@ -1,5 +1,6 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
-using System;
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,8 +29,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public override bool Equals(object? obj)
         {
             return obj is Occurrence<T> occurrence &&
-                   At == occurrence.At &&
-                   EqualityComparer<T>.Default.Equals(Value, occurrence.Value);
+                At == occurrence.At &&
+                ValueEquals(occurrence.Value);
+        }
+
+        private bool ValueEquals(T x)
+        {
+            if (Value is IStructuralEquatable seq)
+                return seq.Equals(
+                    x,
+                    StructuralComparisons.StructuralEqualityComparer);
+
+            return EqualityComparer<T>.Default.Equals(Value, x);
         }
 
         public override int GetHashCode()

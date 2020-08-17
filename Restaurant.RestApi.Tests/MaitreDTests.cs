@@ -182,7 +182,12 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         {
             public ScheduleTestCases()
             {
-                // No reservations, so no occurrences:
+                NoReservations();
+                SingleReservationCommunalTable();
+            }
+
+            private void NoReservations()
+            {
                 Add(new MaitreD(
                         TimeSpan.FromHours(18),
                         TimeSpan.FromHours(21),
@@ -190,6 +195,19 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                         Table.Communal(12)),
                     Array.Empty<Reservation>(),
                     Array.Empty<Occurrence<Table[]>>());
+            }
+
+            private void SingleReservationCommunalTable()
+            {
+                var table = Table.Communal(12);
+                var r = Some.Reservation;
+                Add(new MaitreD(
+                        TimeSpan.FromHours(18),
+                        TimeSpan.FromHours(21),
+                        TimeSpan.FromHours(6),
+                        table),
+                    new[] { r },
+                    new[] { new[] { table.Reserve(r) }.At(r.At) });
             }
         }
 
@@ -205,8 +223,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         {
             var actual = sut.Schedule(reservations);
             Assert.Equal(
-                expected.Select(o => o.Select(ts => ts.AsEnumerable())),
-                actual);
+                expected,
+                actual.Select(o => o.Select(ts => ts.ToArray())));
         }
     }
 }
