@@ -67,16 +67,33 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         private static Gen<MaitreD> GenMaitreD(
             IEnumerable<Reservation> reservations)
         {
-            // Create a table for each reservation, to ensure that all
-            // reservations can be allotted a table.
-            var tables = reservations.Select(r => Table.Standard(r.Quantity));
             return
                 from seatingDuration in Gen.Choose(1, 6)
+                from tables in GenTables(reservations)
                 select new MaitreD(
                     TimeSpan.FromHours(18),
                     TimeSpan.FromHours(21),
                     TimeSpan.FromHours(seatingDuration),
                     tables);
+        }
+
+        /// <summary>
+        /// Generate a table configuration that can at minimum accomodate all
+        /// reservations.
+        /// </summary>
+        /// <param name="reservations">The reservations to accommodate</param>
+        /// <returns>A generator of valid table configurations.</returns>
+        private static Gen<IEnumerable<Table>> GenTables(
+            IEnumerable<Reservation> reservations)
+        {
+            // Create a table for each reservation, to ensure that all
+            // reservations can be allotted a table.
+            var tables = reservations.Select(r => Table.Standard(r.Quantity));
+            return
+                from moreTables in
+                    Gen.Choose(1, 12).Select(Table.Standard).ArrayOf()
+                from allTables in Gen.Shuffle(tables.Concat(moreTables))
+                select allTables.AsEnumerable();
         }
     }
 }
