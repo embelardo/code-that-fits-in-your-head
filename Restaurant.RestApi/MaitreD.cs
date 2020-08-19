@@ -83,12 +83,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
 #pragma warning restore CA1822 // Mark members as static
             IEnumerable<Reservation> reservations)
         {
-            if (reservations.Any())
-            {
-                var r = reservations.First();
-                yield return new[] { Table.Communal(12).Reserve(r) }.AsEnumerable().At(r.At);
-            }
-            yield break;
+            return
+                from r in reservations
+                group Table.Communal(12).Reserve(r) by r.At into g
+                select g.AsEnumerable().At(g.Key);
         }
     }
 }
