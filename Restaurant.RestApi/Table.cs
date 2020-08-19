@@ -24,6 +24,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new Table(new CommunalTable(seats));
         }
 
+        public int Capacity
+        {
+            get { return table.Accept(new CapacityVisitor()); }
+        }
+
         internal bool Fits(int quantity)
         {
             int remainingSeats = table.Accept(new RemainingSeatsVisitor());
@@ -161,6 +166,21 @@ namespace Ploeh.Samples.Restaurant.RestApi
             public int VisitStandard(int seats, Reservation? reservation)
             {
                 return reservation is null ? seats : 0;
+            }
+        }
+
+        private sealed class CapacityVisitor : ITableVisitor<int>
+        {
+            public int VisitCommunal(
+                int seats,
+                IReadOnlyCollection<Reservation> reservations)
+            {
+                return seats;
+            }
+
+            public int VisitStandard(int seats, Reservation? reservation)
+            {
+                return seats;
             }
         }
     }

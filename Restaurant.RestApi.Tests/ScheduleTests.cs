@@ -46,6 +46,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             IEnumerable<Table> actual)
         {
             Assert.Equal(expected.Count(), actual.Count());
+            Assert.Equal(
+                expected.Sum(t => t.Capacity),
+                actual.Sum(t => t.Capacity));
         }
 
         private static Gen<Email> GenEmail =>

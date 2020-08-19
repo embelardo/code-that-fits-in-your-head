@@ -78,12 +78,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return allocation;
         }
 
-#pragma warning disable CA1822 // Mark members as static
         public IEnumerable<Occurrence<IEnumerable<Table>>> Schedule(
-#pragma warning restore CA1822 // Mark members as static
             IEnumerable<Reservation> reservations)
         {
-            var tables = reservations.Select(r => Table.Communal(12).Reserve(r));
+            var tables = reservations.Zip(Tables, (r, t) => t.Reserve(r));
             return
                 from r in reservations
                 group r by r.At into g
