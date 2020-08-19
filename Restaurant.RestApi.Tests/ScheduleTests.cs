@@ -4,6 +4,7 @@ using FsCheck.Xunit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using Xunit;
 
@@ -15,21 +16,17 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public Property Schedule()
         {
             return Prop.ForAll(
-                GenReservation.ArrayOf().ToArbitrary(),
-                ScheduleImp);
+                GenReservation
+                    .ArrayOf()
+                    .SelectMany(rs => GenMaitreD(rs).Select(m => (m, rs)))
+                    .ToArbitrary(),
+                t => ScheduleImp(t.m, t.rs));
         }
 
-        private static void ScheduleImp(Reservation[] reservations)
+        private static void ScheduleImp(
+            MaitreD sut,
+            Reservation[] reservations)
         {
-            // Create a table for each reservation, to ensure that all
-            // reservations can be allotted a table.
-            var tables = reservations.Select(r => Table.Standard(r.Quantity));
-            var sut = new MaitreD(
-                TimeSpan.FromHours(18),
-                TimeSpan.FromHours(21),
-                TimeSpan.FromHours(6),
-                tables);
-
             var actual = sut.Schedule(reservations);
 
             Assert.Equal(
@@ -38,7 +35,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Equal(
                 actual.Select(o => o.At).OrderBy(d => d),
                 actual.Select(o => o.At));
-            Assert.All(actual, o => AssertTables(tables, o.Value));
+            Assert.All(actual, o => AssertTables(sut.Tables, o.Value));
         }
 
         private static void AssertTables(
@@ -66,5 +63,20 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             from n in GenName
             from q in Arb.Default.PositiveInt().Generator
             select new Reservation(id, d, e, n, q.Item);
+
+        private static Gen<MaitreD> GenMaitreD(
+            IEnumerable<Reservation> reservations)
+        {
+            // Create a table for each reservation, to ensure that all
+            // reservations can be allotted a table.
+            var tables = reservations.Select(r => Table.Standard(r.Quantity));
+            return
+                from seatingDuration in Gen.Choose(1, 6)
+                select new MaitreD(
+                    TimeSpan.FromHours(18),
+                    TimeSpan.FromHours(21),
+                    TimeSpan.FromHours(seatingDuration),
+                    tables);
+        }
     }
 }
