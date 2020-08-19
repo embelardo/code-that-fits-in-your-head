@@ -38,6 +38,14 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Equal(
                 actual.Select(o => o.At).OrderBy(d => d),
                 actual.Select(o => o.At));
+            Assert.All(actual, o => AssertTables(tables, o.Value));
+        }
+
+        private static void AssertTables(
+            IEnumerable<Table> expected,
+            IEnumerable<Table> actual)
+        {
+            Assert.Equal(expected.Count(), actual.Count());
         }
 
         private static Gen<Email> GenEmail =>
