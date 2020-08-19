@@ -86,6 +86,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return
                 from r in reservations
                 group Table.Communal(12).Reserve(r) by r.At into g
+                orderby g.Key
                 select g.AsEnumerable().At(g.Key);
         }
     }

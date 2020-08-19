@@ -35,6 +35,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Equal(
                 reservations.Select(r => r.At).Distinct().Count(),
                 actual.Count());
+            Assert.Equal(
+                actual.Select(o => o.At).OrderBy(d => d),
+                actual.Select(o => o.At));
         }
 
         private static Gen<Email> GenEmail =>
