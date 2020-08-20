@@ -6,30 +6,38 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
-    internal sealed class Seating
+    public sealed class Seating
     {
-        internal Seating(TimeSpan seatingDuration, Reservation reservation)
+        public Seating(TimeSpan seatingDuration, Reservation reservation)
         {
             SeatingDuration = seatingDuration;
             Reservation = reservation;
         }
 
-        internal TimeSpan SeatingDuration { get; }
-        internal Reservation Reservation { get; }
+        public TimeSpan SeatingDuration { get; }
+        public Reservation Reservation { get; }
 
-        internal DateTime Start
+        public DateTime Start
         {
             get { return Reservation.At; }
         }
 
-        internal DateTime End
+        public DateTime End
         {
             get { return Start + SeatingDuration; }
         }
 
-        internal bool Overlaps(Reservation other)
+        public bool Overlaps(Reservation other)
         {
             var otherSeating = new Seating(SeatingDuration, other);
+            return Overlaps(otherSeating);
+        }
+
+        public bool Overlaps(Seating otherSeating)
+        {
+            if (otherSeating is null)
+                throw new ArgumentNullException(nameof(otherSeating));
+
             return Start < otherSeating.End && otherSeating.Start < End;
         }
 
