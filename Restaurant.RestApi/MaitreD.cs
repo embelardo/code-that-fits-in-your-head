@@ -85,7 +85,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 from r in reservations
                 group r by r.At into g
                 orderby g.Key
-                select Allocate(g).At(g.Key);
+                let seating = new Seating(SeatingDuration, g.Key)
+                let overlapping = reservations.Where(seating.Overlaps)
+                select Allocate(overlapping).At(g.Key);
         }
     }
 }
