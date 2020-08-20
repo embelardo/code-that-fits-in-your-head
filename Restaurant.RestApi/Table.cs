@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
-    public sealed class Table
+    public sealed partial class Table
     {
         private readonly ITable table;
 
@@ -26,18 +26,23 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         public int Capacity
         {
-            get { return table.Accept(new CapacityVisitor()); }
+            get { return Accept(new CapacityVisitor()); }
         }
 
         internal bool Fits(int quantity)
         {
-            int remainingSeats = table.Accept(new RemainingSeatsVisitor());
+            int remainingSeats = Accept(new RemainingSeatsVisitor());
             return quantity <= remainingSeats;
         }
 
         public Table Reserve(Reservation reservation)
         {
-            return table.Accept(new ReserveVisitor(reservation));
+            return Accept(new ReserveVisitor(reservation));
+        }
+
+        public T Accept<T>(ITableVisitor<T> visitor)
+        {
+            return table.Accept(visitor);
         }
 
         public override bool Equals(object? obj)
@@ -54,14 +59,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
         private interface ITable
         {
             T Accept<T>(ITableVisitor<T> visitor);
-        }
-
-        private interface ITableVisitor<T>
-        {
-            T VisitStandard(int seats, Reservation? reservation);
-            T VisitCommunal(
-                int seats,
-                IReadOnlyCollection<Reservation> reservations);
         }
 
         private sealed class StandardTable : ITable
