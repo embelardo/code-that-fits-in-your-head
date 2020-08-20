@@ -8,18 +8,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
 {
     public sealed class Seating
     {
-        public Seating(TimeSpan seatingDuration, Reservation reservation)
+        public Seating(TimeSpan seatingDuration, DateTime at)
         {
             SeatingDuration = seatingDuration;
-            Reservation = reservation;
+            At = at;
         }
 
         public TimeSpan SeatingDuration { get; }
-        public Reservation Reservation { get; }
+        public DateTime At { get; }
 
         public DateTime Start
         {
-            get { return Reservation.At; }
+            get { return At; }
         }
 
         public DateTime End
@@ -29,7 +29,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         public bool Overlaps(Reservation other)
         {
-            var otherSeating = new Seating(SeatingDuration, other);
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            var otherSeating = new Seating(SeatingDuration, other.At);
             return Overlaps(otherSeating);
         }
 
@@ -45,12 +48,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             return obj is Seating seating &&
                    SeatingDuration.Equals(seating.SeatingDuration) &&
-                   EqualityComparer<Reservation>.Default.Equals(Reservation, seating.Reservation);
+                   At == seating.At;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(SeatingDuration, Reservation);
+            return HashCode.Combine(SeatingDuration, At);
         }
     }
 }

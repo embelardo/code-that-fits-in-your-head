@@ -48,7 +48,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (IsOutsideOfOpeningHours(candidate))
                 return false;
 
-            var seating = new Seating(SeatingDuration, candidate);
+            var seating = new Seating(SeatingDuration, candidate.At);
             var relevantReservations =
                 existingReservations.Where(seating.Overlaps);
             var availableTables = Allocate(relevantReservations);
