@@ -416,6 +416,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.True(
                 expectedDays <= (timeSlotEntries?.Count() ?? 0),
                 $"Expected at least one time slot entry per day. Expected: {expectedDays}; actual: {timeSlotEntries?.Count() ?? 0}.");
+            // There's no reservations in these test cases, so all time slots
+            // should allow up to the (single) table's capacity.
+            Assert.All(
+                timeSlotEntries,
+                t => Assert.Equal(tableSize, t.MaximumPartySize));
         }
     }
 }
