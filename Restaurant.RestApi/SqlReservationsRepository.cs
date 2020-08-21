@@ -68,6 +68,37 @@ namespace Ploeh.Samples.Restaurant.RestApi
             FROM [dbo].[Reservations]
             WHERE CONVERT(DATE, [At]) = @At";
 
+        public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
+            DateTime min,
+            DateTime max)
+        {
+            const string readByRangeSql = @"
+                SELECT [PublicId], [Date], [Name], [Email], [Quantity]
+                FROM [dbo].[Reservations]
+                WHERE @Min <= [Date] AND [Date] <= @Max";
+            
+            var result = new List<Reservation>();
+
+            using var conn = new SqlConnection(ConnectionString);
+            using var cmd = new SqlCommand(readByRangeSql, conn);
+            cmd.Parameters.AddWithValue("@Min", min);
+            cmd.Parameters.AddWithValue("@Max", max);
+
+            await conn.OpenAsync().ConfigureAwait(false);
+            using var rdr =
+                await cmd.ExecuteReaderAsync().ConfigureAwait(false);
+            while (await rdr.ReadAsync().ConfigureAwait(false))
+                result.Add(
+                    new Reservation(
+                        (Guid)rdr["PublicId"],
+                        (DateTime)rdr["Date"],
+                        new Email((string)rdr["Email"]),
+                        new Name((string)rdr["Name"]),
+                        (int)rdr["Quantity"]));
+
+            return result.AsReadOnly();
+        }
+
         public async Task<Reservation?> ReadReservation(Guid id)
         {
             const string readByIdSql = @"
