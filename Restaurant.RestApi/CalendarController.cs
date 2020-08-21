@@ -60,9 +60,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public async Task<ActionResult> Get(int year, int month, int day)
         {
             var firstDay = new DateTime(year, month, day);
-            var min = firstDay.Date;
-            var max = min.AddDays(1).AddTicks(-1);
-            var reservations = await Repository.ReadReservations(min, max)
+            var reservations = await Repository.ReadReservations(firstDay)
                 .ConfigureAwait(false);
             var days = new[] { MakeDay(new DateTime(year, month, day), 0, reservations) };
             return new OkObjectResult(

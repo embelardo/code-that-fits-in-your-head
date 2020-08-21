@@ -41,8 +41,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             using var scope = new TransactionScope(
                 TransactionScopeAsyncFlowOption.Enabled);
-            var reservations =
-                await ReadReservations(r.At).ConfigureAwait(false);
+            var reservations = await Repository.ReadReservations(r.At)
+                .ConfigureAwait(false);
             if (!MaitreD.WillAccept(DateTime.Now, reservations, r))
                 return NoTables500InternalServerError();
 
@@ -108,8 +108,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (existing is null)
                 return new NotFoundResult();
 
-            var reservations =
-                await ReadReservations(res.At).ConfigureAwait(false);
+            var reservations = await Repository.ReadReservations(res.At)
+                .ConfigureAwait(false);
             reservations = reservations.Where(r => r.Id != res.Id).ToList();
             if (!MaitreD.WillAccept(DateTime.Now, reservations, res))
                 return NoTables500InternalServerError();
@@ -123,14 +123,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             scope.Complete();
 
             return new OkObjectResult(res.ToDto());
-        }
-
-        private Task<IReadOnlyCollection<Reservation>> ReadReservations(
-            DateTime date)
-        {
-            var min = date.Date;
-            var max = min.AddDays(1).AddTicks(-1);
-            return Repository.ReadReservations(min, max);
         }
 
         [HttpDelete("{id}")]
