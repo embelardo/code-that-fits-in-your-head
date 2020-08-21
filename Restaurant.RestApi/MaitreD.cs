@@ -34,6 +34,15 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public TimeSpan SeatingDuration { get; }
         public IEnumerable<Table> Tables { get; }
 
+        public MaitreD WithTables(params Table[] newTables)
+        {
+            return new MaitreD(
+                OpensAt,
+                LastSeating,
+                SeatingDuration,
+                newTables);
+        }
+
         public bool WillAccept(
             DateTime now,
             IEnumerable<Reservation> existingReservations,

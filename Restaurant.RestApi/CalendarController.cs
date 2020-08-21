@@ -11,6 +11,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
     [Route("calendar")]
     public class CalendarController
     {
+        public CalendarController(MaitreD maitreD)
+        {
+            MaitreD = maitreD;
+        }
+
+        public MaitreD MaitreD { get; }
+
         [HttpGet("{year}")]
         public ActionResult Get(int year)
         {
@@ -63,7 +70,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             return new DayDto
             {
-                Date = origin.AddDays(offset).ToIso8601DateString()
+                Date = origin.AddDays(offset).ToIso8601DateString(),
+                Entries = new[] { new TimeDto { } }
             };
         }
     }

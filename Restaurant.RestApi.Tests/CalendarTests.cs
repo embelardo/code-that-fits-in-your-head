@@ -327,47 +327,59 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             "CA1812: Avoid uninstantiated internal classes",
             Justification = "This class is instantiated via Reflection.")]
         private class CalendarTestCases :
-            TheoryData<Func<CalendarController, ActionResult>, int, int?, int?, int>
+            TheoryData<Func<CalendarController, ActionResult>, int, int?, int?, int, int>
         {
             public CalendarTestCases()
             {
-                AddYear(2000, 366);
-                AddYear(2019, 365);
-                AddYear(2020, 366);
-                AddYear(2040, 366);
-                AddYear(2100, 365);
-                AddMonth(2020, 7, 31);
-                AddMonth(2020, 6, 30);
-                AddMonth(2020, 2, 29);
-                AddMonth(2021, 2, 28);
-                AddDay(2020, 7,  3);
-                AddDay(2021, 8,  2);
-                AddDay(2022, 2, 28);
+                AddYear(2000, 366, 10);
+                AddYear(2019, 365,  3);
+                AddYear(2020, 366, 12);
+                AddYear(2040, 366,  8);
+                AddYear(2100, 365, 20);
+                AddMonth(2020, 7, 31, 1);
+                AddMonth(2020, 6, 30, 6);
+                AddMonth(2020, 2, 29, 9);
+                AddMonth(2021, 2, 28, 8);
+                AddDay(2020, 7,  3, 11);
+                AddDay(2021, 8,  2, 11);
+                AddDay(2022, 2, 28, 13);
             }
 
-            private void AddYear(int year, int expectedDays)
+            private void AddYear(int year, int expectedDays, int tableSize)
             {
-                Add(sut => sut.Get(year), year, null, null, expectedDays);
+                Add(
+                    sut => sut.Get(year),
+                    year,
+                    null,
+                    null,
+                    expectedDays,
+                    tableSize);
             }
 
-            private void AddMonth(int year, int month, int expectedDays)
+            private void AddMonth(
+                int year,
+                int month,
+                int expectedDays,
+                int tableSize)
             {
                 Add(
                     sut => sut.Get(year, month),
                     year,
                     month,
                     null,
-                    expectedDays);
+                    expectedDays,
+                    tableSize);
             }
 
-            private void AddDay(int year, int month, int day)
+            private void AddDay(int year, int month, int day, int tableSize)
             {
                 Add(
                     sut => sut.Get(year, month, day),
                     year,
                     month,
                     day,
-                    1);
+                    1,
+                    tableSize);
             }
         }
 
@@ -381,9 +393,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int year,
             int? month,
             int? day,
-            int expectedDays)
+            int expectedDays,
+            int tableSize)
         {
-            var sut = new CalendarController();
+            var sut = new CalendarController(
+                Some.MaitreD.WithTables(Table.Communal(tableSize)));
 
             var actual = act(sut);
 
@@ -397,6 +411,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Equal(
                 expectedDays,
                 dto.Days.Select(d => d.Date).Distinct().Count());
+            var timeSlotEntries =
+                dto.Days.SelectMany(d => d.Entries ?? Array.Empty<TimeDto>());
+            Assert.True(
+                expectedDays <= (timeSlotEntries?.Count() ?? 0),
+                $"Expected at least one time slot entry per day. Expected: {expectedDays}; actual: {timeSlotEntries?.Count() ?? 0}.");
         }
     }
 }
