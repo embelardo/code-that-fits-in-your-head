@@ -31,6 +31,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new TimeOfDay(timeSpan);
         }
 
+        public static explicit operator TimeSpan(TimeOfDay timeOfDay)
+        {
+            return timeOfDay.durationSinceMidnight;
+        }
+
+        public static TimeSpan ToTimeSpan(TimeOfDay timeOfDay)
+        {
+            return timeOfDay.durationSinceMidnight;
+        }
+
         public string ToIso8601TimeString()
         {
             return durationSinceMidnight.ToIso8601TimeString();

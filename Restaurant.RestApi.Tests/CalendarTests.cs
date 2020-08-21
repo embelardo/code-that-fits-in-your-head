@@ -397,6 +397,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int tableSize)
         {
             var sut = new CalendarController(
+                new FakeDatabase(),
                 Some.MaitreD.WithTables(Table.Communal(tableSize)));
 
             var actual = await act(sut);
@@ -426,6 +427,49 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 t => Assert.Equal(
                     sut.MaitreD.OpensAt.ToIso8601TimeString(),
                     t.Time));
+        }
+
+        [Fact]
+        public async Task ViewCalendarForDayWithReservations()
+        {
+            var date = new DateTime(2020, 8, 21);
+            var maitreD =
+                Some.MaitreD.WithTables(Table.Standard(4), Table.Standard(4));
+            var r1 = Some.Reservation.WithDate(
+                date.Add((TimeSpan)maitreD.OpensAt).AddHours(1));
+            var r2 = Some.Reservation.WithDate(
+                date.Add((TimeSpan)maitreD.OpensAt).AddHours(2));
+            var db = new FakeDatabase();
+            await db.Create(r1);
+            await db.Create(r2);
+            var sut = new CalendarController(
+                db,
+                Some.MaitreD.WithTables(Table.Standard(4), Table.Standard(4)));
+
+            var actual = await sut.Get(date.Year, date.Month, date.Day);
+
+            var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
+            var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
+            var day = Assert.Single(dto.Days);
+            var expected = new[]
+            {
+                new TimeDto
+                {
+                    Time = maitreD.OpensAt.ToIso8601TimeString(),
+                    MaximumPartySize = 4,
+                },
+                new TimeDto
+                {
+                    Time = r1.At.TimeOfDay.ToIso8601TimeString(),
+                    MaximumPartySize = 0,
+                },
+                new TimeDto
+                {
+                    Time = r2.At.TimeOfDay.ToIso8601TimeString(),
+                    MaximumPartySize = 0
+                }
+            };
+            Assert.Equal(expected, day.Entries, new TimeDtoComparer());
         }
     }
 }
