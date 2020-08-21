@@ -19,23 +19,23 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public MaitreD MaitreD { get; }
 
         [HttpGet("{year}")]
-        public ActionResult Get(int year)
+        public Task<ActionResult> Get(int year)
         {
             var daysInYear = new GregorianCalendar().GetDaysInYear(year);
             var firstDay = new DateTime(year, 1, 1);
             var days = Enumerable.Range(0, daysInYear)
                 .Select(i => MakeDay(firstDay, i))
                 .ToArray();
-            return new OkObjectResult(
+            return Task.FromResult<ActionResult>(new OkObjectResult(
                 new CalendarDto
                 {
                     Year = year,
                     Days = days
-                });
+                }));
         }
 
         [HttpGet("{year}/{month}")]
-        public ActionResult Get(int year, int month)
+        public Task<ActionResult> Get(int year, int month)
         {
             var daysInMonth =
                 new GregorianCalendar().GetDaysInMonth(year, month);
@@ -43,27 +43,27 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var days = Enumerable.Range(0, daysInMonth)
                 .Select(i => MakeDay(firstDay, i))
                 .ToArray();
-            return new OkObjectResult(
+            return Task.FromResult<ActionResult>(new OkObjectResult(
                 new CalendarDto
                 {
                     Year = year,
                     Month = month,
                     Days = days
-                });
+                }));
         }
 
         [HttpGet("{year}/{month}/{day}")]
-        public ActionResult Get(int year, int month, int day)
+        public Task<ActionResult> Get(int year, int month, int day)
         {
             var days = new[] { MakeDay(new DateTime(year, month, day), 0) };
-            return new OkObjectResult(
+            return Task.FromResult<ActionResult>(new OkObjectResult(
                 new CalendarDto
                 {
                     Year = year,
                     Month = month,
                     Day = day,
                     Days = days
-                });
+                }));
         }
 
         private DayDto MakeDay(DateTime origin, int offset)

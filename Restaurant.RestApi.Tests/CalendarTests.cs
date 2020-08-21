@@ -327,7 +327,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             "CA1812: Avoid uninstantiated internal classes",
             Justification = "This class is instantiated via Reflection.")]
         private class CalendarTestCases :
-            TheoryData<Func<CalendarController, ActionResult>, int, int?, int?, int, int>
+            TheoryData<Func<CalendarController, Task<ActionResult>>, int, int?, int?, int, int>
         {
             public CalendarTestCases()
             {
@@ -388,8 +388,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             "CA1062:Validate arguments of public methods",
             Justification = "Parametrised test.")]
         [Theory, ClassData(typeof(CalendarTestCases))]
-        public void GetCalendar(
-            Func<CalendarController, ActionResult> act,
+        public async Task GetCalendar(
+            Func<CalendarController, Task<ActionResult>> act,
             int year,
             int? month,
             int? day,
@@ -399,7 +399,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var sut = new CalendarController(
                 Some.MaitreD.WithTables(Table.Communal(tableSize)));
 
-            var actual = act(sut);
+            var actual = await act(sut);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
