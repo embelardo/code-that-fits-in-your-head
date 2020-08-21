@@ -31,6 +31,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new TimeOfDay(timeSpan);
         }
 
+        public string ToIso8601TimeString()
+        {
+            return durationSinceMidnight.ToIso8601TimeString();
+        }
+
         public override bool Equals(object? obj)
         {
             return obj is TimeOfDay day && Equals(day);

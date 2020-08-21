@@ -421,6 +421,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.All(
                 timeSlotEntries,
                 t => Assert.Equal(tableSize, t.MaximumPartySize));
+            Assert.All(
+                timeSlotEntries,
+                t => Assert.Equal(
+                    sut.MaitreD.OpensAt.ToIso8601TimeString(),
+                    t.Time));
         }
     }
 }

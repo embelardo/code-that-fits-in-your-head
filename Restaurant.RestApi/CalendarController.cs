@@ -75,6 +75,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 {
                     new TimeDto
                     {
+                        Time = MaitreD.OpensAt.ToIso8601TimeString(),
                         MaximumPartySize = MaitreD.Tables.First().Capacity
                     }
                 }
