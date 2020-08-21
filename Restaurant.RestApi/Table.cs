@@ -29,10 +29,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
             get { return Accept(new CapacityVisitor()); }
         }
 
+        public int RemainingSeats
+        {
+            get { return Accept(new RemainingSeatsVisitor()); }
+        }
+
         internal bool Fits(int quantity)
         {
-            int remainingSeats = Accept(new RemainingSeatsVisitor());
-            return quantity <= remainingSeats;
+            return quantity <= RemainingSeats;
         }
 
         public Table Reserve(Reservation reservation)
