@@ -40,35 +40,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             VALUES (@Id, @At, @Name, @Email, @Quantity)";
 
         public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
-            DateTime dateTime)
-        {
-            var result = new List<Reservation>();
-
-            using var conn = new SqlConnection(ConnectionString);
-            using var cmd = new SqlCommand(readByRangeSql, conn);
-            cmd.Parameters.AddWithValue("@at", dateTime.Date);
-
-            await conn.OpenAsync().ConfigureAwait(false);
-            using var rdr =
-                await cmd.ExecuteReaderAsync().ConfigureAwait(false);
-            while (rdr.Read())
-                result.Add(
-                    new Reservation(
-                        (Guid)rdr["PublicId"],
-                        (DateTime)rdr["At"],
-                        new Email((string)rdr["Email"]),
-                        new Name((string)rdr["Name"]),
-                        (int)rdr["Quantity"]));
-
-            return result.AsReadOnly();
-        }
-
-        private const string readByRangeSql = @"
-            SELECT [PublicId], [At], [Name], [Email], [Quantity]
-            FROM [dbo].[Reservations]
-            WHERE CONVERT(DATE, [At]) = @At";
-
-        public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
             DateTime min,
             DateTime max)
         {
