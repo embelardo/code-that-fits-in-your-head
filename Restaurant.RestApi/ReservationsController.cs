@@ -41,8 +41,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             using var scope = new TransactionScope(
                 TransactionScopeAsyncFlowOption.Enabled);
+            var min = r.At.Date;
+            var max = min.AddDays(1).AddTicks(-1);
             var reservations = await Repository
-                .ReadReservations(r.At)
+                .ReadReservations(min, max)
                 .ConfigureAwait(false);
             if (!MaitreD.WillAccept(DateTime.Now, reservations, r))
                 return NoTables500InternalServerError();

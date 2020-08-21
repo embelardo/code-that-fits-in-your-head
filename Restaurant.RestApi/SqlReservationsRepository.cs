@@ -73,9 +73,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
             DateTime max)
         {
             const string readByRangeSql = @"
-                SELECT [PublicId], [Date], [Name], [Email], [Quantity]
+                SELECT [PublicId], [At], [Name], [Email], [Quantity]
                 FROM [dbo].[Reservations]
-                WHERE @Min <= [Date] AND [Date] <= @Max";
+                WHERE @Min <= [At] AND [At] <= @Max";
             
             var result = new List<Reservation>();
 
@@ -91,7 +91,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 result.Add(
                     new Reservation(
                         (Guid)rdr["PublicId"],
-                        (DateTime)rdr["Date"],
+                        (DateTime)rdr["At"],
                         new Email((string)rdr["Email"]),
                         new Name((string)rdr["Name"]),
                         (int)rdr["Quantity"]));
