@@ -23,37 +23,41 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public MaitreD MaitreD { get; }
 
         [HttpGet("{year}")]
-        public Task<ActionResult> Get(int year)
+        public async Task<ActionResult> Get(int year)
         {
             var daysInYear = new GregorianCalendar().GetDaysInYear(year);
             var firstDay = new DateTime(year, 1, 1);
+            var reservations = await Repository.ReadReservations(firstDay)
+                .ConfigureAwait(false);
             var days = Enumerable.Range(0, daysInYear)
-                .Select(i => MakeDay(firstDay, i))
+                .Select(i => MakeDay(firstDay, i, reservations))
                 .ToArray();
-            return Task.FromResult<ActionResult>(new OkObjectResult(
+            return new OkObjectResult(
                 new CalendarDto
                 {
                     Year = year,
                     Days = days
-                }));
+                });
         }
 
         [HttpGet("{year}/{month}")]
-        public Task<ActionResult> Get(int year, int month)
+        public async Task<ActionResult> Get(int year, int month)
         {
             var daysInMonth =
                 new GregorianCalendar().GetDaysInMonth(year, month);
             var firstDay = new DateTime(year, month, 1);
+            var reservations = await Repository.ReadReservations(firstDay)
+                .ConfigureAwait(false);
             var days = Enumerable.Range(0, daysInMonth)
-                .Select(i => MakeDay(firstDay, i))
+                .Select(i => MakeDay(firstDay, i, reservations))
                 .ToArray();
-            return Task.FromResult<ActionResult>(new OkObjectResult(
+            return new OkObjectResult(
                 new CalendarDto
                 {
                     Year = year,
                     Month = month,
                     Days = days
-                }));
+                });
         }
 
         [HttpGet("{year}/{month}/{day}")]
@@ -71,22 +75,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
                     Day = day,
                     Days = days
                 });
-        }
-
-        private DayDto MakeDay(DateTime origin, int offset)
-        {
-            return new DayDto
-            {
-                Date = origin.AddDays(offset).ToIso8601DateString(),
-                Entries = new[]
-                {
-                    new TimeDto
-                    {
-                        Time = MaitreD.OpensAt.ToIso8601TimeString(),
-                        MaximumPartySize = MaitreD.Tables.First().Capacity
-                    }
-                }
-            };
         }
 
         private DayDto MakeDay(
