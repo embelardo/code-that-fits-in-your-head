@@ -33,6 +33,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Equal(
                 date.Date.Add((TimeSpan)sut.OpensAt),
                 actual.First().At);
+            Assert.Equal(
+                date.Date.Add((TimeSpan)sut.LastSeating),
+                actual.Last().At);
         }
 
         /// <summary>

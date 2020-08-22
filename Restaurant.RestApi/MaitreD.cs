@@ -123,6 +123,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
             yield return new Occurrence<IEnumerable<Table>>(
                 date.Date.Add((TimeSpan)OpensAt),
                 Enumerable.Empty<Table>());
+            yield return new Occurrence<IEnumerable<Table>>(
+                date.Date.Add((TimeSpan)LastSeating),
+                Enumerable.Empty<Table>());
         }
     }
 }
