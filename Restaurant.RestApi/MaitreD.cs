@@ -114,18 +114,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
         /// </returns>
         public IEnumerable<Occurrence<IEnumerable<Table>>> Segment(
             DateTime date,
-#pragma warning disable CA1801 // Review unused parameters
             Reservation[] reservations)
-#pragma warning restore CA1801 // Review unused parameters
         {
             for (var dur = (TimeSpan)OpensAt;
                  dur <= (TimeSpan)LastSeating;
                  dur = dur.Add(TimeSpan.FromMinutes(15)))
             {
                 var at = date.Date.Add(dur);
-                yield return new Occurrence<IEnumerable<Table>>(
-                    at,
-                    Tables);
+                var seating = new Seating(SeatingDuration, at);
+                var relevantReservations =
+                    reservations.Where(seating.Overlaps);
+                var allocation = Allocate(relevantReservations);
+                yield return new Occurrence<IEnumerable<Table>>(at, allocation);
             }
         }
     }
