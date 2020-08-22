@@ -125,7 +125,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 var at = date.Date.Add(dur);
                 yield return new Occurrence<IEnumerable<Table>>(
                     at,
-                    Enumerable.Empty<Table>());
+                    Tables);
             }
         }
     }

@@ -37,6 +37,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 date.Date.Add((TimeSpan)sut.LastSeating),
                 actual.Last().At);
             AssertFifteenMinuteDistances(actual);
+            Assert.All(actual, o => AssertTables(sut.Tables, o.Value));
         }
 
         private static void AssertFifteenMinuteDistances(
@@ -45,6 +46,16 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var times = actual.Select(o => o.At).OrderBy(t => t);
             var deltas = times.Zip(times.Skip(1), (x, y) => y - x);
             Assert.All(deltas, d => Assert.Equal(TimeSpan.FromMinutes(15), d));
+        }
+
+        private static void AssertTables(
+           IEnumerable<Table> expected,
+           IEnumerable<Table> actual)
+        {
+            Assert.Equal(expected.Count(), actual.Count());
+            Assert.Equal(
+                expected.Sum(t => t.Capacity),
+                actual.Sum(t => t.Capacity));
         }
 
         /// <summary>
