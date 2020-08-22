@@ -422,29 +422,22 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.All(
                 timeSlotEntries,
                 t => Assert.Equal(tableSize, t.MaximumPartySize));
-            Assert.All(
-                timeSlotEntries,
-                t => Assert.Equal(
-                    sut.MaitreD.OpensAt.ToIso8601TimeString(),
-                    t.Time));
         }
 
         [Fact]
-        public async Task ViewCalendarForDayWithReservations()
+        public async Task ViewCalendarForDayWithReservation()
         {
             var date = new DateTime(2020, 8, 21);
-            var maitreD =
-                Some.MaitreD.WithTables(Table.Standard(4), Table.Standard(4));
-            var r1 = Some.Reservation.WithDate(
-                date.Add((TimeSpan)maitreD.OpensAt).AddHours(1));
-            var r2 = Some.Reservation.WithDate(
-                date.Add((TimeSpan)maitreD.OpensAt).AddHours(2));
+            var maitreD = new MaitreD(
+                TimeSpan.FromHours(18),
+                TimeSpan.FromHours(20),
+                TimeSpan.FromHours(.75),
+                Table.Standard(4));
             var db = new FakeDatabase();
-            await db.Create(r1);
-            await db.Create(r2);
-            var sut = new CalendarController(
-                db,
-                Some.MaitreD.WithTables(Table.Standard(4), Table.Standard(4)));
+            await db.Create(Some.Reservation
+                .WithQuantity(3)
+                .WithDate(new DateTime(2020, 8, 21, 19, 0, 0)));
+            var sut = new CalendarController(db, maitreD);
 
             var actual = await sut.Get(date.Year, date.Month, date.Day);
 
@@ -453,21 +446,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var day = Assert.Single(dto.Days);
             var expected = new[]
             {
-                new TimeDto
-                {
-                    Time = maitreD.OpensAt.ToIso8601TimeString(),
-                    MaximumPartySize = 4,
-                },
-                new TimeDto
-                {
-                    Time = r1.At.TimeOfDay.ToIso8601TimeString(),
-                    MaximumPartySize = 0,
-                },
-                new TimeDto
-                {
-                    Time = r2.At.TimeOfDay.ToIso8601TimeString(),
-                    MaximumPartySize = 0
-                }
+                new TimeDto { Time = "18:00:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "18:15:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "18:30:00", MaximumPartySize = 0, },
+                new TimeDto { Time = "18:45:00", MaximumPartySize = 0, },
+                new TimeDto { Time = "19:00:00", MaximumPartySize = 0, },
+                new TimeDto { Time = "19:15:00", MaximumPartySize = 0, },
+                new TimeDto { Time = "19:30:00", MaximumPartySize = 0, },
+                new TimeDto { Time = "19:45:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "20:00:00", MaximumPartySize = 4, },
             };
             Assert.Equal(expected, day.Entries, new TimeDtoComparer());
         }

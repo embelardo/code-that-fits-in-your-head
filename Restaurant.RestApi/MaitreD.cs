@@ -114,7 +114,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         /// </returns>
         public IEnumerable<Occurrence<IEnumerable<Table>>> Segment(
             DateTime date,
-            Reservation[] reservations)
+            IEnumerable<Reservation> reservations)
         {
             for (var dur = (TimeSpan)OpensAt;
                  dur <= (TimeSpan)LastSeating;
