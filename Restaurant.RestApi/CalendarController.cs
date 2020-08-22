@@ -22,13 +22,22 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public IReservationsRepository Repository { get; }
         public MaitreD MaitreD { get; }
 
+        /* This method loads a year's worth of reservation in order to segment
+         * them all. In a realistic system, this could be quite stressful for
+         * both the database and the web server. Some of that concern can be
+         * addressed with an appropriate HTTP cache header and a reverse proxy,
+         * but a better solution would be a CQRS-style architecture where the
+         * calendars get re-rendered as materialised views in a background
+         * process. That's beyond the scope of this example code base, though.
+         */
         [HttpGet("{year}")]
         public async Task<ActionResult> Get(int year)
         {
             var daysInYear = new GregorianCalendar().GetDaysInYear(year);
             var firstDay = new DateTime(year, 1, 1);
-            var reservations = await Repository.ReadReservations(firstDay)
-                .ConfigureAwait(false);
+            var lastDay = firstDay.AddYears(1).AddTicks(-1);
+            var reservations = await Repository
+                .ReadReservations(firstDay, lastDay).ConfigureAwait(false);
             var days = Enumerable.Range(0, daysInYear)
                 .Select(i => MakeDay(firstDay, i, reservations))
                 .ToArray();
@@ -40,6 +49,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 });
         }
 
+        /* See comment about Get(int year). */
         [HttpGet("{year}/{month}")]
         public async Task<ActionResult> Get(int year, int month)
         {

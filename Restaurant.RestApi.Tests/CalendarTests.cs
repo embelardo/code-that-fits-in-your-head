@@ -503,5 +503,47 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             };
             Assert.Equal(expected, day.Entries, new TimeDtoComparer());
         }
+
+        [Fact]
+        public async Task ViewCalendarForYearWithReservation()
+        {
+            var maitreD = new MaitreD(
+                TimeSpan.FromHours(18.5),
+                TimeSpan.FromHours(22),
+                TimeSpan.FromHours(2),
+                Table.Standard(4),
+                Table.Standard(6));
+            var db = new FakeDatabase();
+            await db.Create(Some.Reservation
+                .WithQuantity(5)
+                .WithDate(new DateTime(2020, 9, 23, 20, 15, 0)));
+            var sut = new CalendarController(db, maitreD);
+
+            var actual = await sut.Get(2020);
+
+            var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
+            var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
+            var day =
+                Assert.Single(dto.Days.Where(d => d.Date == "2020-09-23"));
+            var expected = new[]
+            {
+                new TimeDto { Time = "18:30:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "18:45:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "19:00:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "19:15:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "19:30:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "19:45:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "20:00:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "20:15:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "20:30:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "20:45:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "21:00:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "21:15:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "21:30:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "21:45:00", MaximumPartySize = 4, },
+                new TimeDto { Time = "22:00:00", MaximumPartySize = 4, },
+            };
+            Assert.Equal(expected, day.Entries, new TimeDtoComparer());
+        }
     }
 }
