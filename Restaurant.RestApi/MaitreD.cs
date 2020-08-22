@@ -98,5 +98,31 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 let overlapping = reservations.Where(seating.Overlaps)
                 select Allocate(overlapping).At(g.Key);
         }
+
+        /// <summary>
+        /// Segment a day into 15-minute segments during the restaurant's
+        /// opening hours, with a table configuration for each segment.
+        /// </summary>
+        /// <param name="date">The day to segment.</param>
+        /// <param name="reservations">
+        /// Reservations relevant for <paramref name="date" />.
+        /// </param>
+        /// <returns>
+        /// 15-minute segments starting at the restaurant's opening hour, and
+        /// concluding at the restaurant's last seating time. Each segment
+        /// contains the table allocation at that time.
+        /// </returns>
+#pragma warning disable CA1822 // Mark members as static
+        public IEnumerable<Occurrence<IEnumerable<Table>>> Segment(
+#pragma warning restore CA1822 // Mark members as static
+#pragma warning disable CA1801 // Review unused parameters
+            DateTime date,
+            Reservation[] reservations)
+#pragma warning restore CA1801 // Review unused parameters
+        {
+            yield return new Occurrence<IEnumerable<Table>>(
+                new DateTime(1, 1, 1),
+                Enumerable.Empty<Table>());
+        }
     }
 }
