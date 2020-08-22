@@ -115,13 +115,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
 #pragma warning disable CA1822 // Mark members as static
         public IEnumerable<Occurrence<IEnumerable<Table>>> Segment(
 #pragma warning restore CA1822 // Mark members as static
-#pragma warning disable CA1801 // Review unused parameters
             DateTime date,
+#pragma warning disable CA1801 // Review unused parameters
             Reservation[] reservations)
 #pragma warning restore CA1801 // Review unused parameters
         {
             yield return new Occurrence<IEnumerable<Table>>(
-                new DateTime(1, 1, 1),
+                date.Date.Add((TimeSpan)OpensAt),
                 Enumerable.Empty<Table>());
         }
     }
