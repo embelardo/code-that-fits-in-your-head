@@ -36,6 +36,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Equal(
                 date.Date.Add((TimeSpan)sut.LastSeating),
                 actual.Last().At);
+            AssertFifteenMinuteDistances(actual);
+        }
+
+        private static void AssertFifteenMinuteDistances(
+            IEnumerable<Occurrence<IEnumerable<Table>>> actual)
+        {
+            var times = actual.Select(o => o.At).OrderBy(t => t);
+            var deltas = times.Zip(times.Skip(1), (x, y) => y - x);
+            Assert.All(deltas, d => Assert.Equal(TimeSpan.FromMinutes(15), d));
         }
 
         /// <summary>
