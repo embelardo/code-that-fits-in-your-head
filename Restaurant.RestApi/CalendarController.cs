@@ -46,8 +46,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var daysInMonth =
                 new GregorianCalendar().GetDaysInMonth(year, month);
             var firstDay = new DateTime(year, month, 1);
-            var reservations = await Repository.ReadReservations(firstDay)
-                .ConfigureAwait(false);
+            var lastDay = firstDay.AddMonths(1).AddTicks(-1);
+            var reservations = await Repository
+                .ReadReservations(firstDay, lastDay).ConfigureAwait(false);
             var days = Enumerable.Range(0, daysInMonth)
                 .Select(i => MakeDay(firstDay, i, reservations))
                 .ToArray();

@@ -468,5 +468,40 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             };
             Assert.Equal(expected, day.Entries, new TimeDtoComparer());
         }
+
+        [Fact]
+        public async Task ViewCalendarForMonthWithReservation()
+        {
+            var maitreD = new MaitreD(
+                TimeSpan.FromHours(20),
+                TimeSpan.FromHours(22),
+                TimeSpan.FromHours(1),
+                Table.Communal(12));
+            var db = new FakeDatabase();
+            await db.Create(Some.Reservation
+                .WithQuantity(3)
+                .WithDate(new DateTime(2020, 8, 22, 20, 30, 0)));
+            var sut = new CalendarController(db, maitreD);
+
+            var actual = await sut.Get(2020, 8);
+
+            var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
+            var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
+            var day =
+                Assert.Single(dto.Days.Where(d => d.Date == "2020-08-22"));
+            var expected = new[]
+            {
+                new TimeDto { Time = "20:00:00", MaximumPartySize =  9, },
+                new TimeDto { Time = "20:15:00", MaximumPartySize =  9, },
+                new TimeDto { Time = "20:30:00", MaximumPartySize =  9, },
+                new TimeDto { Time = "20:45:00", MaximumPartySize =  9, },
+                new TimeDto { Time = "21:00:00", MaximumPartySize =  9, },
+                new TimeDto { Time = "21:15:00", MaximumPartySize =  9, },
+                new TimeDto { Time = "21:30:00", MaximumPartySize = 12, },
+                new TimeDto { Time = "21:45:00", MaximumPartySize = 12, },
+                new TimeDto { Time = "22:00:00", MaximumPartySize = 12, },
+            };
+            Assert.Equal(expected, day.Entries, new TimeDtoComparer());
+        }
     }
 }
