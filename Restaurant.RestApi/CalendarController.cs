@@ -33,14 +33,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
         [HttpGet("{year}")]
         public async Task<ActionResult> Get(int year)
         {
-            var daysInYear = new GregorianCalendar().GetDaysInYear(year);
-            var firstDay = new DateTime(year, 1, 1);
-            var lastDay = firstDay.AddYears(1).AddTicks(-1);
+            var period = Period.Year(year);
+            var firstTick = period.Accept(new FirstTickVisitor());
+            var lastTick = period.Accept(new LastTickVisitor());
             var reservations = await Repository
-                .ReadReservations(firstDay, lastDay).ConfigureAwait(false);
-            var days = Enumerable.Range(0, daysInYear)
-                .Select(i => MakeDay(firstDay, i, reservations))
+                .ReadReservations(firstTick, lastTick).ConfigureAwait(false);
+
+            var days = period.Accept(new DaysVisitor())
+                .Select(d => MakeDay(d, reservations))
                 .ToArray();
+
             return new OkObjectResult(
                 new CalendarDto
                 {
@@ -53,15 +55,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
         [HttpGet("{year}/{month}")]
         public async Task<ActionResult> Get(int year, int month)
         {
-            var daysInMonth =
-                new GregorianCalendar().GetDaysInMonth(year, month);
-            var firstDay = new DateTime(year, month, 1);
-            var lastDay = firstDay.AddMonths(1).AddTicks(-1);
+            var period = Period.Month(year, month);
+            var firstTick = period.Accept(new FirstTickVisitor());
+            var lastTick = period.Accept(new LastTickVisitor());
             var reservations = await Repository
-                .ReadReservations(firstDay, lastDay).ConfigureAwait(false);
-            var days = Enumerable.Range(0, daysInMonth)
-                .Select(i => MakeDay(firstDay, i, reservations))
+                .ReadReservations(firstTick, lastTick).ConfigureAwait(false);
+
+            var days = period.Accept(new DaysVisitor())
+                .Select(d => MakeDay(d, reservations))
                 .ToArray();
+
             return new OkObjectResult(
                 new CalendarDto
                 {
@@ -74,10 +77,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
         [HttpGet("{year}/{month}/{day}")]
         public async Task<ActionResult> Get(int year, int month, int day)
         {
-            var firstDay = new DateTime(year, month, day);
-            var reservations = await Repository.ReadReservations(firstDay)
-                .ConfigureAwait(false);
-            var days = new[] { MakeDay(new DateTime(year, month, day), 0, reservations) };
+            var period = Period.Day(year, month, day);
+            var firstTick = period.Accept(new FirstTickVisitor());
+            var lastTick = period.Accept(new LastTickVisitor());
+            var reservations = await Repository
+                .ReadReservations(firstTick, lastTick).ConfigureAwait(false);
+
+            var days = period.Accept(new DaysVisitor())
+                .Select(d => MakeDay(d, reservations))
+                .ToArray();
+
             return new OkObjectResult(
                 new CalendarDto
                 {
@@ -89,23 +98,85 @@ namespace Ploeh.Samples.Restaurant.RestApi
         }
 
         private DayDto MakeDay(
-            DateTime origin,
-            int offset,
-            IEnumerable<Reservation> reservations)
+            DateTime date,
+            IReadOnlyCollection<Reservation> reservations)
         {
-            var entries = MaitreD
-                .Segment(origin.AddDays(offset), reservations)
+            var segments = MaitreD
+                .Segment(date, reservations)
                 .Select(o => new TimeDto
                 {
                     Time = o.At.TimeOfDay.ToIso8601TimeString(),
                     MaximumPartySize = o.Value.Max(t => t.RemainingSeats)
                 })
                 .ToArray();
+
             return new DayDto
             {
-                Date = origin.AddDays(offset).ToIso8601DateString(),
-                Entries = entries
+                Date = date.ToIso8601DateString(),
+                Entries = segments
             };
+        }
+
+        private sealed class FirstTickVisitor : IPeriodVisitor<DateTime>
+        {
+            public DateTime VisitDay(int year, int month, int day)
+            {
+                return new DateTime(year, month, day);
+            }
+
+            public DateTime VisitMonth(int year, int month)
+            {
+                return new DateTime(year, month, 1);
+            }
+
+            public DateTime VisitYear(int year)
+            {
+                return new DateTime(year, 1, 1);
+            }
+        }
+
+        private sealed class LastTickVisitor : IPeriodVisitor<DateTime>
+        {
+            public DateTime VisitDay(int year, int month, int day)
+            {
+                return new DateTime(year, month, day).AddDays(1).AddTicks(-1);
+            }
+
+            public DateTime VisitMonth(int year, int month)
+            {
+                return new DateTime(year, month, 1).AddMonths(1).AddTicks(-1);
+            }
+
+            public DateTime VisitYear(int year)
+            {
+                return new DateTime(year, 1, 1).AddYears(1).AddTicks(-1);
+            }
+        }
+
+        private sealed class DaysVisitor :
+            IPeriodVisitor<IEnumerable<DateTime>>
+        {
+            public IEnumerable<DateTime> VisitDay(int year, int month, int day)
+            {
+                return new[] { new DateTime(year, month, day) };
+            }
+
+            public IEnumerable<DateTime> VisitMonth(int year, int month)
+            {
+                var daysInMonth =
+                    new GregorianCalendar().GetDaysInMonth(year, month);
+                var firstDay = new DateTime(year, month, 1);
+                return Enumerable.Range(0, daysInMonth)
+                    .Select(i => firstDay.AddDays(i));
+            }
+
+            public IEnumerable<DateTime> VisitYear(int year)
+            {
+                var daysInYear = new GregorianCalendar().GetDaysInYear(year);
+                var firstDay = new DateTime(year, 1, 1);
+                return Enumerable.Range(0, daysInYear)
+                    .Select(i => firstDay.AddDays(i));
+            }
         }
     }
 }
