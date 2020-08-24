@@ -30,7 +30,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
          * calendars get re-rendered as materialised views in a background
          * process. That's beyond the scope of this example code base, though.
          */
-        [HttpGet("{year}")]
+        [HttpGet("{year}"), ResponseCache(Duration = 60)]
         public async Task<ActionResult> Get(int year)
         {
             var period = Period.Year(year);
