@@ -39,10 +39,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var smtpSettings = new Settings.SmtpSettings();
             Configuration.Bind("Smtp", smtpSettings);
             services.AddSingleton(smtpSettings.ToPostOffice());
-
-            var calendarEnabled = new CalendarFlag(
-                Configuration.GetValue<bool>("EnableCalendar"));
-            services.AddSingleton(calendarEnabled);
         }
 
         public static void Configure(
