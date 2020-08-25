@@ -12,6 +12,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
     {
 #pragma warning disable CA1822 // Mark members as static
 #pragma warning disable CA1801 // Review unused parameters
+        [HttpGet("{year}/{month}/{day}")]
         public ActionResult Get(int year, int month, int day)
 #pragma warning restore CA1801 // Review unused parameters
 #pragma warning restore CA1822 // Mark members as static
