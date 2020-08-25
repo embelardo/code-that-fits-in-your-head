@@ -17,6 +17,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
             new UrlBuilder()
                 .WithAction(nameof(CalendarController.Get))
                 .WithController(nameof(CalendarController));
+        private readonly static UrlBuilder schedule =
+            new UrlBuilder()
+                .WithAction(nameof(ScheduleController.Get))
+                .WithController(nameof(ScheduleController));
 
         internal static LinkDto Link(this Uri uri, string rel)
         {
@@ -122,7 +126,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
             int month,
             int day)
         {
-            return url.LinkToDay(year, month, day, "urn:schedule");
+            return schedule
+                .WithValues(new { year, month, day })
+                .BuildAbsolute(url)
+                .Link("urn:schedule");
         }
 
         public static Uri FindAddress(

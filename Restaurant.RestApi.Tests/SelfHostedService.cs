@@ -173,6 +173,21 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return await CreateClient().GetAsync(address);
         }
 
+        public async Task<HttpResponseMessage> GetSchedule(
+            int year,
+            int month,
+            int day)
+        {
+            var resp = await GetYear(year);
+            resp.EnsureSuccessStatusCode();
+            var dto = await resp.ParseJsonContent<CalendarDto>();
+
+            var target = new DateTime(year, month, day).ToIso8601DateString();
+            var dayCalendar = dto.Days.Single(d => d.Date == target);
+            var address = dayCalendar.Links.FindAddress("urn:schedule");
+            return await CreateClient().GetAsync(address);
+        }
+
         private async Task<Uri> FindAddress(string rel)
         {
             var homeResponse =
