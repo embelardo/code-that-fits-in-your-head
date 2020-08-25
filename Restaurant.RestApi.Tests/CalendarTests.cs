@@ -306,6 +306,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             AssertDayLinks(actual.Days, "urn:day");
             AssertDayLinks(actual.Days, "urn:month");
             AssertDayLinks(actual.Days, "urn:year");
+            AssertDayLinks(actual.Days, "urn:schedule");
         }
 
         private static void AssertDayLinks(DayDto[]? days, string rel)

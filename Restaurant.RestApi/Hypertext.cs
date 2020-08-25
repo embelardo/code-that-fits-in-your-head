@@ -116,6 +116,15 @@ namespace Ploeh.Samples.Restaurant.RestApi
             }
         }
 
+        internal static LinkDto LinkToSchedule(
+            this IUrlHelper url,
+            int year,
+            int month,
+            int day)
+        {
+            return url.LinkToDay(year, month, day, "urn:schedule");
+        }
+
         public static Uri FindAddress(
             this IEnumerable<LinkDto>? links,
             string rel)
