@@ -3,11 +3,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -16,6 +20,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 {
     public class SelfHostedService : WebApplicationFactory<Startup>
     {
+        private bool authorizeClient;
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             if (builder is null)
@@ -27,6 +33,42 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 services.AddSingleton<IReservationsRepository>(
                     new FakeDatabase());
             });
+        }
+
+        internal void AuthorizeClient()
+        {
+            authorizeClient = true;
+        }
+
+        protected override void ConfigureClient(HttpClient client)
+        {
+            base.ConfigureClient(client);
+            if (client is null)
+                throw new ArgumentNullException(nameof(client));
+
+            if (!authorizeClient)
+                return;
+
+            var token = GenerateJwtToken();
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        private static string GenerateJwtToken()
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes("Let's hope that this generates more than 128 bytes...");
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject =
+                    new ClaimsIdentity(new[] { new Claim("role", "MaitreD") }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
 
         [SuppressMessage(
