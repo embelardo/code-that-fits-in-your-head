@@ -32,7 +32,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var schedule = MaitreD.Schedule(reservations);
             var entries = schedule.Select(o => new TimeDto
             {
-                Time = o.At.TimeOfDay.ToIso8601TimeString()
+                Time = o.At.TimeOfDay.ToIso8601TimeString(),
+                Reservations = o.Value
+                    .SelectMany(t => t.Accept(new ReservationsVisitor()))
+                    .Select(r => r.ToDto())
+                    .ToArray()
             }).ToArray();
 
             return new OkObjectResult(
@@ -50,6 +54,25 @@ namespace Ploeh.Samples.Restaurant.RestApi
                         } 
                     }
                 });
+        }
+
+        private sealed class ReservationsVisitor :
+            ITableVisitor<IEnumerable<Reservation>>
+        {
+            public IEnumerable<Reservation> VisitCommunal(
+                int seats,
+                IReadOnlyCollection<Reservation> reservations)
+            {
+                return reservations;
+            }
+
+            public IEnumerable<Reservation> VisitStandard(
+                int seats,
+                Reservation? reservation)
+            {
+                if (reservation is { })
+                    yield return reservation;
+            }
         }
     }
 }

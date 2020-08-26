@@ -2,6 +2,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -77,7 +78,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
             var day = Assert.Single(calendar.Days);
-            Assert.NotEmpty(day.Entries);
+            Assert.Contains(
+                day.Entries.SelectMany(e => e.Reservations), 
+                rdto => rdto.Id == r.Id.ToString("N"));
         }
     }
 }
