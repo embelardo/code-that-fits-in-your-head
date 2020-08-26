@@ -42,6 +42,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.True(
                 response.IsSuccessStatusCode,
                 $"Actual status code: {response.StatusCode}.");
+            var actual = await response.ParseJsonContent<CalendarDto>();
+            var dayDto = Assert.Single(actual.Days);
         }
     }
 }

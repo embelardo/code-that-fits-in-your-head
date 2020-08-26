@@ -12,13 +12,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
     public class ScheduleController
     {
 #pragma warning disable CA1822 // Mark members as static
-#pragma warning disable CA1801 // Review unused parameters
         [HttpGet("{year}/{month}/{day}"), Authorize(Roles = "MaitreD")]
         public ActionResult Get(int year, int month, int day)
-#pragma warning restore CA1801 // Review unused parameters
 #pragma warning restore CA1822 // Mark members as static
         {
-            return new OkResult();
+            return new OkObjectResult(
+                new CalendarDto
+                {
+                    Year = year,
+                    Month = month,
+                    Day = day,
+                    Days = new[] { new DayDto { } }
+                });
         }
     }
 }
