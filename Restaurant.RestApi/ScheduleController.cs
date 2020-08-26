@@ -2,7 +2,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -54,25 +53,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
                         } 
                     }
                 });
-        }
-
-        private sealed class ReservationsVisitor :
-            ITableVisitor<IEnumerable<Reservation>>
-        {
-            public IEnumerable<Reservation> VisitCommunal(
-                int seats,
-                IReadOnlyCollection<Reservation> reservations)
-            {
-                return reservations;
-            }
-
-            public IEnumerable<Reservation> VisitStandard(
-                int seats,
-                Reservation? reservation)
-            {
-                if (reservation is { })
-                    yield return reservation;
-            }
         }
     }
 }
