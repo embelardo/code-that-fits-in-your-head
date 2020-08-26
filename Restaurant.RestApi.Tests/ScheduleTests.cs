@@ -51,17 +51,33 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         }
 
         [Fact]
-        public void GetScheduleForDateWithoutReservations()
+        public async Task GetScheduleForDateWithoutReservations()
         {
             var db = new FakeDatabase();
-            var sut = new ScheduleController(db);
+            var sut = new ScheduleController(db, Some.MaitreD);
 
-            var actual = sut.Get(2020, 8, 26);
+            var actual = await sut.Get(2020, 8, 26);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
             var day = Assert.Single(calendar.Days);
             Assert.Empty(day.Entries);
+        }
+
+        [Fact]
+        public async Task GetScheduleForDateWithReservation()
+        {
+            var r = Some.Reservation;
+            var db = new FakeDatabase();
+            await db.Create(r);
+            var sut = new ScheduleController(db, Some.MaitreD);
+
+            var actual = await sut.Get(r.At.Year, r.At.Month, r.At.Day);
+
+            var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
+            var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
+            var day = Assert.Single(calendar.Days);
+            Assert.NotEmpty(day.Entries);
         }
     }
 }

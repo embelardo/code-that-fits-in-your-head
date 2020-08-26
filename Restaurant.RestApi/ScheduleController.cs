@@ -11,18 +11,30 @@ namespace Ploeh.Samples.Restaurant.RestApi
     [Route("schedule")]
     public class ScheduleController
     {
-        public ScheduleController(IReservationsRepository repository)
+        public ScheduleController(
+            IReservationsRepository repository,
+            MaitreD maitreD)
         {
             Repository = repository;
+            MaitreD = maitreD;
         }
 
         public IReservationsRepository Repository { get; }
+        public MaitreD MaitreD { get; }
 
-#pragma warning disable CA1822 // Mark members as static
         [HttpGet("{year}/{month}/{day}"), Authorize(Roles = "MaitreD")]
-        public ActionResult Get(int year, int month, int day)
-#pragma warning restore CA1822 // Mark members as static
+        public async Task<ActionResult> Get(int year, int month, int day)
         {
+            var date = new DateTime(year, month, day);
+            var firstTick = date;
+            var lastTick = firstTick.AddDays(1).AddTicks(-1);
+            var reservations = await Repository.ReadReservations(firstTick, lastTick).ConfigureAwait(false);
+            var schedule = MaitreD.Schedule(reservations);
+            var entries = schedule.Select(o => new TimeDto
+            {
+                Time = o.At.TimeOfDay.ToIso8601TimeString()
+            }).ToArray();
+
             return new OkObjectResult(
                 new CalendarDto
                 {
@@ -33,9 +45,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                     {
                         new DayDto 
                         {
-                            Date = new DateTime(year, month, day)
-                                .ToIso8601DateString(),
-                            Entries = Array.Empty<TimeDto>()
+                            Date = date.ToIso8601DateString(),
+                            Entries = entries
                         } 
                     }
                 });
