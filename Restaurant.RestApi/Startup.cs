@@ -32,23 +32,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 .AddJsonOptions(opts =>
                     opts.JsonSerializerOptions.IgnoreNullValues = true);
 
-            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-            services.AddAuthentication(opts =>
-            {
-                opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(opts =>
-            {
-                opts.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("Let's hope that this generates more than 128 bytes...")),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    RoleClaimType = "role"
-                };
-                opts.RequireHttpsMetadata = false;
-            });
+            ConfigureAuthorization(services);
 
             var connStr = Configuration.GetConnectionString("Restaurant");
             services.AddSingleton<IReservationsRepository>(
@@ -61,6 +45,29 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var smtpSettings = new Settings.SmtpSettings();
             Configuration.Bind("Smtp", smtpSettings);
             services.AddSingleton(smtpSettings.ToPostOffice());
+        }
+
+        private static void ConfigureAuthorization(IServiceCollection services)
+        {
+            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+            services.AddAuthentication(opts =>
+            {
+                opts.DefaultAuthenticateScheme =
+                    JwtBearerDefaults.AuthenticationScheme;
+                opts.DefaultChallengeScheme =
+                    JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opts =>
+            {
+                opts.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("Let's hope that this generates more than 128 bytes...")),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    RoleClaimType = "role"
+                };
+                opts.RequireHttpsMetadata = false;
+            });
         }
 
         public static void Configure(
