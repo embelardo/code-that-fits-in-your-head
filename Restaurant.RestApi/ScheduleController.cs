@@ -29,23 +29,33 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var date = new DateTime(year, month, day);
             var firstTick = date;
             var lastTick = firstTick.AddDays(1).AddTicks(-1);
-            var reservations = await Repository.ReadReservations(firstTick, lastTick).ConfigureAwait(false);
+            var reservations = await Repository
+                .ReadReservations(firstTick, lastTick).ConfigureAwait(false);
+
             var schedule = MaitreD.Schedule(reservations);
+
+            return MakeCalendar(date, schedule);
+        }
+
+        private ActionResult MakeCalendar(
+            DateTime date,
+            IEnumerable<Occurrence<IEnumerable<Table>>> schedule)
+        {
             var entries = schedule.Select(MakeEntry).ToArray();
 
             return new OkObjectResult(
                 new CalendarDto
                 {
-                    Year = year,
-                    Month = month,
-                    Day = day,
+                    Year = date.Year,
+                    Month = date.Month,
+                    Day = date.Day,
                     Days = new[]
                     {
-                        new DayDto 
+                        new DayDto
                         {
                             Date = date.ToIso8601DateString(),
                             Entries = entries
-                        } 
+                        }
                     }
                 });
         }
