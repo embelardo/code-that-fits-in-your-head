@@ -2,6 +2,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,14 +31,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var lastTick = firstTick.AddDays(1).AddTicks(-1);
             var reservations = await Repository.ReadReservations(firstTick, lastTick).ConfigureAwait(false);
             var schedule = MaitreD.Schedule(reservations);
-            var entries = schedule.Select(o => new TimeDto
-            {
-                Time = o.At.TimeOfDay.ToIso8601TimeString(),
-                Reservations = o.Value
-                    .SelectMany(t => t.Accept(ReservationsVisitor.Instance))
-                    .Select(r => r.ToDto())
-                    .ToArray()
-            }).ToArray();
+            var entries = schedule.Select(MakeEntry).ToArray();
 
             return new OkObjectResult(
                 new CalendarDto
@@ -53,6 +48,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
                         } 
                     }
                 });
+        }
+
+        private TimeDto MakeEntry(Occurrence<IEnumerable<Table>> occurrence)
+        {
+            return new TimeDto
+            {
+                Time = occurrence.At.TimeOfDay.ToIso8601TimeString(),
+                Reservations = occurrence.Value
+                    .SelectMany(t => t.Accept(ReservationsVisitor.Instance))
+                    .Select(r => r.ToDto())
+                    .ToArray()
+            };
         }
     }
 }
