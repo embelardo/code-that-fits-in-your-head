@@ -1,4 +1,5 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -47,6 +48,20 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Equal(
                 new DateTime(year, month, day).ToIso8601DateString(),
                 dayDto.Date);
+        }
+
+        [Fact]
+        public void GetScheduleForDateWithoutReservations()
+        {
+            var db = new FakeDatabase();
+            var sut = new ScheduleController(db);
+
+            var actual = sut.Get(2020, 8, 26);
+
+            var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
+            var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
+            var day = Assert.Single(calendar.Days);
+            Assert.Empty(day.Entries);
         }
     }
 }

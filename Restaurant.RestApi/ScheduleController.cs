@@ -11,6 +11,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
     [Route("schedule")]
     public class ScheduleController
     {
+        public ScheduleController(IReservationsRepository repository)
+        {
+            Repository = repository;
+        }
+
+        public IReservationsRepository Repository { get; }
+
 #pragma warning disable CA1822 // Mark members as static
         [HttpGet("{year}/{month}/{day}"), Authorize(Roles = "MaitreD")]
         public ActionResult Get(int year, int month, int day)
@@ -27,7 +34,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                         new DayDto 
                         {
                             Date = new DateTime(year, month, day)
-                                .ToIso8601DateString()
+                                .ToIso8601DateString(),
+                            Entries = Array.Empty<TimeDto>()
                         } 
                     }
                 });
