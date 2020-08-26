@@ -63,7 +63,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 .ToHashSet();
 
             var actual = occurrence.Value
-                .SelectMany(t => t.Accept(new ReservationsVisitor()))
+                .SelectMany(t => t.Accept(ReservationsVisitor.Instance))
                 .ToHashSet();
 
             Assert.True(
