@@ -47,9 +47,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
             services.AddSingleton(smtpSettings.ToPostOffice());
         }
 
-        private static void ConfigureAuthorization(IServiceCollection services)
+        private void ConfigureAuthorization(IServiceCollection services)
         {
             JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+            var secret = Configuration["JwtIssuerSigningKey"];
+
             services.AddAuthentication(opts =>
             {
                 opts.DefaultAuthenticateScheme =
@@ -61,7 +64,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 opts.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("Let's hope that this generates more than 128 bytes...")),
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.ASCII.GetBytes(secret)),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     RoleClaimType = "role"
