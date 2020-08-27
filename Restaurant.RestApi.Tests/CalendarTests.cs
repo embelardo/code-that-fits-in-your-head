@@ -77,11 +77,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         }
 
         [Theory]
-        [InlineData(1999)]
+        [InlineData(2009)]
         [InlineData(2019)]
         [InlineData(2020)]
         [InlineData(2021)]
-        [InlineData(2050)]
+        [InlineData(2029)]
         public async Task GetSpecificYear(int year)
         {
             using var service = new SelfHostedService();
@@ -166,11 +166,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         }
 
         [Theory]
-        [InlineData(1998, 12)]
+        [InlineData(2010, 12)]
         [InlineData(2020,  4)]
         [InlineData(2020,  7)]
         [InlineData(2020,  9)]
-        [InlineData(2050,  8)]
+        [InlineData(2030,  8)]
         public async Task GetSpecificMonth(int year, int month)
         {
             using var service = new SelfHostedService();
@@ -261,11 +261,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         }
 
         [Theory]
-        [InlineData(1990, 3, 28)]
+        [InlineData(2010, 3, 28)]
         [InlineData(2020, 7,  1)]
         [InlineData(2020, 7, 10)]
         [InlineData(2020, 7, 17)]
-        [InlineData(2050, 2,  9)]
+        [InlineData(2030, 2,  9)]
         public async Task GetSpecificDay(int year, int month, int day)
         {
             using var service = new SelfHostedService();
