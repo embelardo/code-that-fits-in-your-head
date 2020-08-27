@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi
@@ -13,6 +16,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
     internal sealed class SigningUrlHelper : IUrlHelper
     {
         private readonly IUrlHelper inner;
+        private const string secret = "The very secret secret that's checked into source contro.";
 
         public SigningUrlHelper(IUrlHelper inner)
         {
@@ -27,9 +31,15 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public string Action(UrlActionContext actionContext)
         {
             var url = inner.Action(actionContext);
-
             var ub = new UriBuilder(url);
-            ub.Query = new QueryString(ub.Query).Add("sig", "foo").ToString();
+
+            using var hmac = new HMACSHA256(Encoding.ASCII.GetBytes(secret));
+            var sig = Encoding.ASCII.GetString(
+                hmac.ComputeHash(Encoding.ASCII.GetBytes(url)));
+
+            ub.Query = new QueryString(ub.Query)
+                .Add("sig", WebUtility.UrlEncode(sig))
+                .ToString();
             return ub.ToString();
         }
 
