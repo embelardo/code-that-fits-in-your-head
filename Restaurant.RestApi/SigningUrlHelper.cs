@@ -1,4 +1,5 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using System;
@@ -25,7 +26,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         public string Action(UrlActionContext actionContext)
         {
-            return inner.Action(actionContext);
+            var url = inner.Action(actionContext);
+
+            var ub = new UriBuilder(url);
+            ub.Query = new QueryString(ub.Query).Add("sig", "foo").ToString();
+            return ub.ToString();
         }
 
         public string Content(string contentPath)
