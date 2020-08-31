@@ -24,7 +24,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             ActionExecutingContext context,
             ActionExecutionDelegate next)
         {
-            if (context.HttpContext.Request.Path == "/" && context.HttpContext.Request.Method == "GET")
+            if (IsGetHomeRequest(context))
             {
                 await next().ConfigureAwait(false);
                 return;
@@ -53,6 +53,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
             }
 
             await next().ConfigureAwait(false);
+        }
+
+        private static bool IsGetHomeRequest(ActionExecutingContext context)
+        {
+            return context.HttpContext.Request.Path == "/"
+                && context.HttpContext.Request.Method == "GET";
         }
     }
 }
