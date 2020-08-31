@@ -21,7 +21,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
     public sealed class Startup
     {
         public IConfiguration Configuration { get; }
-        private const string secret = "The very secret secret that's checked into source contro.";
 
         public Startup(IConfiguration configuration)
         {
@@ -30,13 +29,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var urlSigningKey = Encoding.ASCII.GetBytes(
+                Configuration.GetValue<string>("UrlSigningKey"));
+
             services
                 .AddControllers(opts =>
                 {
                     opts.Filters.Add<LinksFilter>();
                     opts.Filters.Add(
                         new UrlIntegrityFilter(
-                            Encoding.ASCII.GetBytes(secret)));
+                            urlSigningKey));
                 })
                 .AddJsonOptions(opts =>
                     opts.JsonSerializerOptions.IgnoreNullValues = true);
@@ -47,7 +49,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             services.AddSingleton<IUrlHelperFactory>(
                 new SigningUrlHelperFactory(
                     new UrlHelperFactory(),
-                    Encoding.ASCII.GetBytes(secret)));
+                    urlSigningKey));
 
             var connStr = Configuration.GetConnectionString("Restaurant");
             services.AddSingleton<IReservationsRepository>(
