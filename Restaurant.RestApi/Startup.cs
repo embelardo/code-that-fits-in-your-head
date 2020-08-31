@@ -9,8 +9,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
@@ -28,11 +30,20 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddControllers(opts => opts.Filters.Add<LinksFilter>())
+                .AddControllers(opts =>
+                {
+                    opts.Filters.Add<LinksFilter>();
+                    opts.Filters.Add<UrlIntegrityFilter>();
+                })
                 .AddJsonOptions(opts =>
                     opts.JsonSerializerOptions.IgnoreNullValues = true);
 
             ConfigureAuthorization(services);
+
+            services.RemoveAll<IUrlHelperFactory>();
+            services.AddSingleton<IUrlHelperFactory>(
+                new SigningUrlHelperFactory(
+                    new UrlHelperFactory()));
 
             var connStr = Configuration.GetConnectionString("Restaurant");
             services.AddSingleton<IReservationsRepository>(

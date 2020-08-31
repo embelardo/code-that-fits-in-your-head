@@ -72,17 +72,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return tokenHandler.WriteToken(token);
         }
 
-        [SuppressMessage(
-            "Usage",
-            "CA2234:Pass system uri objects instead of strings",
-            Justification = "URL isn't passed as variable, but as literal.")]
         public async Task<HttpResponseMessage> PostReservation(
             object reservation)
         {
             string json = JsonSerializer.Serialize(reservation);
             using var content = new StringContent(json);
             content.Headers.ContentType.MediaType = "application/json";
-            return await CreateClient().PostAsync("reservations", content);
+
+            var address = await FindAddress("urn:reservations");
+            return await CreateClient().PostAsync(address, content);
         }
 
         public async Task<HttpResponseMessage> PutReservation(

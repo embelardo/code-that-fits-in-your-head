@@ -31,8 +31,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (!(ctxAfter.Result is OkObjectResult ok))
                 return;
 
-            IUrlHelper? url = UrlHelperFactory.GetUrlHelper(ctxAfter);
-            url = new SigningUrlHelper(url);
+            var url = UrlHelperFactory.GetUrlHelper(ctxAfter);
             switch (ok.Value)
             {
                 case HomeDto homeDto:

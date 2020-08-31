@@ -16,7 +16,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
     internal sealed class SigningUrlHelper : IUrlHelper
     {
         private readonly IUrlHelper inner;
-        private const string secret = "The very secret secret that's checked into source contro.";
+        public const string secret = "The very secret secret that's checked into source contro.";
 
         public SigningUrlHelper(IUrlHelper inner)
         {
@@ -34,11 +34,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var ub = new UriBuilder(url);
 
             using var hmac = new HMACSHA256(Encoding.ASCII.GetBytes(secret));
-            var sig = Encoding.ASCII.GetString(
+            var sig = Convert.ToBase64String(
                 hmac.ComputeHash(Encoding.ASCII.GetBytes(url)));
 
             ub.Query = new QueryString(ub.Query)
-                .Add("sig", WebUtility.UrlEncode(sig))
+                .Add("sig", sig)
                 .ToString();
             return ub.ToString();
         }

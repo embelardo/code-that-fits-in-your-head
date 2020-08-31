@@ -37,8 +37,19 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
             using var content = new StringContent(json);
             content.Headers.ContentType.MediaType = "application/json";
 
-            var address = new Uri("reservations", UriKind.Relative);
+            var address = await FindAddress("urn:reservations");
             return await client.PostAsync(address, content);
+        }
+
+        private async Task<Uri> FindAddress(string rel)
+        {
+            var homeResponse =
+                await CreateClient().GetAsync(new Uri("", UriKind.Relative));
+            homeResponse.EnsureSuccessStatusCode();
+            var homeRepresentation =
+                await homeResponse.ParseJsonContent<HomeDto>();
+
+            return homeRepresentation.Links.FindAddress(rel);
         }
 
         public async Task<(Uri, ReservationDto)> PostReservation(
@@ -51,22 +62,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
                 .Build());
             resp.EnsureSuccessStatusCode();
 
-            var dto = await ParseReservationContent(resp);
+            var dto = await resp.ParseJsonContent<ReservationDto>();
 
             return (resp.Headers.Location, dto);
-        }
-
-        private static async Task<ReservationDto> ParseReservationContent(
-            HttpResponseMessage msg)
-        {
-            var json = await msg.Content.ReadAsStringAsync();
-            var reservation = JsonSerializer.Deserialize<ReservationDto>(
-                json,
-                new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
-            return reservation;
         }
 
         public async Task<HttpResponseMessage> PutReservation(

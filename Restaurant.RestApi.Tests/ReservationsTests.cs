@@ -180,7 +180,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 $"Actual status code: {postResp.StatusCode}.");
             var actual = await getResp.ParseJsonContent<ReservationDto>();
             Assert.Equal(expected, actual, new ReservationDtoComparer());
-            Assert.DoesNotContain(address.ToString(), char.IsUpper);
+            Assert.DoesNotContain(
+                address.GetLeftPart(UriPartial.Path),
+                char.IsUpper);
         }
 
         private static Uri FindReservationAddress(HttpResponseMessage response)
@@ -199,6 +201,29 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var resp = await service.CreateClient().GetAsync(url);
 
             Assert.Equal(HttpStatusCode.NotFound, resp.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("DA5EFE7FAE914F43828467D403DD9814")]
+        [InlineData("d4fec75f8d054299975515f757f1223e")]
+        public async Task NoHackingOfUrlsAllowed(string id)
+        {
+            using var service = new SelfHostedService();
+            var dto = Some.Reservation.ToDto();
+            dto.Id = id;
+            var postResp = await service.PostReservation(dto);
+            postResp.EnsureSuccessStatusCode();
+
+            /* This is the sort of 'hacking' of URLs that clients should be
+             * discouraged from. Clients should be following links, as all the
+             * other tests in this test suite demonstrate. */
+            var urlHack = new Uri($"/reservations/{id}", UriKind.Relative);
+            var getResp = await service.CreateClient().GetAsync(urlHack);
+
+            /* The expected result of a 'hacked' URL is 404 Not Found rather
+             * than 403 Forbidden. Clients are simply requesting a URL which
+             * doesn't exist. */
+            Assert.Equal(HttpStatusCode.NotFound, getResp.StatusCode);
         }
 
         [Theory]
@@ -231,13 +256,18 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         }
 
         [Theory]
-        [InlineData("bar")]
+        [InlineData("d46668b1ea484d9d918e2143e2f6e991")]
         [InlineData("79F53E9D9A66458AB79E11DA130BF1D8")]
-        public async Task DeleteAbsentReservation(string id)
+        public async Task DeleteIsIdempotent(string id)
         {
             using var service = new SelfHostedService();
+            var dto = Some.Reservation.ToDto();
+            dto.Id = id;
+            var postResp = await service.PostReservation(dto);
+            postResp.EnsureSuccessStatusCode();
+            var url = FindReservationAddress(postResp);
 
-            var url = new Uri($"/reservations/{id}", UriKind.Relative);
+            await service.CreateClient().DeleteAsync(url);
             var resp = await service.CreateClient().DeleteAsync(url);
 
             Assert.True(
