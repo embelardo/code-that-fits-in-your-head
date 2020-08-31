@@ -12,17 +12,20 @@ namespace Ploeh.Samples.Restaurant.RestApi
     public sealed class SigningUrlHelperFactory : IUrlHelperFactory
     {
         private readonly IUrlHelperFactory inner;
-        public const string secret = "The very secret secret that's checked into source contro.";
+        private readonly byte[] urlSigningKey;
 
-        public SigningUrlHelperFactory(IUrlHelperFactory inner)
+        public SigningUrlHelperFactory(
+            IUrlHelperFactory inner,
+            byte[] urlSigningKey)
         {
             this.inner = inner;
+            this.urlSigningKey = urlSigningKey;
         }
 
         public IUrlHelper GetUrlHelper(ActionContext context)
         {
             var url = inner.GetUrlHelper(context);
-            return new SigningUrlHelper(url, Encoding.ASCII.GetBytes(secret));
+            return new SigningUrlHelper(url, urlSigningKey);
         }
     }
 }
