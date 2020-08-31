@@ -35,7 +35,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                     opts.Filters.Add<LinksFilter>();
                     opts.Filters.Add(
                         new UrlIntegrityFilter(
-                            Encoding.ASCII.GetBytes(SigningUrlHelper.secret)));
+                            Encoding.ASCII.GetBytes(SigningUrlHelperFactory.secret)));
                 })
                 .AddJsonOptions(opts =>
                     opts.JsonSerializerOptions.IgnoreNullValues = true);

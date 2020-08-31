@@ -16,11 +16,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
     internal sealed class SigningUrlHelper : IUrlHelper
     {
         private readonly IUrlHelper inner;
-        public const string secret = "The very secret secret that's checked into source contro.";
+        private readonly byte[] urlSigningKey;
 
-        public SigningUrlHelper(IUrlHelper inner)
+        public SigningUrlHelper(IUrlHelper inner, byte[] urlSigningKey)
         {
             this.inner = inner;
+            this.urlSigningKey = urlSigningKey;
         }
 
         public ActionContext ActionContext
@@ -33,7 +34,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var url = inner.Action(actionContext);
             var ub = new UriBuilder(url);
 
-            using var hmac = new HMACSHA256(Encoding.ASCII.GetBytes(secret));
+            using var hmac = new HMACSHA256(urlSigningKey);
             var sig = Convert.ToBase64String(
                 hmac.ComputeHash(Encoding.ASCII.GetBytes(url)));
 
