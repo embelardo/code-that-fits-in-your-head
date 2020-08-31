@@ -43,13 +43,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 .AddJsonOptions(opts =>
                     opts.JsonSerializerOptions.IgnoreNullValues = true);
 
-            ConfigureAuthorization(services);
+            ConfigureUrSigning(services, urlSigningKey);
 
-            services.RemoveAll<IUrlHelperFactory>();
-            services.AddSingleton<IUrlHelperFactory>(
-                new SigningUrlHelperFactory(
-                    new UrlHelperFactory(),
-                    urlSigningKey));
+            ConfigureAuthorization(services);
 
             var connStr = Configuration.GetConnectionString("Restaurant");
             services.AddSingleton<IReservationsRepository>(
@@ -62,6 +58,17 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var smtpSettings = new Settings.SmtpSettings();
             Configuration.Bind("Smtp", smtpSettings);
             services.AddSingleton(smtpSettings.ToPostOffice());
+        }
+
+        private static void ConfigureUrSigning(
+            IServiceCollection services,
+            byte[] urlSigningKey)
+        {
+            services.RemoveAll<IUrlHelperFactory>();
+            services.AddSingleton<IUrlHelperFactory>(
+                new SigningUrlHelperFactory(
+                    new UrlHelperFactory(),
+                    urlSigningKey));
         }
 
         private void ConfigureAuthorization(IServiceCollection services)
