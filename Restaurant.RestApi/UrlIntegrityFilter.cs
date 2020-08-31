@@ -33,17 +33,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 return;
             }
 
-            var sig = context.HttpContext.Request.Query["sig"];
-            var sigBytes =
-                Convert.FromBase64String(sig.ToString());
-
             var strippedUrl = GetUrlWithoutSignature(context);
 
-            using var hmac = new HMACSHA256(urlSigningKey);
-            var expectedSignature =
-                hmac.ComputeHash(Encoding.ASCII.GetBytes(strippedUrl));
-            var signaturesMatch = expectedSignature.SequenceEqual(sigBytes);
-            if (!signaturesMatch)
+            if (!SignatureIsValid(strippedUrl, context))
             {
                 context.Result = new NotFoundResult();
                 return;
@@ -68,6 +60,22 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var ub = new UriBuilder(url);
             ub.Query = restOfQuery.ToString();
             return ub.Uri.AbsoluteUri;
+        }
+
+        private bool SignatureIsValid(
+            string candidate,
+            ActionExecutingContext context)
+        {
+            var sig = context.HttpContext.Request.Query["sig"];
+            var receivedSignature = Convert.FromBase64String(sig.ToString());
+
+            using var hmac = new HMACSHA256(urlSigningKey);
+            var computedSignature =
+                hmac.ComputeHash(Encoding.ASCII.GetBytes(candidate));
+
+            var signaturesMatch =
+                computedSignature.SequenceEqual(receivedSignature);
+            return signaturesMatch;
         }
     }
 }
