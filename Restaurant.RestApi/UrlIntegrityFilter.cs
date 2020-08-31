@@ -34,14 +34,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
             }
 
             var strippedUrl = GetUrlWithoutSignature(context);
-
-            if (!SignatureIsValid(strippedUrl, context))
+            if (SignatureIsValid(strippedUrl, context))
             {
-                context.Result = new NotFoundResult();
+                await next().ConfigureAwait(false);
                 return;
             }
 
-            await next().ConfigureAwait(false);
+            context.Result = new NotFoundResult();
         }
 
         private static bool IsGetHomeRequest(ActionExecutingContext context)
