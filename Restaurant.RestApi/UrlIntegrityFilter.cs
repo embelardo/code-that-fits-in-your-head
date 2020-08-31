@@ -14,12 +14,15 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
-    [SuppressMessage(
-        "Performance",
-        "CA1812: Avoid uninstantiated internal classes",
-        Justification = "This class is instantiated via Reflection.")]
     internal sealed class UrlIntegrityFilter : IAsyncActionFilter
     {
+        private readonly byte[] urlSigningKey;
+
+        public UrlIntegrityFilter(byte[] urlSigningKey)
+        {
+            this.urlSigningKey = urlSigningKey;
+        }
+
         public async Task OnActionExecutionAsync(
             ActionExecutingContext context,
             ActionExecutionDelegate next)
@@ -36,8 +39,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             var strippedUrl = GetUrlWithoutSignature(context);
 
-            using var hmac =
-                new HMACSHA256(Encoding.ASCII.GetBytes(SigningUrlHelper.secret));
+            using var hmac = new HMACSHA256(urlSigningKey);
             var expectedSignature =
                 hmac.ComputeHash(Encoding.ASCII.GetBytes(strippedUrl));
             var signaturesMatch = expectedSignature.SequenceEqual(sigBytes);
