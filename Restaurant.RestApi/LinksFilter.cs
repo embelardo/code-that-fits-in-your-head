@@ -40,6 +40,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 case CalendarDto calendarDto:
                     AddLinks(calendarDto, url);
                     break;
+                case RestaurantDto restaurantDto:
+                    AddLinks(restaurantDto, url);
+                    break;
                 default:
                     break;
             }
@@ -63,9 +66,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private static void AddLinks(RestaurantDto restaurant, IUrlHelper url)
         {
+            var now = DateTime.Now;
             restaurant.Links = new[]
             {
-                url.LinkToRestaurant(restaurant.Name?.Length ?? 0)
+                url.LinkToRestaurant(restaurant.Name?.Length ?? 0),
+                url.LinkToReservations(),
+                url.LinkToYear(now.Year),
+                url.LinkToMonth(now.Year, now.Month),
+                url.LinkToDay(now.Year, now.Month, now.Day)
             };
         }
 
