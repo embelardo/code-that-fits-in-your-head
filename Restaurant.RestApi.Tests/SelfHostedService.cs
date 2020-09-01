@@ -93,6 +93,22 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return await CreateClient().PutAsync(address, content);
         }
 
+        public async Task<HttpResponseMessage> GetRestaurant(string name)
+        {
+            var client = CreateClient();
+
+            var homeResponse =
+                await client.GetAsync(new Uri("", UriKind.Relative));
+            homeResponse.EnsureSuccessStatusCode();
+            var homeRepresentation =
+                await homeResponse.ParseJsonContent<HomeDto>();
+            var restaurant =
+                homeRepresentation.Restaurants.First(r => r.Name == name);
+            var address = restaurant.Links.FindAddress("urn:restaurant");
+
+            return await client.GetAsync(address);
+        }
+
         public async Task<HttpResponseMessage> GetCurrentYear()
         {
             var yearAddress = await FindAddress("urn:year");

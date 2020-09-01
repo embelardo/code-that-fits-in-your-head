@@ -22,7 +22,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 {
                     Restaurants = new[]
                     {
-                        new RestaurantDto { Name = "Hipgnosta" }
+                        new RestaurantDto { Name = "Hipgnosta" },
+                        new RestaurantDto { Name = "Nono" },
+                        new RestaurantDto { Name = "The Vatican Cellar" }
                     }
                 });
         }
