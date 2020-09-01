@@ -17,7 +17,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Justification = "Controller methods must be instance methods.")]
         public ActionResult Get()
         {
-            return new OkObjectResult(new HomeDto());
+            return new OkObjectResult(
+                new HomeDto
+                {
+                    Restaurants = new[] {new RestaurantDto { } }
+                });
         }
     }
 }
