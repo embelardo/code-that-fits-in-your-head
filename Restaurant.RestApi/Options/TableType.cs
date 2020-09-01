@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ploeh.Samples.Restaurant.RestApi.Settings
+namespace Ploeh.Samples.Restaurant.RestApi.Options
 {
     public enum TableType
     {

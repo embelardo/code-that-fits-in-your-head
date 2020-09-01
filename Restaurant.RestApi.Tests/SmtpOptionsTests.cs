@@ -1,5 +1,5 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
-using Ploeh.Samples.Restaurant.RestApi.Settings;
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿using Ploeh.Samples.Restaurant.RestApi.Options;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurant.RestApi.Tests
 {
-    public class SmtpSettingsTests
+    public class SmtpOptionsTests
     {
         [Theory]
         [InlineData("", 587, "foo", "bar", "w@example.com")]
@@ -25,7 +25,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             string password,
             string fromAddress)
         {
-            var sut = new SmtpSettings
+            var sut = new SmtpOptions
             {
                 Host = host,
                 Port = port,
@@ -47,7 +47,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             string password,
             string fromAddress)
         {
-            var sut = new SmtpSettings
+            var sut = new SmtpOptions
             {
                 Host = host,
                 Port = port,

@@ -51,13 +51,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
             services.AddSingleton<IReservationsRepository>(
                 new SqlReservationsRepository(connStr));
 
-            var restaurantSettings = new Settings.RestaurantSettings();
-            Configuration.Bind("Restaurant", restaurantSettings);
-            services.AddSingleton(restaurantSettings.ToMaitreD());
+            var restaurantOptions = new Options.RestaurantOptions();
+            Configuration.Bind("Restaurant", restaurantOptions);
+            services.AddSingleton(restaurantOptions.ToMaitreD());
 
-            var smtpSettings = new Settings.SmtpSettings();
-            Configuration.Bind("Smtp", smtpSettings);
-            services.AddSingleton(smtpSettings.ToPostOffice());
+            var smtpOptions = new Options.SmtpOptions();
+            Configuration.Bind("Smtp", smtpOptions);
+            services.AddSingleton(smtpOptions.ToPostOffice());
         }
 
         private static void ConfigureUrSigning(

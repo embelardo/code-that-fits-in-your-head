@@ -5,9 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ploeh.Samples.Restaurant.RestApi.Settings
+namespace Ploeh.Samples.Restaurant.RestApi.Options
 {
-    public class RestaurantSettings
+    public class RestaurantOptions
     {
         public TimeSpan OpensAt { get; set; }
         public TimeSpan LastSeating { get; set; }
@@ -17,7 +17,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Settings
             "Performance",
             "CA1819:Properties should not return arrays",
             Justification = "With the .NET configuration system, it seems like it's either this, or some collection object with a public setter, which causes other code analysis warnings.")]
-        public TableSettings[]? Tables { get; set; }
+        public TableOptions[]? Tables { get; set; }
 
         internal MaitreD ToMaitreD()
         {

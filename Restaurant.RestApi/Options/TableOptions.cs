@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ploeh.Samples.Restaurant.RestApi.Settings
+namespace Ploeh.Samples.Restaurant.RestApi.Options
 {
-    public class TableSettings
+    public class TableOptions
     {
         public TableType TableType { get; set; }
         public int Seats { get; set; }
