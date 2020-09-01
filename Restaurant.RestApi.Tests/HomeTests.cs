@@ -76,6 +76,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var dto = await response.ParseJsonContent<HomeDto>();
             Assert.NotEmpty(dto.Restaurants);
             Assert.All(dto.Restaurants, r => Assert.NotEmpty(r.Name));
+            Assert.All(
+                dto.Restaurants,
+                r => Assert.Contains(r.Links, l => l.Rel == "urn:restaurant"));
         }
     }
 }
