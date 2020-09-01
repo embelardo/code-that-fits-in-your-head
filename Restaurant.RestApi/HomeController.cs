@@ -20,7 +20,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new OkObjectResult(
                 new HomeDto
                 {
-                    Restaurants = new[] {new RestaurantDto { } }
+                    Restaurants = new[]
+                    {
+                        new RestaurantDto { Name = "Hipgnosta" }
+                    }
                 });
         }
     }
