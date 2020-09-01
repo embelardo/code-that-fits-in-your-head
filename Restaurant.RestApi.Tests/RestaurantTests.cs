@@ -16,10 +16,14 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task GetRestaurant(string name)
         {
             using var service = new SelfHostedService();
+
             var response = await service.GetRestaurant(name);
+
             Assert.True(
                 response.IsSuccessStatusCode,
                 $"Actual status code: {response.StatusCode}.");
+            var content = await response.ParseJsonContent<RestaurantDto>();
+            Assert.Equal(name, content.Name);
         }
     }
 }

@@ -65,7 +65,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             restaurant.Links = new[]
             {
-                url.LinkToYear(1900, "urn:restaurant")
+                url.LinkToRestaurant(restaurant.Name?.Length ?? 0)
             };
         }
 

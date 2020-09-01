@@ -13,6 +13,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
             new UrlBuilder()
                 .WithAction(nameof(ReservationsController.Post))
                 .WithController(nameof(ReservationsController));
+        private readonly static UrlBuilder restaurants =
+            new UrlBuilder()
+                .WithAction(nameof(RestaurantsController.Get))
+                .WithController(nameof(RestaurantsController));
         private readonly static UrlBuilder calendar =
             new UrlBuilder()
                 .WithAction(nameof(CalendarController.Get))
@@ -30,6 +34,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
         internal static LinkDto LinkToReservations(this IUrlHelper url)
         {
             return reservations.BuildAbsolute(url).Link("urn:reservations");
+        }
+
+        internal static LinkDto LinkToRestaurant(this IUrlHelper url, int id)
+        {
+            return restaurants
+                .WithValues(new { id })
+                .BuildAbsolute(url)
+                .Link("urn:restaurant");
         }
 
         internal static LinkDto LinkToYear(this IUrlHelper url, int year)
