@@ -79,6 +79,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.All(
                 dto.Restaurants,
                 r => Assert.Contains(r.Links, l => l.Rel == "urn:restaurant"));
+            Assert.All(
+                dto.Restaurants.SelectMany(r => r.Links),
+                AssertHrefAbsoluteUrl);
         }
     }
 }
