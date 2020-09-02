@@ -49,6 +49,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
             var addGuidColumn = ReadDdl("AddGuidColumnToReservations");
             foreach (var s in SeperateStatements(addGuidColumn))
                 yield return s;
+
+            var addTenantIdColumn = ReadDdl("AddTenantColumnToReservations");
+            foreach (var s in SeperateStatements(addTenantIdColumn))
+                yield return s;
         }
 
         private static string ReadDdl(string name)

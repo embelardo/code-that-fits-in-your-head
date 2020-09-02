@@ -25,6 +25,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             using var conn = new SqlConnection(ConnectionString);
             using var cmd = new SqlCommand(createReservationSql, conn);
             cmd.Parameters.AddWithValue("@Id", reservation.Id);
+            cmd.Parameters.AddWithValue("@RestaurantId", 1);
             cmd.Parameters.AddWithValue("@At", reservation.At);
             cmd.Parameters.AddWithValue("@Name", reservation.Name.ToString());
             cmd.Parameters.AddWithValue("@Email", reservation.Email.ToString());
@@ -36,8 +37,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private const string createReservationSql = @"
             INSERT INTO [dbo].[Reservations] (
-                [PublicId], [At], [Name], [Email], [Quantity])
-            VALUES (@Id, @At, @Name, @Email, @Quantity)";
+                [PublicId], [RestaurantId], [At], [Name], [Email], [Quantity])
+            VALUES (@Id, @RestaurantId, @At, @Name, @Email, @Quantity)";
 
         public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
             DateTime min,

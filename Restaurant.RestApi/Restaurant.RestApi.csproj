@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <None Remove="AddGuidColumnToReservations.sql" />
+    <None Remove="AddTenantColumnToReservations.sql" />
     <None Remove="RestaurantDbSchema.sql" />
   </ItemGroup>
 
@@ -28,6 +29,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="AddGuidColumnToReservations.sql" />
+    <EmbeddedResource Include="AddTenantColumnToReservations.sql" />
     <EmbeddedResource Include="RestaurantDbSchema.sql" />
   </ItemGroup>
 
