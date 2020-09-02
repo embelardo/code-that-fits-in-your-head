@@ -48,18 +48,17 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             ConfigureAuthorization(services);
 
-            services
-                .AddSingleton<IRestaurantDatabase, OptionsRestaurantDatabase>();
-
             var connStr = Configuration.GetConnectionString("Restaurant");
             services.AddSingleton<IReservationsRepository>(
                 new SqlReservationsRepository(connStr));
 
-            var restaurantOptions = new Options.RestaurantOptions();
-            Configuration.Bind("Restaurant", restaurantOptions);
-            services.AddSingleton(restaurantOptions.ToMaitreD());
+            var restaurantsOptions = Configuration.GetSection("Restaurants")
+                .Get<RestaurantOptions[]>();
+            services.AddSingleton(restaurantsOptions.First().ToMaitreD());
+            services.AddSingleton<IRestaurantDatabase>(
+                new OptionsRestaurantDatabase(restaurantsOptions));
 
-            var smtpOptions = new Options.SmtpOptions();
+            var smtpOptions = new SmtpOptions();
             Configuration.Bind("Smtp", smtpOptions);
             services.AddSingleton(smtpOptions.ToPostOffice());
         }

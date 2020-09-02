@@ -6,32 +6,35 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi.Options
 {
-    public class OptionsRestaurantDatabase : IRestaurantDatabase
+    internal class OptionsRestaurantDatabase : IRestaurantDatabase
     {
+        private readonly RestaurantOptions[] restaurants;
+
+        internal OptionsRestaurantDatabase(RestaurantOptions[] restaurants)
+        {
+            this.restaurants = restaurants;
+        }
+
         public Task<IEnumerable<string>> GetAllNames()
         {
             return Task.FromResult(
-                new[] { "Hipgnosta", "Nono", "The Vatican Cellar" }
-                .AsEnumerable());
+                restaurants.Select(r => r.Name).OfType<string>());
         }
 
         public Task<int?> GetId(string name)
         {
-            if (name is null)
-                throw new ArgumentNullException(nameof(name));
-
-            return Task.FromResult((int?)name.Length);
+            return Task.FromResult(restaurants
+                .Where(r => r.Name == name)
+                .Select(r => (int?)r.Id)
+                .SingleOrDefault());
         }
 
         public Task<string?> GetName(int id)
         {
-            var name = "Hipgnosta";
-            if (id == 4)
-                name = "Nono";
-            if (id == 18)
-                name = "The Vatican Cellar";
-
-            return Task.FromResult((string?)name);
+            return Task.FromResult(restaurants
+                .Where(r => r.Id == id)
+                .Select(r => r.Name)
+                .SingleOrDefault());
         }
     }
 }
