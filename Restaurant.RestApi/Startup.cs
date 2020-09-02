@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Ploeh.Samples.Restaurant.RestApi.Options;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
@@ -46,6 +47,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
             ConfigureUrSigning(services, urlSigningKey);
 
             ConfigureAuthorization(services);
+
+            services
+                .AddSingleton<IRestaurantDatabase, OptionsRestaurantDatabase>();
 
             var connStr = Configuration.GetConnectionString("Restaurant");
             services.AddSingleton<IReservationsRepository>(

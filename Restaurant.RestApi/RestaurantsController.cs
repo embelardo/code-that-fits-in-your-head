@@ -10,16 +10,17 @@ namespace Ploeh.Samples.Restaurant.RestApi
     [Route("restaurants")]
     public sealed class RestaurantsController
     {
-        [HttpGet("{id}")]
-#pragma warning disable CA1822 // Mark members as static
-        public ActionResult Get(int id)
-#pragma warning restore CA1822 // Mark members as static
+        public RestaurantsController(IRestaurantDatabase database)
         {
-            var name = "Hipgnosta";
-            if (id == 4)
-                name = "Nono";
-            if (id == 18)
-                name = "The Vatican Cellar";
+            Database = database;
+        }
+
+        public IRestaurantDatabase Database { get; }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult> Get(int id)
+        {
+            var name = await Database.GetName(id).ConfigureAwait(false);
 
             return new OkObjectResult(new RestaurantDto { Name = name });
         }
