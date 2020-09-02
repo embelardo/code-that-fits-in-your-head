@@ -17,10 +17,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
     internal class LinksFilter : IAsyncActionFilter
     {
         public IUrlHelperFactory UrlHelperFactory { get; }
+        public IRestaurantDatabase Database { get; }
 
-        public LinksFilter(IUrlHelperFactory urlHelperFactory)
+        public LinksFilter(
+            IUrlHelperFactory urlHelperFactory,
+            IRestaurantDatabase database)
         {
             UrlHelperFactory = urlHelperFactory;
+            Database = database;
         }
 
         public async Task OnActionExecutionAsync(
@@ -35,20 +39,20 @@ namespace Ploeh.Samples.Restaurant.RestApi
             switch (ok.Value)
             {
                 case HomeDto homeDto:
-                    AddLinks(homeDto, url);
+                    await AddLinks(homeDto, url).ConfigureAwait(false);
                     break;
                 case CalendarDto calendarDto:
                     AddLinks(calendarDto, url);
                     break;
                 case RestaurantDto restaurantDto:
-                    AddLinks(restaurantDto, url);
+                    await AddLinks(restaurantDto, url).ConfigureAwait(false);
                     break;
                 default:
                     break;
             }
         }
 
-        private static void AddLinks(HomeDto dto, IUrlHelper url)
+        private async Task AddLinks(HomeDto dto, IUrlHelper url)
         {
             var now = DateTime.Now;
             dto.Links = new[]
@@ -61,15 +65,24 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             if (dto.Restaurants is { })
                 foreach (var restaurant in dto.Restaurants)
-                    AddLinks(restaurant, url);
+                    await AddLinks(restaurant, url).ConfigureAwait(false);
         }
 
-        private static void AddLinks(RestaurantDto restaurant, IUrlHelper url)
+        private async Task AddLinks(RestaurantDto restaurant, IUrlHelper url)
         {
+            if (restaurant.Name is null)
+                return;
+
+            var restaurantId =
+                await Database.GetId(restaurant.Name).ConfigureAwait(false);
+            if (restaurantId is null)
+                return;
+
             var now = DateTime.Now;
+
             restaurant.Links = new[]
             {
-                url.LinkToRestaurant(restaurant.Name?.Length ?? 0),
+                url.LinkToRestaurant(restaurantId.Value),
                 url.LinkToReservations(),
                 url.LinkToYear(now.Year),
                 url.LinkToMonth(now.Year, now.Month),

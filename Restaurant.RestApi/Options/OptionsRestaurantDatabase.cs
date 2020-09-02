@@ -15,6 +15,14 @@ namespace Ploeh.Samples.Restaurant.RestApi.Options
                 .AsEnumerable());
         }
 
+        public Task<int?> GetId(string name)
+        {
+            if (name is null)
+                throw new ArgumentNullException(nameof(name));
+
+            return Task.FromResult((int?)name.Length);
+        }
+
         public Task<string?> GetName(int id)
         {
             var name = "Hipgnosta";
