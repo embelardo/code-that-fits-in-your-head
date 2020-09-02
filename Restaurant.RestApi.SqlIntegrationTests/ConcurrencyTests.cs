@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
+namespace Ploeh.Samples.Restaurants.RestApi.SqlIntegrationTests
 {
     [UseDatabase]
     public class ConcurrencyTests

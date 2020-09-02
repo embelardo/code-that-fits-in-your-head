@@ -6,9 +6,9 @@
 
     <IsPackable>false</IsPackable>
 
-    <AssemblyName>Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests</AssemblyName>
+    <AssemblyName>Ploeh.Samples.Restaurants.RestApi.SqlIntegrationTests</AssemblyName>
 
-    <RootNamespace>Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests</RootNamespace>
+    <RootNamespace>Ploeh.Samples.Restaurants.RestApi.SqlIntegrationTests</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

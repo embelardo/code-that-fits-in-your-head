@@ -7,7 +7,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ploeh.Samples.Restaurant.RestApi
+namespace Ploeh.Samples.Restaurants.RestApi
 {
     public sealed class SmtpPostOffice : IPostOffice
     {

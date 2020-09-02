@@ -15,7 +15,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Ploeh.Samples.Restaurant.RestApi.Tests
+namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
     /// <summary>
     /// This class encapsulates the interactions expected by a typical HTTP

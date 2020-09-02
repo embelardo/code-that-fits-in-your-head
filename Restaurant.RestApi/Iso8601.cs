@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ploeh.Samples.Restaurant.RestApi
+namespace Ploeh.Samples.Restaurants.RestApi
 {
     public static class Iso8601
     {

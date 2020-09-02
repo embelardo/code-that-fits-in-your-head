@@ -2,7 +2,7 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Ploeh.Samples.Restaurant.RestApi
+namespace Ploeh.Samples.Restaurants.RestApi
 {
     [SuppressMessage(
         "Performance",

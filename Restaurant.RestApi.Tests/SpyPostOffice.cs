@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace Ploeh.Samples.Restaurant.RestApi.Tests
+namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
     internal class SpyPostOffice :
         Collection<SpyPostOffice.Observation>, IPostOffice

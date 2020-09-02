@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ploeh.Samples.Restaurant.RestApi.Tests
+namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
     public static class ReservationEnvy
     {

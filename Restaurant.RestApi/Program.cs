@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Ploeh.Samples.Restaurant.RestApi
+namespace Ploeh.Samples.Restaurants.RestApi
 {
     public static class Program
     {

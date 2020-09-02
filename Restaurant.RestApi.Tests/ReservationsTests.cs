@@ -2,7 +2,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Ploeh.Samples.Restaurant.RestApi.Options;
+using Ploeh.Samples.Restaurants.RestApi.Options;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +17,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Ploeh.Samples.Restaurant.RestApi.Tests
+namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
     public class ReservationsTests
     {

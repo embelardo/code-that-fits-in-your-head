@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ploeh.Samples.Restaurant.RestApi
+namespace Ploeh.Samples.Restaurants.RestApi
 {
     [Authorize(Roles = "MaitreD")]
     public class ScheduleController

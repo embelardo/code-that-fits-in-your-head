@@ -3,8 +3,8 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>Ploeh.Samples.Restaurant.RestApi</AssemblyName>
-    <RootNamespace>Ploeh.Samples.Restaurant.RestApi</RootNamespace>
+    <AssemblyName>Ploeh.Samples.Restaurants.RestApi</AssemblyName>
+    <RootNamespace>Ploeh.Samples.Restaurants.RestApi</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

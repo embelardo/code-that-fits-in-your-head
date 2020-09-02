@@ -1,7 +1,7 @@
 /* Copyright (c) Mark Seemann 2020. All rights reserved. */
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Ploeh.Samples.Restaurant.RestApi
+namespace Ploeh.Samples.Restaurants.RestApi
 {
     [SuppressMessage(
             "Performance",

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ploeh.Samples.Restaurant.RestApi.Tests
+namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
     internal static class Gens
     {

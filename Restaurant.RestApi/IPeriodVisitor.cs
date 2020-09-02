@@ -1,5 +1,5 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
-namespace Ploeh.Samples.Restaurant.RestApi
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿namespace Ploeh.Samples.Restaurants.RestApi
 {
     internal interface IPeriodVisitor<T>
     {

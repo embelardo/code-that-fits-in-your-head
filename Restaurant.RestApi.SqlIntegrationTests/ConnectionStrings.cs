@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
+namespace Ploeh.Samples.Restaurants.RestApi.SqlIntegrationTests
 {
     public static class ConnectionStrings
     {

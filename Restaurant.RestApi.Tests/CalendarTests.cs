@@ -1,6 +1,6 @@
 /* Copyright (c) Mark Seemann 2020. All rights reserved. */
 ﻿using Microsoft.AspNetCore.Mvc;
-using Ploeh.Samples.Restaurant.RestApi.Options;
+using Ploeh.Samples.Restaurants.RestApi.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -13,7 +13,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Ploeh.Samples.Restaurant.RestApi.Tests
+namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
     public class CalendarTests
     {

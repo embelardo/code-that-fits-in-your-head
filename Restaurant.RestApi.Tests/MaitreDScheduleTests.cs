@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Xunit;
 
-namespace Ploeh.Samples.Restaurant.RestApi.Tests
+namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
     public class MaitreDScheduleTests
     {

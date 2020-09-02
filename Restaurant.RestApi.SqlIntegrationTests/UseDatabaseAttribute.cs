@@ -7,7 +7,7 @@ using System.IO;
 using System.Reflection;
 using Xunit.Sdk;
 
-namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
+namespace Ploeh.Samples.Restaurants.RestApi.SqlIntegrationTests
 {
     public class UseDatabaseAttribute : BeforeAfterTestAttribute
     {
@@ -60,7 +60,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
             using var strm = typeof(SqlReservationsRepository)
                 .Assembly
                 .GetManifestResourceStream(
-                    $"Ploeh.Samples.Restaurant.RestApi.{name}.sql");
+                    $"Ploeh.Samples.Restaurants.RestApi.{name}.sql");
             using var rdr = new StreamReader(strm!);
             return rdr.ReadToEnd();
         }

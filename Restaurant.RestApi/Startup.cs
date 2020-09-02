@@ -16,9 +16,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Ploeh.Samples.Restaurant.RestApi.Options;
+using Ploeh.Samples.Restaurants.RestApi.Options;
 
-namespace Ploeh.Samples.Restaurant.RestApi
+namespace Ploeh.Samples.Restaurants.RestApi
 {
     public sealed class Startup
     {

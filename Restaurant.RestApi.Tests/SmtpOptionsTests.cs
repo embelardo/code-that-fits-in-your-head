@@ -1,11 +1,11 @@
 /* Copyright (c) Mark Seemann 2020. All rights reserved. */
-﻿using Ploeh.Samples.Restaurant.RestApi.Options;
+﻿using Ploeh.Samples.Restaurants.RestApi.Options;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace Ploeh.Samples.Restaurant.RestApi.Tests
+namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
     public class SmtpOptionsTests
     {

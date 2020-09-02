@@ -6,9 +6,9 @@
 
     <IsPackable>false</IsPackable>
 
-    <AssemblyName>Ploeh.Samples.Restaurant.RestApi.Tests</AssemblyName>
+    <AssemblyName>Ploeh.Samples.Restaurants.RestApi.Tests</AssemblyName>
 
-    <RootNamespace>Ploeh.Samples.Restaurant.RestApi.Tests</RootNamespace>
+    <RootNamespace>Ploeh.Samples.Restaurants.RestApi.Tests</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -2,7 +2,7 @@
 using System;
 using System.Globalization;
 
-namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
+namespace Ploeh.Samples.Restaurants.RestApi.SqlIntegrationTests
 {
     internal class ReservationDtoBuilder
     {

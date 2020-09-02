@@ -1,12 +1,12 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
-using Ploeh.Samples.Restaurant.RestApi;
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿using Ploeh.Samples.Restaurants.RestApi;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ploeh.Samples.Restaurant.RestApi
+namespace Ploeh.Samples.Restaurants.RestApi
 {
     public class SqlReservationsRepository : IReservationsRepository
     {

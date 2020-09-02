@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
+namespace Ploeh.Samples.Restaurants.RestApi.SqlIntegrationTests
 {
     internal static class Content
     {
