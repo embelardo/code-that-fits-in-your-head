@@ -11,22 +11,22 @@ namespace Ploeh.Samples.Restaurant.RestApi
     [Route("")]
     public sealed class HomeController
     {
-        [SuppressMessage(
-            "Performance",
-            "CA1822:Mark members as static",
-            Justification = "Controller methods must be instance methods.")]
-        public ActionResult Get()
+        public HomeController(IRestaurantDatabase database)
         {
+            Database = database;
+        }
+
+        public IRestaurantDatabase Database { get; }
+
+        public async Task<ActionResult> Get()
+        {
+            var names = await Database.GetAllNames().ConfigureAwait(false);
+            var restaurants = names
+                .Select(n => new RestaurantDto { Name = n })
+                .ToArray();
+
             return new OkObjectResult(
-                new HomeDto
-                {
-                    Restaurants = new[]
-                    {
-                        new RestaurantDto { Name = "Hipgnosta" },
-                        new RestaurantDto { Name = "Nono" },
-                        new RestaurantDto { Name = "The Vatican Cellar" }
-                    }
-                });
+                new HomeDto { Restaurants = restaurants });
         }
     }
 }
