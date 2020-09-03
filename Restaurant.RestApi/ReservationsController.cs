@@ -46,7 +46,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (!MaitreD.WillAccept(DateTime.Now, reservations, r))
                 return NoTables500InternalServerError();
 
-            await Repository.Create(r).ConfigureAwait(false);
+            await Repository.Create(Grandfather.Id, r).ConfigureAwait(false);
             await PostOffice.EmailReservationCreated(r).ConfigureAwait(false);
             scope.Complete();
 
