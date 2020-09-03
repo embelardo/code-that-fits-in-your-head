@@ -70,7 +70,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         {
             var r = Some.Reservation;
             var db = new FakeDatabase();
-            await db.Create(r);
+            await db.Create(Grandfather.Id, r);
             var sut = new ScheduleController(db, Some.MaitreD);
 
             var actual = await sut.Get(r.At.Year, r.At.Month, r.At.Day);

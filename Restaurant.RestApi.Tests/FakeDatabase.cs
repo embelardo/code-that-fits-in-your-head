@@ -28,11 +28,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         /// <seealso cref="RestApi.Grandfather" />
         public Collection<Reservation> Grandfather { get; }
 
-        public Task Create(Reservation reservation)
-        {
-            return Create(RestApi.Grandfather.Id, reservation);
-        }
-
         public Task Create(int restaurantId, Reservation reservation)
         {
             AddOrUpdate(
@@ -65,7 +60,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 throw new ArgumentNullException(nameof(reservation));
 
             await Delete(reservation.Id);
-            await Create(reservation);
+            await Create(RestApi.Grandfather.Id, reservation);
         }
 
         public Task Delete(Guid id)
