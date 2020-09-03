@@ -8,6 +8,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
     public interface IReservationsRepository
     {
         Task Create(Reservation reservation);
+        Task Create(int restaurantId, Reservation reservation);
 
         Task<IReadOnlyCollection<Reservation>> ReadReservations(
             DateTime min, DateTime max);

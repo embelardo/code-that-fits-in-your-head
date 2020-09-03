@@ -1,5 +1,6 @@
 /* Copyright (c) Mark Seemann 2020. All rights reserved. */
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -13,11 +14,31 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         "CA1710:Identifiers should have correct suffix",
         Justification = "The role of the class is a Test Double.")]
     public class FakeDatabase :
-        Collection<Reservation>, IReservationsRepository
+        ConcurrentDictionary<int, Collection<Reservation>>, IReservationsRepository
     {
+        public FakeDatabase()
+        {
+            Grandfather = new Collection<Reservation>();
+            AddOrUpdate(RestApi.Grandfather.Id, Grandfather, (_, rs) => rs);
+        }
+
+        /// <summary>
+        /// The 'original' restaurant 'grandfathered' in.
+        /// </summary>
+        /// <seealso cref="RestApi.Grandfather" />
+        public Collection<Reservation> Grandfather { get; }
+
         public Task Create(Reservation reservation)
         {
-            Add(reservation);
+            return Create(RestApi.Grandfather.Id, reservation);
+        }
+
+        public Task Create(int restaurantId, Reservation reservation)
+        {
+            AddOrUpdate(
+                restaurantId,
+                new Collection<Reservation> { reservation },
+                (_, rs) => { rs.Add(reservation); return rs; });
             return Task.CompletedTask;
         }
 
@@ -26,12 +47,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             DateTime max)
         {
             return Task.FromResult<IReadOnlyCollection<Reservation>>(
-                this.Where(r => min <= r.At && r.At <= max).ToList());
+                GetOrAdd(RestApi.Grandfather.Id, new Collection<Reservation>())
+                    .Where(r => min <= r.At && r.At <= max).ToList());
         }
 
         public Task<Reservation?> ReadReservation(Guid id)
         {
-            var reservation = this.FirstOrDefault(r => r.Id == id);
+            var reservation =
+                GetOrAdd(RestApi.Grandfather.Id, new Collection<Reservation>())
+                .FirstOrDefault(r => r.Id == id);
             return Task.FromResult((Reservation?)reservation);
         }
 
@@ -46,9 +70,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
         public Task Delete(Guid id)
         {
-            var reservation = this.SingleOrDefault(r => r.Id == id);
+            var reservations =
+                GetOrAdd(RestApi.Grandfather.Id, new Collection<Reservation>());
+            var reservation = reservations.SingleOrDefault(r => r.Id == id);
             if (reservation is { })
-                Remove(reservation);
+                reservations.Remove(reservation);
 
             return Task.CompletedTask;
         }

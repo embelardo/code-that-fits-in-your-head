@@ -25,7 +25,25 @@ namespace Ploeh.Samples.Restaurant.RestApi
             using var conn = new SqlConnection(ConnectionString);
             using var cmd = new SqlCommand(createReservationSql, conn);
             cmd.Parameters.AddWithValue("@Id", reservation.Id);
-            cmd.Parameters.AddWithValue("@RestaurantId", 1);
+            cmd.Parameters.AddWithValue("@RestaurantId", Grandfather.Id);
+            cmd.Parameters.AddWithValue("@At", reservation.At);
+            cmd.Parameters.AddWithValue("@Name", reservation.Name.ToString());
+            cmd.Parameters.AddWithValue("@Email", reservation.Email.ToString());
+            cmd.Parameters.AddWithValue("@Quantity", reservation.Quantity);
+
+            await conn.OpenAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+        }
+
+        public async Task Create(int restaurantId, Reservation reservation)
+        {
+            if (reservation is null)
+                throw new ArgumentNullException(nameof(reservation));
+
+            using var conn = new SqlConnection(ConnectionString);
+            using var cmd = new SqlCommand(createReservationSql, conn);
+            cmd.Parameters.AddWithValue("@Id", reservation.Id);
+            cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
             cmd.Parameters.AddWithValue("@At", reservation.At);
             cmd.Parameters.AddWithValue("@Name", reservation.Name.ToString());
             cmd.Parameters.AddWithValue("@Email", reservation.Email.ToString());

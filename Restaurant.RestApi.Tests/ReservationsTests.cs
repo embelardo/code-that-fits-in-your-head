@@ -74,7 +74,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                     new Email(dto.Email),
                     new Name(dto.Name ?? ""),
                     dto.Quantity));
-            Assert.Contains(expected.Reservation, db);
+            Assert.Contains(expected.Reservation, db.Grandfather);
             Assert.Contains(expected, postOffice);
         }
 
@@ -279,7 +279,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task DeleteSendsEmail()
         {
             var r = Some.Reservation;
-            var db = new FakeDatabase { r };
+            var db = new FakeDatabase();
+            db.Grandfather.Add(r);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
@@ -395,7 +396,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task PutConflictingIds()
         {
-            var db = new FakeDatabase { Some.Reservation };
+            var db = new FakeDatabase();
+            db.Grandfather.Add(Some.Reservation);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
@@ -406,7 +408,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var id = Some.Reservation.Id.ToString("N");
             await sut.Put(id, dto);
 
-            var r = Assert.Single(db);
+            var r = Assert.Single(db.Grandfather);
             Assert.Equal(Some.Reservation.WithName(new Name("Qux")), r);
         }
 
@@ -438,7 +440,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 .WithId(Guid.NewGuid())
                 .TheDayAfter()
                 .WithQuantity(10);
-            var db = new FakeDatabase { r1, r2 };
+            var db = new FakeDatabase();
+            db.Grandfather.Add(r1);
+            db.Grandfather.Add(r2);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
@@ -480,7 +484,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task PutSendsEmail(string newName)
         {
             var r = Some.Reservation;
-            var db = new FakeDatabase { r };
+            var db = new FakeDatabase();
+            db.Grandfather.Add(r);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
@@ -502,7 +507,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task PutSendsEmailToOldAddresOnChange(string newEmail)
         {
             var r = Some.Reservation;
-            var db = new FakeDatabase { r };
+            var db = new FakeDatabase();
+            db.Grandfather.Add(r);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(db, postOffice, Some.MaitreD);
 
