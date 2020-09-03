@@ -29,7 +29,15 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public MaitreD MaitreD { get; }
 
         [HttpPost]
-        public async Task<ActionResult> Post(ReservationDto dto)
+        public Task<ActionResult> Post(ReservationDto dto)
+        {
+            return Post(Grandfather.Id, dto);
+        }
+
+        [HttpPost("{restaurantId}")]
+        public async Task<ActionResult> Post(
+            int restaurantId,
+            ReservationDto dto)
         {
             if (dto is null)
                 throw new ArgumentNullException(nameof(dto));
@@ -46,7 +54,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (!MaitreD.WillAccept(DateTime.Now, reservations, r))
                 return NoTables500InternalServerError();
 
-            await Repository.Create(Grandfather.Id, r).ConfigureAwait(false);
+            await Repository.Create(restaurantId, r).ConfigureAwait(false);
             await PostOffice.EmailReservationCreated(r).ConfigureAwait(false);
             scope.Complete();
 

@@ -31,9 +31,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new LinkDto { Rel = rel, Href = uri.ToString() };
         }
 
-        internal static LinkDto LinkToReservations(this IUrlHelper url)
+        internal static LinkDto LinkToReservations(
+            this IUrlHelper url,
+            int restaurantId)
         {
-            return reservations.BuildAbsolute(url).Link("urn:reservations");
+            return reservations
+                .WithValues(new { restaurantId })
+                .BuildAbsolute(url)
+                .Link("urn:reservations");
         }
 
         internal static LinkDto LinkToRestaurant(this IUrlHelper url, int id)
