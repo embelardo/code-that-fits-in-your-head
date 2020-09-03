@@ -39,13 +39,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         }
 
         public Task<IReadOnlyCollection<Reservation>> ReadReservations(
-            DateTime min,
-            DateTime max)
-        {
-            return ReadReservations(RestApi.Grandfather.Id, min, max);
-        }
-
-        public Task<IReadOnlyCollection<Reservation>> ReadReservations(
             int restaurantId,
             DateTime min,
             DateTime max)
