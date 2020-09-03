@@ -40,13 +40,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 [PublicId], [RestaurantId], [At], [Name], [Email], [Quantity])
             VALUES (@Id, @RestaurantId, @At, @Name, @Email, @Quantity)";
 
-        public Task<IReadOnlyCollection<Reservation>> ReadReservations(
-            DateTime min,
-            DateTime max)
-        {
-            return ReadReservations(Grandfather.Id, min, max);
-        }
-
         public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
             int restaurantId,
             DateTime min,
