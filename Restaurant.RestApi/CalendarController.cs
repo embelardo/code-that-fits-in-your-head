@@ -34,7 +34,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public async Task<ActionResult> Get(int year)
         {
             var period = Period.Year(year);
-            var days = await MakeDays(period).ConfigureAwait(false);
+            var days = await MakeDays(Grandfather.Id, period)
+                .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
                 {
@@ -48,7 +49,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public async Task<ActionResult> Get(int year, int month)
         {
             var period = Period.Month(year, month);
-            var days = await MakeDays(period).ConfigureAwait(false);
+            var days = await MakeDays(Grandfather.Id, period)
+                .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
                 {
@@ -62,7 +64,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public async Task<ActionResult> Get(int year, int month, int day)
         {
             var period = Period.Day(year, month, day);
-            var days = await MakeDays(period).ConfigureAwait(false);
+            var days = await MakeDays(Grandfather.Id, period)
+                .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
                 {
@@ -73,12 +76,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 });
         }
 
-        private async Task<DayDto[]> MakeDays(IPeriod period)
+        private async Task<DayDto[]> MakeDays(int restaurantId, IPeriod period)
         {
             var firstTick = period.Accept(new FirstTickVisitor());
             var lastTick = period.Accept(new LastTickVisitor());
             var reservations = await Repository
-                .ReadReservations(Grandfather.Id, firstTick, lastTick)
+                .ReadReservations(restaurantId, firstTick, lastTick)
                 .ConfigureAwait(false);
 
             var days = period.Accept(new DaysVisitor())
