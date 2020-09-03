@@ -78,7 +78,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var firstTick = period.Accept(new FirstTickVisitor());
             var lastTick = period.Accept(new LastTickVisitor());
             var reservations = await Repository
-                .ReadReservations(firstTick, lastTick).ConfigureAwait(false);
+                .ReadReservations(Grandfather.Id, firstTick, lastTick)
+                .ConfigureAwait(false);
 
             var days = period.Accept(new DaysVisitor())
                 .Select(d => MakeDay(d, reservations))

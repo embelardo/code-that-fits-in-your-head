@@ -10,9 +10,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
         Task Create(int restaurantId, Reservation reservation);
 
         Task<IReadOnlyCollection<Reservation>> ReadReservations(
-            DateTime min, DateTime max);
-
-        Task<IReadOnlyCollection<Reservation>> ReadReservations(
             int restaurantId, DateTime min, DateTime max);
 
         Task<Reservation?> ReadReservation(Guid id);

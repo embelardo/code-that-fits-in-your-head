@@ -49,7 +49,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             using var scope = new TransactionScope(
                 TransactionScopeAsyncFlowOption.Enabled);
-            var reservations = await Repository.ReadReservations(r.At)
+            var reservations = await Repository
+                .ReadReservations(restaurantId, r.At)
                 .ConfigureAwait(false);
             if (!MaitreD.WillAccept(DateTime.Now, reservations, r))
                 return NoTables500InternalServerError();
@@ -116,7 +117,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (existing is null)
                 return new NotFoundResult();
 
-            var reservations = await Repository.ReadReservations(res.At)
+            var reservations = await Repository
+                .ReadReservations(Grandfather.Id, res.At)
                 .ConfigureAwait(false);
             reservations = reservations.Where(r => r.Id != res.Id).ToList();
             if (!MaitreD.WillAccept(DateTime.Now, reservations, res))
