@@ -14,7 +14,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         "CA1710:Identifiers should have correct suffix",
         Justification = "The role of the class is a Test Double.")]
     public class FakeDatabase :
-        ConcurrentDictionary<int, Collection<Reservation>>, IReservationsRepository
+        ConcurrentDictionary<int, Collection<Reservation>>,
+        IReservationsRepository
     {
         public FakeDatabase()
         {
@@ -41,8 +42,16 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             DateTime min,
             DateTime max)
         {
+            return ReadReservations(RestApi.Grandfather.Id, min, max);
+        }
+
+        public Task<IReadOnlyCollection<Reservation>> ReadReservations(
+            int restaurantId,
+            DateTime min,
+            DateTime max)
+        {
             return Task.FromResult<IReadOnlyCollection<Reservation>>(
-                GetOrAdd(RestApi.Grandfather.Id, new Collection<Reservation>())
+                GetOrAdd(restaurantId, new Collection<Reservation>())
                     .Where(r => min <= r.At && r.At <= max).ToList());
         }
 

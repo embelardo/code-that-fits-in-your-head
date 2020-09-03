@@ -40,19 +40,29 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 [PublicId], [RestaurantId], [At], [Name], [Email], [Quantity])
             VALUES (@Id, @RestaurantId, @At, @Name, @Email, @Quantity)";
 
+        public Task<IReadOnlyCollection<Reservation>> ReadReservations(
+            DateTime min,
+            DateTime max)
+        {
+            return ReadReservations(Grandfather.Id, min, max);
+        }
+
         public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
+            int restaurantId,
             DateTime min,
             DateTime max)
         {
             const string readByRangeSql = @"
                 SELECT [PublicId], [At], [Name], [Email], [Quantity]
                 FROM [dbo].[Reservations]
-                WHERE @Min <= [At] AND [At] <= @Max";
-            
+                WHERE [RestaurantId] = @RestaurantId AND
+                      @Min <= [At] AND [At] <= @Max";
+
             var result = new List<Reservation>();
 
             using var conn = new SqlConnection(ConnectionString);
             using var cmd = new SqlCommand(readByRangeSql, conn);
+            cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
             cmd.Parameters.AddWithValue("@Min", min);
             cmd.Parameters.AddWithValue("@Max", max);
 
