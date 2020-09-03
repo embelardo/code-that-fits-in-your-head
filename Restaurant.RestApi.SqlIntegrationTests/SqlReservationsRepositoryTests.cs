@@ -29,7 +29,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
             var connectionString = ConnectionStrings.Reservations;
             var sut = new SqlReservationsRepository(connectionString);
 
-            await sut.Create(expected);
+            await sut.Create(Grandfather.Id, expected);
             var actual = await sut.ReadReservation(expected.Id);
 
             Assert.Equal(expected, actual);
@@ -53,7 +53,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.SqlIntegrationTests
                 quantity);
             var connectionString = ConnectionStrings.Reservations;
             var sut = new SqlReservationsRepository(connectionString);
-            await sut.Create(r);
+            await sut.Create(Grandfather.Id, r);
 
             var expected = r.WithName(new Name(newName));
             await sut.Update(expected);
