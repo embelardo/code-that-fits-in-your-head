@@ -17,19 +17,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public ReservationsController(
             IRestaurantDatabase restaurantDatabase,
             IReservationsRepository repository,
-            IPostOffice postOffice,
-            MaitreD maitreD)
+            IPostOffice postOffice)
         {
             RestaurantDatabase = restaurantDatabase;
             Repository = repository;
             PostOffice = postOffice;
-            MaitreD = maitreD;
         }
 
         public IRestaurantDatabase RestaurantDatabase { get; }
         public IReservationsRepository Repository { get; }
         public IPostOffice PostOffice { get; }
-        public MaitreD MaitreD { get; }
 
         [HttpPost]
         public Task<ActionResult> Post(ReservationDto dto)
