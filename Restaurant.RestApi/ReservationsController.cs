@@ -140,6 +140,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
                 .ConfigureAwait(false);
+            if (maitreD is null)
+                return new NotFoundResult();
 
             using var scope = new TransactionScope(
                 TransactionScopeAsyncFlowOption.Enabled);

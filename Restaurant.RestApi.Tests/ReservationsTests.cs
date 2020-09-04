@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -649,6 +650,29 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.True(
                 putResponse.IsSuccessStatusCode,
                 $"Actual status code: {putResponse.StatusCode}.");
+        }
+
+        [Fact]
+        public async Task PutToAbsentRestaurant()
+        {
+            var absentRestaurantId = 4;
+            var db = new FakeDatabase();
+            await db.Create(absentRestaurantId, Some.Reservation);
+            var sut = new ReservationsController(
+                Some.RestaurantDatabase,
+                db,
+                new SpyPostOffice(),
+                Some.MaitreD);
+            MaitreD? m =
+                await Some.RestaurantDatabase.GetMaitreD(absentRestaurantId);
+            Assert.Null(m);
+
+            var actual = await sut.Put(
+                absentRestaurantId,
+                Some.Reservation.Id.ToString("N"),
+                Some.Reservation.ToDto());
+
+            Assert.IsAssignableFrom<NotFoundResult>(actual);
         }
     }
 }
