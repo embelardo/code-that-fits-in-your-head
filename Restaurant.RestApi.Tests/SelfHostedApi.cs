@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi.Tests
 {
-    public class SelfHostedService : WebApplicationFactory<Startup>
+    public class SelfHostedApi : WebApplicationFactory<Startup>
     {
         private bool authorizeClient;
 

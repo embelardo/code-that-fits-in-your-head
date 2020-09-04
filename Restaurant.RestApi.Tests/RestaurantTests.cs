@@ -18,7 +18,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData("The Vatican Cellar")]
         public async Task GetRestaurant(string name)
         {
-            using var service = new SelfHostedService();
+            using var service = new SelfHostedApi();
 
             var response = await service.GetRestaurant(name);
 
@@ -35,7 +35,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData("The Vatican Cellar")]
         public async Task RestaurantReturnsCorrectLinks(string name)
         {
-            using var service = new SelfHostedService();
+            using var service = new SelfHostedApi();
 
             var response = await service.GetRestaurant(name);
 
@@ -62,7 +62,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task ReserveTableAtNono()
         {
-            using var service = new SelfHostedService();
+            using var service = new SelfHostedApi();
             var dto = Some.Reservation.ToDto();
             dto.Quantity = 6;
 
@@ -74,7 +74,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         }
 
         private static async Task AssertRemainingCapacity(
-            SelfHostedService service,
+            SelfHostedApi service,
             DateTime date,
             string name,
             int expected)
