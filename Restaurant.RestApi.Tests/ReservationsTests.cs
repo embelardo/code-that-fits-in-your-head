@@ -22,7 +22,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task PostValidReservation()
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
             var expected = new ReservationDto
             {
@@ -31,7 +31,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Name = "Katinka Ingabogovinanana",
                 Quantity = 2
             };
-            var response = await service.PostReservation(expected);
+            var response = await api.PostReservation(expected);
 
             Assert.True(
                 response.IsSuccessStatusCode,
@@ -90,8 +90,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             string name,
             int quantity)
         {
-            using var service = new LegacyApi();
-            var response = await service.PostReservation(
+            using var api = new LegacyApi();
+            var response = await api.PostReservation(
                 new { at, email, name, quantity });
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -99,8 +99,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task OverbookAttempt()
         {
-            using var service = new LegacyApi();
-            await service.PostReservation(new
+            using var api = new LegacyApi();
+            await api.PostReservation(new
             {
                 at = "2022-03-18 17:30",
                 email = "mars@example.edu",
@@ -108,7 +108,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 quantity = 6
             });
 
-            var response = await service.PostReservation(new
+            var response = await api.PostReservation(new
             {
                 at = "2022-03-18 17:30",
                 email = "shli@example.org",
@@ -130,8 +130,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task BookTableWhenFreeSeatingIsAvailable()
         {
-            using var service = new LegacyApi();
-            await service.PostReservation(new
+            using var api = new LegacyApi();
+            await api.PostReservation(new
             {
                 at = "2023-01-02 18:15",
                 email = "net@example.net",
@@ -139,7 +139,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 quantity = 2
             });
 
-            var response = await service.PostReservation(new
+            var response = await api.PostReservation(new
             {
                 at = "2023-01-02 18:30",
                 email = "kant@example.edu",
@@ -162,7 +162,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             string name,
             int quantity)
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
             var expected = new ReservationDto
             {
                 At = date,
@@ -170,10 +170,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Name = name,
                 Quantity = quantity
             };
-            var postResp = await service.PostReservation(expected);
+            var postResp = await api.PostReservation(expected);
             Uri address = FindReservationAddress(postResp);
 
-            var getResp = await service.CreateClient().GetAsync(address);
+            var getResp = await api.CreateClient().GetAsync(address);
 
             Assert.True(
                 getResp.IsSuccessStatusCode,
@@ -195,10 +195,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData("foo")]
         public async Task GetAbsentReservation(string id)
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
             var url = new Uri($"/reservations/{id}", UriKind.Relative);
-            var resp = await service.CreateClient().GetAsync(url);
+            var resp = await api.CreateClient().GetAsync(url);
 
             Assert.Equal(HttpStatusCode.NotFound, resp.StatusCode);
         }
@@ -208,17 +208,17 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData("d4fec75f8d054299975515f757f1223e")]
         public async Task NoHackingOfUrlsAllowed(string id)
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
             var dto = Some.Reservation.ToDto();
             dto.Id = id;
-            var postResp = await service.PostReservation(dto);
+            var postResp = await api.PostReservation(dto);
             postResp.EnsureSuccessStatusCode();
 
             /* This is the sort of 'hacking' of URLs that clients should be
              * discouraged from. Clients should be following links, as all the
              * other tests in this test suite demonstrate. */
             var urlHack = new Uri($"/reservations/{id}", UriKind.Relative);
-            var getResp = await service.CreateClient().GetAsync(urlHack);
+            var getResp = await api.CreateClient().GetAsync(urlHack);
 
             /* The expected result of a 'hacked' URL is 404 Not Found rather
              * than 403 Forbidden. Clients are simply requesting a URL which
@@ -235,7 +235,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             string name,
             int quantity)
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
             var dto = new ReservationDto
             {
                 At = at,
@@ -243,15 +243,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Name = name,
                 Quantity = quantity
             };
-            var postResp = await service.PostReservation(dto);
+            var postResp = await api.PostReservation(dto);
             Uri address = FindReservationAddress(postResp);
 
-            var deleteResp = await service.CreateClient().DeleteAsync(address);
+            var deleteResp = await api.CreateClient().DeleteAsync(address);
 
             Assert.True(
                 deleteResp.IsSuccessStatusCode,
                 $"Actual status code: {deleteResp.StatusCode}.");
-            var getResp = await service.CreateClient().GetAsync(address);
+            var getResp = await api.CreateClient().GetAsync(address);
             Assert.Equal(HttpStatusCode.NotFound, getResp.StatusCode);
         }
 
@@ -260,15 +260,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData("79F53E9D9A66458AB79E11DA130BF1D8")]
         public async Task DeleteIsIdempotent(string id)
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
             var dto = Some.Reservation.ToDto();
             dto.Id = id;
-            var postResp = await service.PostReservation(dto);
+            var postResp = await api.PostReservation(dto);
             postResp.EnsureSuccessStatusCode();
             var url = FindReservationAddress(postResp);
 
-            await service.CreateClient().DeleteAsync(url);
-            var resp = await service.CreateClient().DeleteAsync(url);
+            await api.CreateClient().DeleteAsync(url);
+            var resp = await api.CreateClient().DeleteAsync(url);
 
             Assert.True(
                 resp.IsSuccessStatusCode,
@@ -316,7 +316,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int quantity,
             int newQuantity)
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
             var dto = new ReservationDto
             {
                 At = at,
@@ -324,16 +324,16 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Name = name,
                 Quantity = quantity
             };
-            var postResp = await service.PostReservation(dto);
+            var postResp = await api.PostReservation(dto);
             Uri address = FindReservationAddress(postResp);
 
             dto.Quantity = newQuantity;
-            var putResp = await service.PutReservation(address, dto);
+            var putResp = await api.PutReservation(address, dto);
 
             Assert.True(
                 putResp.IsSuccessStatusCode,
                 $"Actual status code: {putResp.StatusCode}.");
-            var getResp = await service.CreateClient().GetAsync(address);
+            var getResp = await api.CreateClient().GetAsync(address);
             var persisted = await getResp.ParseJsonContent<ReservationDto>();
             Assert.Equal(dto, persisted, new ReservationDtoComparer());
             var actual = await putResp.ParseJsonContent<ReservationDto>();
@@ -352,7 +352,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             string name,
             int quantity)
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
             var dto = new ReservationDto
             {
                 At = "2022-03-22 19:00",
@@ -360,11 +360,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Name = ":wumpscut:",
                 Quantity = 1
             };
-            var postResp = await service.PostReservation(dto);
+            var postResp = await api.PostReservation(dto);
             postResp.EnsureSuccessStatusCode();
             Uri address = FindReservationAddress(postResp);
 
-            var putResp = await service.PutReservation(
+            var putResp = await api.PutReservation(
                 address,
                 new { at, email, name, quantity });
 
@@ -458,7 +458,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task EditReservationOnSameDayNearCapacity()
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
             var dto = new ReservationDto
             {
                 At = "2023-04-10 20:01",
@@ -466,12 +466,12 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Name = "Anette Olzon",
                 Quantity = 5
             };
-            var postResp = await service.PostReservation(dto);
+            var postResp = await api.PostReservation(dto);
             postResp.EnsureSuccessStatusCode();
             Uri address = FindReservationAddress(postResp);
 
             dto.Quantity++;
-            var putResp = await service.PutReservation(address, dto);
+            var putResp = await api.PutReservation(address, dto);
 
             Assert.True(
                 putResp.IsSuccessStatusCode,

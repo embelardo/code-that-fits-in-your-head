@@ -18,10 +18,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetCurrentYear()
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
             var before = DateTime.Now;
-            var response = await service.GetCurrentYear();
+            var response = await api.GetCurrentYear();
             var after = DateTime.Now;
 
             Assert.True(
@@ -37,10 +37,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetPreviousYear()
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
             var before = DateTime.Now;
-            var response = await service.GetPreviousYear();
+            var response = await api.GetPreviousYear();
             var after = DateTime.Now;
 
             Assert.True(
@@ -58,10 +58,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetNextYear()
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
             var before = DateTime.Now;
-            var response = await service.GetNextYear();
+            var response = await api.GetNextYear();
             var after = DateTime.Now;
 
             Assert.True(
@@ -84,9 +84,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData(2029)]
         public async Task GetSpecificYear(int year)
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
-            var response = await service.GetYear(year);
+            var response = await api.GetYear(year);
 
             Assert.True(
                 response.IsSuccessStatusCode,
@@ -101,10 +101,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetCurrentMonth()
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
             var before = DateTime.Now;
-            var response = await service.GetCurrentMonth();
+            var response = await api.GetCurrentMonth();
             var after = DateTime.Now;
 
             Assert.True(
@@ -120,10 +120,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetPreviousMonth()
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
             var before = DateTime.Now;
-            var response = await service.GetPreviousMonth();
+            var response = await api.GetPreviousMonth();
             var after = DateTime.Now;
 
             Assert.True(
@@ -144,10 +144,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetNextMonth()
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
             var before = DateTime.Now;
-            var response = await service.GetNextMonth();
+            var response = await api.GetNextMonth();
             var after = DateTime.Now;
 
             Assert.True(
@@ -173,9 +173,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData(2030,  8)]
         public async Task GetSpecificMonth(int year, int month)
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
-            var response = await service.GetMonth(year, month);
+            var response = await api.GetMonth(year, month);
 
             Assert.True(
                 response.IsSuccessStatusCode,
@@ -190,10 +190,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetCurrentDay()
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
             var before = DateTime.Now;
-            var response = await service.GetCurrentDay();
+            var response = await api.GetCurrentDay();
             var after = DateTime.Now;
 
             Assert.True(
@@ -209,10 +209,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetPreviousDay()
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
             var before = DateTime.Now;
-            var response = await service.GetPreviousDay();
+            var response = await api.GetPreviousDay();
             var after = DateTime.Now;
 
             Assert.True(
@@ -236,10 +236,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetNextDay()
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
             var before = DateTime.Now;
-            var response = await service.GetNextDay();
+            var response = await api.GetNextDay();
             var after = DateTime.Now;
 
             Assert.True(
@@ -268,9 +268,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData(2030, 2,  9)]
         public async Task GetSpecificDay(int year, int month, int day)
         {
-            using var service = new LegacyApi();
+            using var api = new LegacyApi();
 
-            var response = await service.GetDay(year, month, day);
+            var response = await api.GetDay(year, month, day);
 
             Assert.True(
                 response.IsSuccessStatusCode,

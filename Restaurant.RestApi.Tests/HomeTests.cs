@@ -20,8 +20,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Justification = "URL isn't passed as variable, but as literal.")]
         public async Task HomeReturnsJson()
         {
-            using var service = new LegacyApi();
-            var client = service.CreateClient();
+            using var api = new LegacyApi();
+            var client = api.CreateClient();
 
             using var request = new HttpRequestMessage(HttpMethod.Get, "");
             request.Headers.Accept.ParseAdd("application/json");
@@ -38,8 +38,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task HomeReturnsCorrectLinks()
         {
-            using var service = new LegacyApi();
-            var client = service.CreateClient();
+            using var api = new LegacyApi();
+            var client = api.CreateClient();
 
             var response =
                 await client.GetAsync(new Uri("", UriKind.Relative));
@@ -67,8 +67,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task HomeReturnsRestaurants()
         {
-            using var service = new LegacyApi();
-            var client = service.CreateClient();
+            using var api = new LegacyApi();
+            var client = api.CreateClient();
 
             var response =
                 await client.GetAsync(new Uri("", UriKind.Relative));

@@ -18,9 +18,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData("The Vatican Cellar")]
         public async Task GetRestaurant(string name)
         {
-            using var service = new SelfHostedApi();
+            using var api = new SelfHostedApi();
 
-            var response = await service.GetRestaurant(name);
+            var response = await api.GetRestaurant(name);
 
             Assert.True(
                 response.IsSuccessStatusCode,
@@ -35,9 +35,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData("The Vatican Cellar")]
         public async Task RestaurantReturnsCorrectLinks(string name)
         {
-            using var service = new SelfHostedApi();
+            using var api = new SelfHostedApi();
 
-            var response = await service.GetRestaurant(name);
+            var response = await api.GetRestaurant(name);
 
             var expected = new HashSet<string?>(new[]
             {
@@ -62,15 +62,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task ReserveTableAtNono()
         {
-            using var service = new SelfHostedApi();
+            using var api = new SelfHostedApi();
             var dto = Some.Reservation.ToDto();
             dto.Quantity = 6;
 
-            var response = await service.PostReservation("Nono", dto);
+            var response = await api.PostReservation("Nono", dto);
 
-            var date = Some.Reservation.At;
-            await AssertRemainingCapacity(service, date, "Nono", 4);
-            await AssertRemainingCapacity(service, date, "Hipgnosta", 10);
+            var at = Some.Reservation.At;
+            await AssertRemainingCapacity(api, at, "Nono", 4);
+            await AssertRemainingCapacity(api, at, "Hipgnosta", 10);
         }
 
         private static async Task AssertRemainingCapacity(

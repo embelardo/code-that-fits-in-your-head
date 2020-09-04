@@ -22,8 +22,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int month,
             int day)
         {
-            using var service = new LegacyApi();
-            var response = await service.GetSchedule(year, month, day);
+            using var api = new LegacyApi();
+            var response = await api.GetSchedule(year, month, day);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
@@ -36,10 +36,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int month,
             int day)
         {
-            using var service = new LegacyApi();
-            service.AuthorizeClient();
+            using var api = new LegacyApi();
+            api.AuthorizeClient();
 
-            var response = await service.GetSchedule(year, month, day);
+            var response = await api.GetSchedule(year, month, day);
 
             Assert.True(
                 response.IsSuccessStatusCode,
