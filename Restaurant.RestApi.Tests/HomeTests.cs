@@ -20,7 +20,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Justification = "URL isn't passed as variable, but as literal.")]
         public async Task HomeReturnsJson()
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
             var client = service.CreateClient();
 
             using var request = new HttpRequestMessage(HttpMethod.Get, "");
@@ -38,7 +38,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task HomeReturnsCorrectLinks()
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
             var client = service.CreateClient();
 
             var response =
@@ -67,7 +67,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task HomeReturnsRestaurants()
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
             var client = service.CreateClient();
 
             var response =

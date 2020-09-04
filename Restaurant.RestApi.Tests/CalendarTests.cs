@@ -18,7 +18,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetCurrentYear()
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
 
             var before = DateTime.Now;
             var response = await service.GetCurrentYear();
@@ -37,7 +37,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetPreviousYear()
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
 
             var before = DateTime.Now;
             var response = await service.GetPreviousYear();
@@ -58,7 +58,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetNextYear()
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
 
             var before = DateTime.Now;
             var response = await service.GetNextYear();
@@ -84,7 +84,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData(2029)]
         public async Task GetSpecificYear(int year)
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
 
             var response = await service.GetYear(year);
 
@@ -101,7 +101,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetCurrentMonth()
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
 
             var before = DateTime.Now;
             var response = await service.GetCurrentMonth();
@@ -120,7 +120,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetPreviousMonth()
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
 
             var before = DateTime.Now;
             var response = await service.GetPreviousMonth();
@@ -144,7 +144,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetNextMonth()
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
 
             var before = DateTime.Now;
             var response = await service.GetNextMonth();
@@ -173,7 +173,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData(2030,  8)]
         public async Task GetSpecificMonth(int year, int month)
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
 
             var response = await service.GetMonth(year, month);
 
@@ -190,7 +190,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetCurrentDay()
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
 
             var before = DateTime.Now;
             var response = await service.GetCurrentDay();
@@ -209,7 +209,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetPreviousDay()
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
 
             var before = DateTime.Now;
             var response = await service.GetPreviousDay();
@@ -236,7 +236,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task GetNextDay()
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
 
             var before = DateTime.Now;
             var response = await service.GetNextDay();
@@ -268,7 +268,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData(2030, 2,  9)]
         public async Task GetSpecificDay(int year, int month, int day)
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
 
             var response = await service.GetDay(year, month, day);
 

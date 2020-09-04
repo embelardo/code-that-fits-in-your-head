@@ -22,7 +22,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int month,
             int day)
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
             var response = await service.GetSchedule(year, month, day);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
@@ -36,7 +36,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int month,
             int day)
         {
-            using var service = new SelfHostedApi();
+            using var service = new LegacyApi();
             service.AuthorizeClient();
 
             var response = await service.GetSchedule(year, month, day);
