@@ -11,6 +11,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
     {
         public LinkDto[]? Links { get; set; }
 
+        public string? Name { get; set; }
+
         public int Year { get; set; }
 
         public int? Month { get; set; }

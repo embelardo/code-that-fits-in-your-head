@@ -1,7 +1,9 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -55,6 +57,34 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.True(
                 Uri.TryCreate(dto.Href, UriKind.Absolute, out var _),
                 $"Not an absolute URL: {dto.Href}.");
+        }
+
+        [Fact]
+        public async Task ReserveTableAtNono()
+        {
+            using var service = new SelfHostedService();
+            var dto = Some.Reservation.ToDto();
+            dto.Quantity = 6;
+
+            var response = await service.PostReservation("Nono", dto);
+
+            var date = Some.Reservation.At;
+            await AssertRemainingCapacity(service, date, "Nono", 4);
+            await AssertRemainingCapacity(service, date, "Hipgnosta", 10);
+        }
+
+        private static async Task AssertRemainingCapacity(
+            SelfHostedService service,
+            DateTime date,
+            string name,
+            int expected)
+        {
+            var response =
+                await service.GetDay(name, date.Year, date.Month, date.Day);
+            var day = await response.ParseJsonContent<CalendarDto>();
+            Assert.All(
+                day.Days.Single().Entries,
+                e => Assert.Equal(expected, e.MaximumPartySize));
         }
     }
 }

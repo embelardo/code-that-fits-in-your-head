@@ -1,4 +1,5 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿using Ploeh.Samples.Restaurant.RestApi.Options;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,5 +25,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(12),
                 Table.Communal(10));
+
+        public static IRestaurantDatabase RestaurantDatabase =>
+            new OptionsRestaurantDatabase(
+                new RestaurantOptions { Id = 1, Name = "Hipgnosta" });
     }
 }

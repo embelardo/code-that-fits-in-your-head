@@ -8,19 +8,28 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
-    [Route("calendar")]
+    [Route("")]
     public class CalendarController
     {
         public CalendarController(
+            IRestaurantDatabase restaurantDatabase,
             IReservationsRepository repository,
             MaitreD maitreD)
         {
+            RestaurantDatabase = restaurantDatabase;
             Repository = repository;
             MaitreD = maitreD;
         }
 
+        public IRestaurantDatabase RestaurantDatabase { get; }
         public IReservationsRepository Repository { get; }
         public MaitreD MaitreD { get; }
+
+        [HttpGet("calendar/{year}"), ResponseCache(Duration = 60)]
+        public Task<ActionResult> GetYear(int year)
+        {
+            return GetYear(Grandfather.Id, year);
+        }
 
         /* This method loads a year's worth of reservation in order to segment
          * them all. In a realistic system, this could be quite stressful for
@@ -30,45 +39,77 @@ namespace Ploeh.Samples.Restaurant.RestApi
          * calendars get re-rendered as materialised views in a background
          * process. That's beyond the scope of this example code base, though.
          */
-        [HttpGet("{year}"), ResponseCache(Duration = 60)]
-        public async Task<ActionResult> Get(int year)
+        [ResponseCache(Duration = 60)]
+        [HttpGet("restaurants/{restaurantId}/calendar/{year}")]
+        public async Task<ActionResult> GetYear(int restaurantId, int year)
         {
+            var name = await RestaurantDatabase.GetName(restaurantId)
+                .ConfigureAwait(false);
+
             var period = Period.Year(year);
-            var days = await MakeDays(Grandfather.Id, period)
+            var days = await MakeDays(restaurantId, period)
                 .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
                 {
+                    Name = name,
                     Year = year,
                     Days = days
                 });
         }
 
-        /* See comment about Get(int year). */
-        [HttpGet("{year}/{month}")]
-        public async Task<ActionResult> Get(int year, int month)
+        [HttpGet("calendar/{year}/{month}")]
+        public Task<ActionResult> GetMonth(int year, int month)
         {
+            return GetMonth(Grandfather.Id, year, month);
+        }
+
+        /* See comment about Get(int year). */
+        [HttpGet("restaurants/{restaurantId}/calendar/{year}/{month}")]
+        public async Task<ActionResult> GetMonth(
+            int restaurantId,
+            int year,
+            int month)
+        {
+            var name = await RestaurantDatabase.GetName(restaurantId)
+                .ConfigureAwait(false);
+
             var period = Period.Month(year, month);
-            var days = await MakeDays(Grandfather.Id, period)
+            var days = await MakeDays(restaurantId, period)
                 .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
                 {
+                    Name = name,
                     Year = year,
                     Month = month,
                     Days = days
                 });
         }
 
-        [HttpGet("{year}/{month}/{day}")]
-        public async Task<ActionResult> Get(int year, int month, int day)
+        [HttpGet("calendar/{year}/{month}/{day}")]
+        public Task<ActionResult> GetDay(int year, int month, int day)
         {
+            return GetDay(Grandfather.Id, year, month, day);
+        }
+
+        [HttpGet("restaurants/{restaurantId}/calendar/{year}/{month}/{day}")]
+        public async Task<ActionResult> GetDay(
+            int restaurantId,
+            int year,
+            int month,
+            int day)
+        {
+            var name = await RestaurantDatabase.GetName(restaurantId)
+                .ConfigureAwait(false);
+
             var period = Period.Day(year, month, day);
-            var days = await MakeDays(Grandfather.Id, period)
+            var days = await MakeDays(restaurantId, period)
                 .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
                 {
+                    Name = name,
                     Year = year,
                     Month = month,
                     Day = day,

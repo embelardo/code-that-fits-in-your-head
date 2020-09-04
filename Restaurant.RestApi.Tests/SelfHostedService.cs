@@ -73,6 +73,22 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         }
 
         public async Task<HttpResponseMessage> PostReservation(
+            string name,
+            object reservation)
+        {
+            string json = JsonSerializer.Serialize(reservation);
+            using var content = new StringContent(json);
+            content.Headers.ContentType.MediaType = "application/json";
+
+            var resp = await GetRestaurant(name);
+            resp.EnsureSuccessStatusCode();
+            var rest = await resp.ParseJsonContent<RestaurantDto>();
+            var address = rest.Links.FindAddress("urn:reservations");
+
+            return await CreateClient().PostAsync(address, content);
+        }
+
+        public async Task<HttpResponseMessage> PostReservation(
             object reservation)
         {
             string json = JsonSerializer.Serialize(reservation);
@@ -115,6 +131,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return await CreateClient().GetAsync(yearAddress);
         }
 
+        public async Task<HttpResponseMessage> GetCurrentYear(string name)
+        {
+            var resp = await GetRestaurant(name);
+            resp.EnsureSuccessStatusCode();
+            var rest = await resp.ParseJsonContent<RestaurantDto>();
+            var address = rest.Links.FindAddress("urn:year");
+            return await CreateClient().GetAsync(address);
+        }
+
         public async Task<HttpResponseMessage> GetPreviousYear()
         {
             var currentResp = await GetCurrentYear();
@@ -152,6 +177,28 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 dto = await resp.ParseJsonContent<CalendarDto>();
             } while (dto.Year != year);
             
+            return resp;
+        }
+
+        public async Task<HttpResponseMessage> GetYear(string name, int year)
+        {
+            var resp = await GetCurrentYear(name);
+            resp.EnsureSuccessStatusCode();
+            var dto = await resp.ParseJsonContent<CalendarDto>();
+            if (dto.Year == year)
+                return resp;
+
+            var rel = dto.Year < year ? "next" : "previous";
+
+            var client = CreateClient();
+            do
+            {
+                var address = dto.Links.FindAddress(rel);
+                resp = await client.GetAsync(address);
+                resp.EnsureSuccessStatusCode();
+                dto = await resp.ParseJsonContent<CalendarDto>();
+            } while (dto.Year != year);
+
             return resp;
         }
 
@@ -221,6 +268,22 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int day)
         {
             var resp = await GetYear(year);
+            resp.EnsureSuccessStatusCode();
+            var dto = await resp.ParseJsonContent<CalendarDto>();
+
+            var target = new DateTime(year, month, day).ToIso8601DateString();
+            var dayCalendar = dto.Days.Single(d => d.Date == target);
+            var address = dayCalendar.Links.FindAddress("urn:day");
+            return await CreateClient().GetAsync(address);
+        }
+
+        public async Task<HttpResponseMessage> GetDay(
+            string name,
+            int year,
+            int month,
+            int day)
+        {
+            var resp = await GetYear(name, year);
             resp.EnsureSuccessStatusCode();
             var dto = await resp.ParseJsonContent<CalendarDto>();
 

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi.Options
 {
-    internal class OptionsRestaurantDatabase : IRestaurantDatabase
+    public class OptionsRestaurantDatabase : IRestaurantDatabase
     {
         private readonly RestaurantOptions[] restaurants;
 
-        internal OptionsRestaurantDatabase(RestaurantOptions[] restaurants)
+        public OptionsRestaurantDatabase(params RestaurantOptions[] restaurants)
         {
             this.restaurants = restaurants;
         }

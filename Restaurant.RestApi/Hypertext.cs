@@ -19,7 +19,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 .WithController(nameof(RestaurantsController));
         private readonly static UrlBuilder calendar =
             new UrlBuilder()
-                .WithAction(nameof(CalendarController.Get))
                 .WithController(nameof(CalendarController));
         private readonly static UrlBuilder schedule =
             new UrlBuilder()
@@ -49,60 +48,71 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 .Link("urn:restaurant");
         }
 
-        internal static LinkDto LinkToYear(this IUrlHelper url, int year)
+        internal static LinkDto LinkToYear(
+            this IUrlHelper url,
+            int restaurantId,
+            int year)
         {
-            return url.LinkToYear(year, "urn:year");
+            return url.LinkToYear(restaurantId, year, "urn:year");
         }
 
         internal static LinkDto LinkToYear(
             this IUrlHelper url,
+            int restaurantId,
             int year,
             string rel)
         {
             return calendar
-                .WithValues(new { year })
+                .WithAction(nameof(CalendarController.GetYear))
+                .WithValues(new { restaurantId, year })
                 .BuildAbsolute(url)
                 .Link(rel);
         }
 
         internal static LinkDto LinkToMonth(
             this IUrlHelper url,
+            int restaurantId,
             int year,
             int month)
         {
-            return url.LinkToMonth(year, month, "urn:month");
+            return url.LinkToMonth(restaurantId, year, month, "urn:month");
         }
 
         internal static LinkDto LinkToMonth(
             this IUrlHelper url,
+            int restaurantId,
             int year,
             int month,
             string rel)
         {
             return calendar
-                .WithValues(new { year, month })
+                .WithAction(nameof(CalendarController.GetMonth))
+                .WithValues(new { restaurantId, year, month })
                 .BuildAbsolute(url)
                 .Link(rel);
         }
 
         internal static LinkDto LinkToDay(
             this IUrlHelper url,
+            int restaurantId,
             int year,
             int month,
             int day)
         {
-            return url.LinkToDay(year, month, day, "urn:day");
+            return url.LinkToDay(restaurantId, year, month, day, "urn:day");
         }
 
         internal static LinkDto LinkToDay(
             this IUrlHelper url,
+            int restaurantId,
             int year,
             int month,
             int day,
             string rel)
         {
             return calendar
-                .WithValues(new { year, month, day })
+                .WithAction(nameof(CalendarController.GetDay))
+                .WithValues(new { restaurantId, year, month, day })
                 .BuildAbsolute(url)
                 .Link(rel);
         }
