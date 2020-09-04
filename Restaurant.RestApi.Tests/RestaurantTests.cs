@@ -58,33 +58,5 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Uri.TryCreate(dto.Href, UriKind.Absolute, out var _),
                 $"Not an absolute URL: {dto.Href}.");
         }
-
-        [Fact]
-        public async Task ReserveTableAtNono()
-        {
-            using var api = new SelfHostedApi();
-            var dto = Some.Reservation.ToDto();
-            dto.Quantity = 6;
-
-            var response = await api.PostReservation("Nono", dto);
-
-            var at = Some.Reservation.At;
-            await AssertRemainingCapacity(api, at, "Nono", 4);
-            await AssertRemainingCapacity(api, at, "Hipgnosta", 10);
-        }
-
-        private static async Task AssertRemainingCapacity(
-            SelfHostedApi service,
-            DateTime date,
-            string name,
-            int expected)
-        {
-            var response =
-                await service.GetDay(name, date.Year, date.Month, date.Day);
-            var day = await response.ParseJsonContent<CalendarDto>();
-            Assert.All(
-                day.Days.Single().Entries,
-                e => Assert.Equal(expected, e.MaximumPartySize));
-        }
     }
 }
