@@ -15,15 +15,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
     public class ReservationsController
     {
         public ReservationsController(
+            IRestaurantDatabase restaurantDatabase,
             IReservationsRepository repository,
             IPostOffice postOffice,
             MaitreD maitreD)
         {
+            RestaurantDatabase = restaurantDatabase;
             Repository = repository;
             PostOffice = postOffice;
             MaitreD = maitreD;
         }
 
+        public IRestaurantDatabase RestaurantDatabase { get; }
         public IReservationsRepository Repository { get; }
         public IPostOffice PostOffice { get; }
         public MaitreD MaitreD { get; }
@@ -47,12 +50,15 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (r is null)
                 return new BadRequestResult();
 
+            var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
+                .ConfigureAwait(false);
+
             using var scope = new TransactionScope(
                 TransactionScopeAsyncFlowOption.Enabled);
             var reservations = await Repository
                 .ReadReservations(restaurantId, r.At)
                 .ConfigureAwait(false);
-            if (!MaitreD.WillAccept(DateTime.Now, reservations, r))
+            if (!maitreD!.WillAccept(DateTime.Now, reservations, r))
                 return NoTables500InternalServerError();
 
             await Repository.Create(restaurantId, r).ConfigureAwait(false);

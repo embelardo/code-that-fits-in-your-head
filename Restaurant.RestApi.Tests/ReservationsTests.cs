@@ -54,7 +54,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         {
             var db = new FakeDatabase();
             var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
+            var sut = new ReservationsController(
+                Some.RestaurantDatabase,
+                db,
+                postOffice,
+                Some.MaitreD);
 
             var dto = new ReservationDto
             {
@@ -282,7 +286,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             db.Grandfather.Add(r);
             var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
+            var sut = new ReservationsController(
+                Some.RestaurantDatabase,
+                db,
+                postOffice,
+                Some.MaitreD);
 
             await sut.Delete(r.Id.ToString("N"));
 
@@ -297,7 +305,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         {
             var db = new FakeDatabase();
             var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
+            var sut = new ReservationsController(
+                Some.RestaurantDatabase,
+                db,
+                postOffice,
+                Some.MaitreD);
 
             await sut.Delete(Guid.NewGuid().ToString("N"));
 
@@ -379,7 +391,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         {
             var db = new FakeDatabase();
             var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
+            var sut = new ReservationsController(
+                Some.RestaurantDatabase,
+                db,
+                postOffice,
+                Some.MaitreD);
 
             var dummyDto = new ReservationDto
             {
@@ -399,7 +415,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             db.Grandfather.Add(Some.Reservation);
             var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
+            var sut = new ReservationsController(
+                Some.RestaurantDatabase,
+                db,
+                postOffice,
+                Some.MaitreD);
 
             var dto = Some.Reservation
                 .WithId(Guid.NewGuid())
@@ -417,7 +437,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         {
             var db = new FakeDatabase();
             var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
+            var sut = new ReservationsController(
+                Some.RestaurantDatabase,
+                db,
+                postOffice,
+                Some.MaitreD);
 
             var dto = new ReservationDto
             {
@@ -444,7 +468,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             db.Grandfather.Add(r1);
             db.Grandfather.Add(r2);
             var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
+            var sut = new ReservationsController(
+                Some.RestaurantDatabase,
+                db,
+                postOffice,
+                Some.MaitreD);
 
             var dto = r1.WithDate(r2.At).ToDto();
             var actual = await sut.Put(r1.Id.ToString("N"), dto);
@@ -487,7 +515,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             db.Grandfather.Add(r);
             var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
+            var sut = new ReservationsController(
+                Some.RestaurantDatabase,
+                db,
+                postOffice,
+                Some.MaitreD);
 
             var dto = r.WithName(new Name(newName)).ToDto();
             await sut.Put(r.Id.ToString("N"), dto);
@@ -510,7 +542,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             db.Grandfather.Add(r);
             var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(db, postOffice, Some.MaitreD);
+            var sut = new ReservationsController(
+                Some.RestaurantDatabase,
+                db,
+                postOffice,
+                Some.MaitreD);
 
             var dto = r.WithEmail(new Email(newEmail)).ToDto();
             await sut.Put(r.Id.ToString("N"), dto);
@@ -551,6 +587,25 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.All(
                 day.Days.Single().Entries,
                 e => Assert.Equal(expected, e.MaximumPartySize));
+        }
+
+        [Fact]
+        public async Task ReserveTableAtTheVaticanCellar()
+        {
+            using var api = new SelfHostedApi();
+            var timeOfDayLaterThanLastSeatingAtTheOtherRestaurants =
+                TimeSpan.FromHours(21.5);
+
+            var dto = Some.Reservation
+                .WithDate(Some.Reservation.At.Date)
+                .AddDate(timeOfDayLaterThanLastSeatingAtTheOtherRestaurants)
+                .ToDto();
+            var response =
+                await api.PostReservation("The Vatican Cellar", dto);
+
+            Assert.True(
+                response.IsSuccessStatusCode,
+                $"Actual status code: {response.StatusCode}.");
         }
     }
 }
