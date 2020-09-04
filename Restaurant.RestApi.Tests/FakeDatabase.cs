@@ -50,28 +50,40 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
         public Task<Reservation?> ReadReservation(Guid id)
         {
-            var reservation =
-                GetOrAdd(RestApi.Grandfather.Id, new Collection<Reservation>())
+            var reservation = Values
+                .SelectMany(rs => rs)
                 .FirstOrDefault(r => r.Id == id);
             return Task.FromResult((Reservation?)reservation);
         }
 
-        public async Task Update(Reservation reservation)
+        public Task Update(Reservation reservation)
         {
             if (reservation is null)
                 throw new ArgumentNullException(nameof(reservation));
 
-            await Delete(reservation.Id);
-            await Create(RestApi.Grandfather.Id, reservation);
+            var restaurant =
+                Values.Single(rs => rs.Any(r => r.Id == reservation.Id));
+
+            var existing =
+                restaurant.SingleOrDefault(r => r.Id == reservation.Id);
+            if (existing is { })
+                restaurant.Remove(existing);
+
+            restaurant.Add(reservation);
+
+            return Task.CompletedTask;
         }
 
         public Task Delete(Guid id)
         {
-            var reservations =
-                GetOrAdd(RestApi.Grandfather.Id, new Collection<Reservation>());
-            var reservation = reservations.SingleOrDefault(r => r.Id == id);
+            var restaurant =
+                Values.SingleOrDefault(rs => rs.Any(r => r.Id == id));
+            if (restaurant is null)
+                return Task.CompletedTask;
+
+            var reservation = restaurant.SingleOrDefault(r => r.Id == id);
             if (reservation is { })
-                reservations.Remove(reservation);
+                restaurant.Remove(reservation);
 
             return Task.CompletedTask;
         }

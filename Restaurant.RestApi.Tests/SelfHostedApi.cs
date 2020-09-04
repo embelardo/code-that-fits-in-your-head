@@ -59,6 +59,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             return await CreateClient().PostAsync(address, content);
         }
+        public async Task<HttpResponseMessage> PutReservation(
+           Uri address,
+           object reservation)
+        {
+            string json = JsonSerializer.Serialize(reservation);
+            using var content = new StringContent(json);
+            content.Headers.ContentType.MediaType = "application/json";
+            return await CreateClient().PutAsync(address, content);
+        }
 
         public async Task<HttpResponseMessage> GetCurrentYear(string name)
         {

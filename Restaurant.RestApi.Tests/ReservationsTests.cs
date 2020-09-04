@@ -626,5 +626,29 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             Assert.IsAssignableFrom<NotFoundResult>(actual);
         }
+
+        [Fact]
+        public async Task ChangeTableAtTheVaticanCellar()
+        {
+            using var api = new SelfHostedApi();
+            var postResponse = await api.PostReservation(
+                "The Vatican Cellar",
+                Some.Reservation.ToDto());
+            postResponse.EnsureSuccessStatusCode();
+            var address = FindReservationAddress(postResponse);
+
+            var timeOfDayLaterThanLastSeatingAtTheOtherRestaurants =
+                TimeSpan.FromHours(21.5);
+            var putResponse = await api.PutReservation(
+                address,
+                Some.Reservation
+                    .WithDate(Some.Reservation.At.Date)
+                    .AddDate(timeOfDayLaterThanLastSeatingAtTheOtherRestaurants)
+                    .ToDto());
+
+            Assert.True(
+                putResponse.IsSuccessStatusCode,
+                $"Actual status code: {putResponse.StatusCode}.");
+        }
     }
 }

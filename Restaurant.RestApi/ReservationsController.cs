@@ -67,7 +67,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             await PostOffice.EmailReservationCreated(r).ConfigureAwait(false);
             scope.Complete();
 
-            return Reservation201Created(r);
+            return Reservation201Created(restaurantId, r);
         }
 
         private static ActionResult NoTables500InternalServerError()
@@ -82,17 +82,29 @@ namespace Ploeh.Samples.Restaurant.RestApi
             "Globalization",
             "CA1305:Specify IFormatProvider",
             Justification = "Guids aren't culture-specific.")]
-        private static ActionResult Reservation201Created(Reservation r)
+        private static ActionResult Reservation201Created(
+            int restaurantId,
+            Reservation r)
         {
             return new CreatedAtActionResult(
                 nameof(Get),
                 null,
-                new { id = r.Id.ToString("N") },
+                new { restaurantId, id = r.Id.ToString("N") },
                 r.ToDto());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> Get(string id)
+        public Task<ActionResult> Get(string id)
+        {
+            return Get(Grandfather.Id, id);
+        }
+
+        [SuppressMessage(
+            "Usage",
+            "CA1801:Review unused parameters",
+            Justification = "The restaurantId parameter is required in order to keep the REST API's URLs consistent across all verbs.")]
+        [HttpGet("{restaurantId}/{id}")]
+        public async Task<ActionResult> Get(int restaurantId, string id)
         {
             if (!Guid.TryParse(id, out var rid))
                 return new NotFoundResult();
@@ -106,7 +118,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(string id, ReservationDto dto)
+        public Task<ActionResult> Put(string id, ReservationDto dto)
+        {
+            return Put(Grandfather.Id, id, dto);
+        }
+
+        [HttpPut("{restaurantId}/{id}")]
+        public async Task<ActionResult> Put(
+            int restaurantId,
+            string id,
+            ReservationDto dto)
         {
             if (dto is null)
                 throw new ArgumentNullException(nameof(dto));
@@ -117,6 +138,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (res is null)
                 return new BadRequestResult();
 
+            var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
+                .ConfigureAwait(false);
+
             using var scope = new TransactionScope(
                 TransactionScopeAsyncFlowOption.Enabled);
 
@@ -126,10 +150,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 return new NotFoundResult();
 
             var reservations = await Repository
-                .ReadReservations(Grandfather.Id, res.At)
+                .ReadReservations(restaurantId, res.At)
                 .ConfigureAwait(false);
             reservations = reservations.Where(r => r.Id != res.Id).ToList();
-            if (!MaitreD.WillAccept(DateTime.Now, reservations, res))
+            if (!maitreD!.WillAccept(DateTime.Now, reservations, res))
                 return NoTables500InternalServerError();
 
             if (existing.Email != res.Email)
@@ -144,7 +168,17 @@ namespace Ploeh.Samples.Restaurant.RestApi
         }
 
         [HttpDelete("{id}")]
-        public async Task Delete(string id)
+        public Task Delete(string id)
+        {
+            return Delete(Grandfather.Id, id);
+        }
+
+        [SuppressMessage(
+            "Usage",
+            "CA1801:Review unused parameters",
+            Justification = "The restaurantId parameter is required in order to keep the REST API's URLs consistent across all verbs.")]
+        [HttpDelete("{restaurantId}/{id}")]
+        public async Task Delete(int restaurantId, string id)
         {
             if (Guid.TryParse(id, out var rid))
             {
