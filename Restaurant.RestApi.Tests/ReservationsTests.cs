@@ -607,5 +607,24 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 response.IsSuccessStatusCode,
                 $"Actual status code: {response.StatusCode}.");
         }
+
+        [Fact]
+        public async Task PostToAbsentRestaurant()
+        {
+            var sut = new ReservationsController(
+                Some.RestaurantDatabase,
+                new FakeDatabase(),
+                new SpyPostOffice(),
+                Some.MaitreD);
+            var absentRestaurantId = 4;
+            MaitreD? m =
+                await Some.RestaurantDatabase.GetMaitreD(absentRestaurantId);
+            Assert.Null(m);
+
+            var actual =
+                await sut.Post(absentRestaurantId, Some.Reservation.ToDto());
+
+            Assert.IsAssignableFrom<NotFoundResult>(actual);
+        }
     }
 }

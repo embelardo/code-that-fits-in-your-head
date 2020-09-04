@@ -52,13 +52,15 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
                 .ConfigureAwait(false);
+            if (maitreD is null)
+                return new NotFoundResult();
 
             using var scope = new TransactionScope(
                 TransactionScopeAsyncFlowOption.Enabled);
             var reservations = await Repository
                 .ReadReservations(restaurantId, r.At)
                 .ConfigureAwait(false);
-            if (!maitreD!.WillAccept(DateTime.Now, reservations, r))
+            if (!maitreD.WillAccept(DateTime.Now, reservations, r))
                 return NoTables500InternalServerError();
 
             await Repository.Create(restaurantId, r).ConfigureAwait(false);
