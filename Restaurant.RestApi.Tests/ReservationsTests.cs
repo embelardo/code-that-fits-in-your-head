@@ -2,6 +2,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Ploeh.Samples.Restaurant.RestApi.Options;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -56,7 +57,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
-                Some.RestaurantDatabase,
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
                 db,
                 postOffice);
 
@@ -287,7 +289,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             db.Grandfather.Add(r);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
-                Some.RestaurantDatabase,
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
                 db,
                 postOffice);
 
@@ -305,7 +308,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
-                Some.RestaurantDatabase,
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
                 db,
                 postOffice);
 
@@ -390,7 +394,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
-                Some.RestaurantDatabase,
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
                 db,
                 postOffice);
 
@@ -413,7 +418,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             db.Grandfather.Add(Some.Reservation);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
-                Some.RestaurantDatabase,
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
                 db,
                 postOffice);
 
@@ -434,7 +440,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
-                Some.RestaurantDatabase,
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
                 db,
                 postOffice);
 
@@ -464,7 +471,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             db.Grandfather.Add(r2);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
-                Some.RestaurantDatabase,
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
                 db,
                 postOffice);
 
@@ -510,7 +518,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             db.Grandfather.Add(r);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
-                Some.RestaurantDatabase,
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
                 db,
                 postOffice);
 
@@ -536,7 +545,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             db.Grandfather.Add(r);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
-                Some.RestaurantDatabase,
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
                 db,
                 postOffice);
 
@@ -603,13 +613,14 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [Fact]
         public async Task PostToAbsentRestaurant()
         {
+            var restaurantDb = new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build());
             var sut = new ReservationsController(
-                Some.RestaurantDatabase,
+                restaurantDb,
                 new FakeDatabase(),
                 new SpyPostOffice());
             var absentRestaurantId = 4;
-            MaitreD? m =
-                await Some.RestaurantDatabase.GetMaitreD(absentRestaurantId);
+            MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
             Assert.Null(m);
 
             var actual =
@@ -646,14 +657,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task PutToAbsentRestaurant()
         {
             var absentRestaurantId = 4;
+            var restaurantDb = new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build());
             var db = new FakeDatabase();
             await db.Create(absentRestaurantId, Some.Reservation);
             var sut = new ReservationsController(
-                Some.RestaurantDatabase,
+                restaurantDb,
                 db,
                 new SpyPostOffice());
-            MaitreD? m =
-                await Some.RestaurantDatabase.GetMaitreD(absentRestaurantId);
+            MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
             Assert.Null(m);
 
             var actual = await sut.Put(

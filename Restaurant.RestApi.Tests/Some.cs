@@ -25,23 +25,5 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(12),
                 Table.Communal(10));
-
-        public static IRestaurantDatabase RestaurantDatabase =>
-            new OptionsRestaurantDatabase(
-                new RestaurantOptions
-                {
-                    Id = 1,
-                    Name = "Hipgnosta",
-                    OpensAt = (TimeSpan)MaitreD.OpensAt,
-                    LastSeating = (TimeSpan)MaitreD.LastSeating,
-                    SeatingDuration = MaitreD.SeatingDuration,
-                    Tables = new[]
-                    {
-                        new TableOptions
-                        {
-                            TableType = TableType.Communal, Seats = 10
-                        }
-                    }
-                });
     }
 }

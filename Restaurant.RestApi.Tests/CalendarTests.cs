@@ -1,5 +1,6 @@
 /* Copyright (c) Mark Seemann 2020. All rights reserved. */
 ﻿using Microsoft.AspNetCore.Mvc;
+using Ploeh.Samples.Restaurant.RestApi.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -398,7 +399,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int tableSize)
         {
             var sut = new CalendarController(
-                Some.RestaurantDatabase,
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
                 new FakeDatabase(),
                 Some.MaitreD.WithTables(Table.Communal(tableSize)));
 
@@ -451,8 +453,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Some.Reservation
                     .WithQuantity(3)
                     .WithDate(new DateTime(2020, 8, 21, 19, 0, 0)));
-            var sut =
-                new CalendarController(Some.RestaurantDatabase, db, maitreD);
+            var sut = new CalendarController(
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
+                db,
+                maitreD);
 
             var actual = await sut.GetDay(date.Year, date.Month, date.Day);
 
@@ -488,8 +493,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Some.Reservation
                     .WithQuantity(3)
                     .WithDate(new DateTime(2020, 8, 22, 20, 30, 0)));
-            var sut =
-                new CalendarController(Some.RestaurantDatabase, db, maitreD);
+            var sut = new CalendarController(
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
+                db,
+                maitreD);
 
             var actual = await sut.GetMonth(2020, 8);
 
@@ -527,8 +535,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Some.Reservation
                     .WithQuantity(5)
                     .WithDate(new DateTime(2020, 9, 23, 20, 15, 0)));
-            var sut =
-                new CalendarController(Some.RestaurantDatabase, db, maitreD);
+            var sut = new CalendarController(
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build()),
+                db,
+                maitreD);
 
             var actual = await sut.GetYear(2020);
 
