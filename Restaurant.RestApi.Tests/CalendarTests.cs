@@ -398,16 +398,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int expectedDays,
             int tableSize)
         {
+            var restaurant = RestaurantOptionsBuilder.Grandfather
+                .WithTables(new TableOptionsBuilder()
+                    .Communal()
+                    .WithSeats(tableSize)
+                    .Build())
+                .Build();
             var sut = new CalendarController(
-                new OptionsRestaurantDatabase(
-                    RestaurantOptionsBuilder.Grandfather
-                        .WithTables(new TableOptionsBuilder()
-                            .Communal()
-                            .WithSeats(tableSize)
-                            .Build())
-                        .Build()),
-                new FakeDatabase(),
-                Some.MaitreD.WithTables(Table.Communal(tableSize)));
+                new OptionsRestaurantDatabase(restaurant),
+                new FakeDatabase());
 
             var actual = await act(sut);
 
@@ -434,12 +433,12 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.All(
                 dto.Days,
                 d => Assert.Contains(
-                    sut.MaitreD.OpensAt.ToIso8601TimeString(),
+                    restaurant.OpensAt.ToIso8601TimeString(),
                     d.Entries.Select(e => e.Time)));
             Assert.All(
                 dto.Days,
                 d => Assert.Contains(
-                    sut.MaitreD.LastSeating.ToIso8601TimeString(),
+                    restaurant.LastSeating.ToIso8601TimeString(),
                     d.Entries.Select(e => e.Time)));
         }
 
@@ -450,11 +449,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task ViewCalendarForDayWithReservation(int restaurantId)
         {
             var date = new DateTime(2020, 8, 21);
-            var maitreD = new MaitreD(
-                TimeSpan.FromHours(18),
-                TimeSpan.FromHours(20),
-                TimeSpan.FromHours(.75),
-                Table.Standard(4));
             var db = new FakeDatabase();
             await db.Create(
                 restaurantId,
@@ -473,8 +467,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                             .WithSeats(4)
                             .Build())
                         .Build()),
-                db,
-                maitreD);
+                db);
 
             var actual = await sut.GetDay(
                 restaurantId,
@@ -506,11 +499,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData(87)]
         public async Task ViewCalendarForMonthWithReservation(int restaurantId)
         {
-            var maitreD = new MaitreD(
-                TimeSpan.FromHours(20),
-                TimeSpan.FromHours(22),
-                TimeSpan.FromHours(1),
-                Table.Communal(12));
             var db = new FakeDatabase();
             await db.Create(
                 restaurantId,
@@ -529,8 +517,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                             .WithSeats(12)
                             .Build())
                         .Build()),
-                db,
-                maitreD);
+                db);
 
             var actual = await sut.GetMonth(restaurantId, 2020, 8);
 
@@ -559,12 +546,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         [InlineData(21)]
         public async Task ViewCalendarForYearWithReservation(int restaurantId)
         {
-            var maitreD = new MaitreD(
-                TimeSpan.FromHours(18.5),
-                TimeSpan.FromHours(22),
-                TimeSpan.FromHours(2),
-                Table.Standard(4),
-                Table.Standard(6));
             var db = new FakeDatabase();
             await db.Create(
                 restaurantId,
@@ -588,8 +569,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                                 .WithSeats(6)
                                 .Build())
                         .Build()),
-                db,
-                maitreD);
+                db);
 
             var actual = await sut.GetYear(restaurantId, 2020);
 
@@ -634,7 +614,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 .Build();
             var restaurantDb = new OptionsRestaurantDatabase(restaurant);
             var db = new FakeDatabase();
-            var sut = new CalendarController(restaurantDb, db, Some.MaitreD);
+            var sut = new CalendarController(restaurantDb, db);
 
             var actual = await sut.GetDay(restaurantId, 2020, 9, 5);
 
@@ -653,8 +633,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             var sut = new CalendarController(
                 restaurantDb,
-                db,
-                Some.MaitreD);
+                db);
             MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
             Assert.Null(m);
 
@@ -672,8 +651,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             var sut = new CalendarController(
                 restaurantDb,
-                db,
-                Some.MaitreD);
+                db);
             MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
             Assert.Null(m);
 
@@ -691,8 +669,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             var sut = new CalendarController(
                 restaurantDb,
-                db,
-                Some.MaitreD);
+                db);
             MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
             Assert.Null(m);
 

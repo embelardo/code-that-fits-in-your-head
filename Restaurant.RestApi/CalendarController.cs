@@ -13,17 +13,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
     {
         public CalendarController(
             IRestaurantDatabase restaurantDatabase,
-            IReservationsRepository repository,
-            MaitreD maitreD)
+            IReservationsRepository repository)
         {
             RestaurantDatabase = restaurantDatabase;
             Repository = repository;
-            MaitreD = maitreD;
         }
 
         public IRestaurantDatabase RestaurantDatabase { get; }
         public IReservationsRepository Repository { get; }
-        public MaitreD MaitreD { get; }
 
         [HttpGet("calendar/{year}"), ResponseCache(Duration = 60)]
         public Task<ActionResult> GetYear(int year)
