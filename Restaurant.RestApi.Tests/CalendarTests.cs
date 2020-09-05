@@ -643,5 +643,62 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var day = Assert.Single(calendar.Days);
             Assert.Equal(opensAt, day.Entries.First().Time);
         }
+
+        [Fact]
+        public async Task ViewYearForAbsentRestaurant()
+        {
+            var absentRestaurantId = 4;
+            var restaurantDb = new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build());
+            var db = new FakeDatabase();
+            var sut = new CalendarController(
+                restaurantDb,
+                db,
+                Some.MaitreD);
+            MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
+            Assert.Null(m);
+
+            var actual = await sut.GetYear(absentRestaurantId, 2029);
+
+            Assert.IsAssignableFrom<NotFoundResult>(actual);
+        }
+
+        [Fact]
+        public async Task ViewMonthForAbsentRestaurant()
+        {
+            var absentRestaurantId = 4;
+            var restaurantDb = new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build());
+            var db = new FakeDatabase();
+            var sut = new CalendarController(
+                restaurantDb,
+                db,
+                Some.MaitreD);
+            MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
+            Assert.Null(m);
+
+            var actual = await sut.GetMonth(absentRestaurantId, 1999, 12);
+
+            Assert.IsAssignableFrom<NotFoundResult>(actual);
+        }
+
+        [Fact]
+        public async Task ViewDayForAbsentRestaurant()
+        {
+            var absentRestaurantId = 4;
+            var restaurantDb = new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().Build());
+            var db = new FakeDatabase();
+            var sut = new CalendarController(
+                restaurantDb,
+                db,
+                Some.MaitreD);
+            MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
+            Assert.Null(m);
+
+            var actual = await sut.GetDay(absentRestaurantId, 2101, 2, 28);
+
+            Assert.IsAssignableFrom<NotFoundResult>(actual);
+        }
     }
 }

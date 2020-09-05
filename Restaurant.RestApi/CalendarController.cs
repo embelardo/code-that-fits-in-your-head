@@ -45,9 +45,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             var name = await RestaurantDatabase.GetName(restaurantId)
                 .ConfigureAwait(false);
+            var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
+                .ConfigureAwait(false);
+            if (maitreD is null)
+                return new NotFoundResult();
 
             var period = Period.Year(year);
-            var days = await MakeDays(restaurantId, period)
+            var days = await MakeDays(restaurantId, maitreD, period)
                 .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
@@ -73,9 +77,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             var name = await RestaurantDatabase.GetName(restaurantId)
                 .ConfigureAwait(false);
+            var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
+                .ConfigureAwait(false);
+            if (maitreD is null)
+                return new NotFoundResult();
 
             var period = Period.Month(year, month);
-            var days = await MakeDays(restaurantId, period)
+            var days = await MakeDays(restaurantId, maitreD, period)
                 .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
@@ -102,9 +110,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             var name = await RestaurantDatabase.GetName(restaurantId)
                 .ConfigureAwait(false);
+            var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
+                .ConfigureAwait(false);
+            if (maitreD is null)
+                return new NotFoundResult();
 
             var period = Period.Day(year, month, day);
-            var days = await MakeDays(restaurantId, period)
+            var days = await MakeDays(restaurantId, maitreD, period)
                 .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
@@ -117,15 +129,15 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 });
         }
 
-        private async Task<DayDto[]> MakeDays(int restaurantId, IPeriod period)
+        private async Task<DayDto[]> MakeDays(
+            int restaurantId,
+            MaitreD maitreD,
+            IPeriod period)
         {
             var firstTick = period.Accept(new FirstTickVisitor());
             var lastTick = period.Accept(new LastTickVisitor());
             var reservations = await Repository
                 .ReadReservations(restaurantId, firstTick, lastTick)
-                .ConfigureAwait(false);
-
-            var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
                 .ConfigureAwait(false);
 
             var days = period.Accept(new DaysVisitor())
