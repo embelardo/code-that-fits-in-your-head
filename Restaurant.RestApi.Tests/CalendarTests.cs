@@ -400,7 +400,12 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         {
             var sut = new CalendarController(
                 new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().Build()),
+                    RestaurantOptionsBuilder.Grandfather
+                        .WithTables(new TableOptionsBuilder()
+                            .Communal()
+                            .WithSeats(tableSize)
+                            .Build())
+                        .Build()),
                 new FakeDatabase(),
                 Some.MaitreD.WithTables(Table.Communal(tableSize)));
 
@@ -438,8 +443,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                     d.Entries.Select(e => e.Time)));
         }
 
-        [Fact]
-        public async Task ViewCalendarForDayWithReservation()
+        [Theory]
+        [InlineData( 1)]
+        [InlineData( 2)]
+        [InlineData(99)]
+        public async Task ViewCalendarForDayWithReservation(int restaurantId)
         {
             var date = new DateTime(2020, 8, 21);
             var maitreD = new MaitreD(
@@ -449,17 +457,30 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Table.Standard(4));
             var db = new FakeDatabase();
             await db.Create(
-                Grandfather.Id,
+                restaurantId,
                 Some.Reservation
                     .WithQuantity(3)
                     .WithDate(new DateTime(2020, 8, 21, 19, 0, 0)));
             var sut = new CalendarController(
                 new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().Build()),
+                    new RestaurantOptionsBuilder()
+                        .WithId(restaurantId)
+                        .WithOpensAt(TimeSpan.FromHours(18))
+                        .WithLastSeating(TimeSpan.FromHours(20))
+                        .WithSeatingDuration(TimeSpan.FromHours(.75))
+                        .WithTables(new TableOptionsBuilder()
+                            .Standard()
+                            .WithSeats(4)
+                            .Build())
+                        .Build()),
                 db,
                 maitreD);
 
-            var actual = await sut.GetDay(date.Year, date.Month, date.Day);
+            var actual = await sut.GetDay(
+                restaurantId,
+                date.Year,
+                date.Month,
+                date.Day);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
@@ -479,8 +500,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Equal(expected, day.Entries, new TimeDtoComparer());
         }
 
-        [Fact]
-        public async Task ViewCalendarForMonthWithReservation()
+        [Theory]
+        [InlineData( 4)]
+        [InlineData(10)]
+        [InlineData(87)]
+        public async Task ViewCalendarForMonthWithReservation(int restaurantId)
         {
             var maitreD = new MaitreD(
                 TimeSpan.FromHours(20),
@@ -489,17 +513,26 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Table.Communal(12));
             var db = new FakeDatabase();
             await db.Create(
-                Grandfather.Id,
+                restaurantId,
                 Some.Reservation
                     .WithQuantity(3)
                     .WithDate(new DateTime(2020, 8, 22, 20, 30, 0)));
             var sut = new CalendarController(
                 new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().Build()),
+                    new RestaurantOptionsBuilder()
+                        .WithId(restaurantId)
+                        .WithOpensAt(TimeSpan.FromHours(20))
+                        .WithLastSeating(TimeSpan.FromHours(22))
+                        .WithSeatingDuration(TimeSpan.FromHours(1))
+                        .WithTables(new TableOptionsBuilder()
+                            .Communal()
+                            .WithSeats(12)
+                            .Build())
+                        .Build()),
                 db,
                 maitreD);
 
-            var actual = await sut.GetMonth(2020, 8);
+            var actual = await sut.GetMonth(restaurantId, 2020, 8);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
@@ -520,8 +553,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             Assert.Equal(expected, day.Entries, new TimeDtoComparer());
         }
 
-        [Fact]
-        public async Task ViewCalendarForYearWithReservation()
+        [Theory]
+        [InlineData( 8)]
+        [InlineData(20)]
+        [InlineData(21)]
+        public async Task ViewCalendarForYearWithReservation(int restaurantId)
         {
             var maitreD = new MaitreD(
                 TimeSpan.FromHours(18.5),
@@ -531,17 +567,31 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Table.Standard(6));
             var db = new FakeDatabase();
             await db.Create(
-                Grandfather.Id,
+                restaurantId,
                 Some.Reservation
                     .WithQuantity(5)
                     .WithDate(new DateTime(2020, 9, 23, 20, 15, 0)));
             var sut = new CalendarController(
                 new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().Build()),
+                    new RestaurantOptionsBuilder()
+                        .WithId(restaurantId)
+                        .WithOpensAt(TimeSpan.FromHours(18.5))
+                        .WithLastSeating(TimeSpan.FromHours(22))
+                        .WithSeatingDuration(TimeSpan.FromHours(2))
+                        .WithTables(
+                            new TableOptionsBuilder()
+                                .Standard()
+                                .WithSeats(4)
+                                .Build(),
+                            new TableOptionsBuilder()
+                                .Standard()
+                                .WithSeats(6)
+                                .Build())
+                        .Build()),
                 db,
                 maitreD);
 
-            var actual = await sut.GetYear(2020);
+            var actual = await sut.GetYear(restaurantId, 2020);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
@@ -566,6 +616,32 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 new TimeDto { Time = "22:00:00", MaximumPartySize = 4, },
             };
             Assert.Equal(expected, day.Entries, new TimeDtoComparer());
+        }
+
+        [Theory]
+        [InlineData( 2, "11:30:00")]
+        [InlineData( 3, "18:00:00")]
+        [InlineData(28, "20:00:00")]
+        public async Task ViewCalendarForSpecificRestaurant(
+            int restaurantId,
+            string opensAt)
+        {
+            var restaurant = new RestaurantOptionsBuilder()
+                .WithId(restaurantId)
+                .WithOpensAt(TimeSpan.Parse(
+                    opensAt,
+                    CultureInfo.InvariantCulture))
+                .Build();
+            var restaurantDb = new OptionsRestaurantDatabase(restaurant);
+            var db = new FakeDatabase();
+            var sut = new CalendarController(restaurantDb, db, Some.MaitreD);
+
+            var actual = await sut.GetDay(restaurantId, 2020, 9, 5);
+
+            var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
+            var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
+            var day = Assert.Single(calendar.Days);
+            Assert.Equal(opensAt, day.Entries.First().Time);
         }
     }
 }

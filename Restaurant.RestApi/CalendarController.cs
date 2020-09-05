@@ -125,17 +125,21 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 .ReadReservations(restaurantId, firstTick, lastTick)
                 .ConfigureAwait(false);
 
+            var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
+                .ConfigureAwait(false);
+
             var days = period.Accept(new DaysVisitor())
-                .Select(d => MakeDay(d, reservations))
+                .Select(d => MakeDay(d, reservations, maitreD!))
                 .ToArray();
             return days;
         }
 
-        private DayDto MakeDay(
+        private static DayDto MakeDay(
             DateTime date,
-            IReadOnlyCollection<Reservation> reservations)
+            IReadOnlyCollection<Reservation> reservations,
+            MaitreD maitreD)
         {
-            var segments = MaitreD
+            var segments = maitreD
                 .Segment(date, reservations)
                 .Select(o => new TimeDto
                 {
