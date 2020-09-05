@@ -13,8 +13,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
         public TableOptionsBuilder()
         {
-            tableType = TableType.Communal;
-            seats = 10;
+            tableType = TableType.Standard;
+            seats = 1;
         }
 
         private TableOptionsBuilder(TableType tableType, int seats)

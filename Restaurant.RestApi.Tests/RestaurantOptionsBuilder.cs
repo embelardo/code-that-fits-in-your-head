@@ -17,13 +17,27 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
         public RestaurantOptionsBuilder()
         {
-            id = Grandfather.Id;
-            name = "Hipgnosta";
-            opensAt = (TimeSpan)Some.MaitreD.OpensAt;
-            lastSeating = (TimeSpan)Some.MaitreD.LastSeating;
-            seatingDuration = Some.MaitreD.SeatingDuration;
+            id = 9; // Not the grandfather ID
+            name = "Foo";
+            opensAt = TimeSpan.FromHours(12);
+            lastSeating = TimeSpan.FromHours(22);
+            seatingDuration = TimeSpan.FromHours(2.5);
             tables = new[] { new TableOptionsBuilder().Build() };
         }
+
+        /// <summary>
+        /// A build that represents the restaurant that's 'grandfathered' into
+        /// the system.
+        /// </summary>
+        /// <seealso cref="RestApi.Grandfather" />
+        public static RestaurantOptionsBuilder Grandfather =>
+            new RestaurantOptionsBuilder(
+                RestApi.Grandfather.Id,
+                "Hipgnosta",
+                (TimeSpan)Some.MaitreD.OpensAt,
+                (TimeSpan)Some.MaitreD.LastSeating,
+                Some.MaitreD.SeatingDuration,
+                new[] { new TableOptions { TableType = TableType.Communal, Seats = 10 } });
 
         private RestaurantOptionsBuilder(
             int id,

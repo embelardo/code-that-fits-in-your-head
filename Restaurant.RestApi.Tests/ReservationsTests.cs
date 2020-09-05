@@ -58,7 +58,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
                 new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().Build()),
+                    RestaurantOptionsBuilder.Grandfather.Build()),
                 db,
                 postOffice);
 
@@ -419,7 +419,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
                 new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().Build()),
+                    RestaurantOptionsBuilder.Grandfather.Build()),
                 db,
                 postOffice);
 
@@ -472,7 +472,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
                 new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().Build()),
+                    RestaurantOptionsBuilder.Grandfather.Build()),
                 db,
                 postOffice);
 
@@ -519,7 +519,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
                 new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().Build()),
+                    RestaurantOptionsBuilder.Grandfather.Build()),
                 db,
                 postOffice);
 
@@ -546,7 +546,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
                 new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().Build()),
+                    RestaurantOptionsBuilder.Grandfather.Build()),
                 db,
                 postOffice);
 
