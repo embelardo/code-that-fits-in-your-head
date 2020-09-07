@@ -47,7 +47,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var firstTick = date;
             var lastTick = firstTick.AddDays(1).AddTicks(-1);
             var reservations = await Repository
-                .ReadReservations(Grandfather.Id, firstTick, lastTick)
+                .ReadReservations(restaurantId, firstTick, lastTick)
                 .ConfigureAwait(false);
 
             var schedule = MaitreD.Schedule(reservations);

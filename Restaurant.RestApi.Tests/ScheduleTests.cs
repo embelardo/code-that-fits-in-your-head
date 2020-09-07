@@ -117,5 +117,30 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 day.Entries.SelectMany(e => e.Reservations), 
                 rdto => rdto.Id == r.Id.ToString("N"));
         }
+
+        [Theory]
+        [InlineData( 4)]
+        [InlineData(22)]
+        public async Task GetScheduleForDateWithReservationAtOtherRestaurant(
+            int restaurantId)
+        {
+            var r = Some.Reservation;
+            var db = new FakeDatabase();
+            await db.Create(Grandfather.Id, r);
+            var sut = new ScheduleController(
+                new OptionsRestaurantDatabase(
+                    RestaurantOptionsBuilder.Grandfather.Build(),
+                    new RestaurantOptionsBuilder().WithId(restaurantId).Build()),
+                db,
+                Some.MaitreD);
+
+            var actual =
+                await sut.Get(restaurantId, r.At.Year, r.At.Month, r.At.Day);
+
+            var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
+            var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
+            var day = Assert.Single(calendar.Days);
+            Assert.Empty(day.Entries);
+        }
     }
 }
