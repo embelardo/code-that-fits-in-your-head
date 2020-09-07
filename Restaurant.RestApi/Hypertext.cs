@@ -122,39 +122,41 @@ namespace Ploeh.Samples.Restaurant.RestApi
             IPeriod period,
             string rel)
         {
-            var values = period.Accept(new ValuesVisitor());
+            var (action, values) = period.Accept(new ValuesVisitor());
             return calendar
+                .WithAction(action)
                 .WithValues(values)
                 .BuildAbsolute(url)
                 .Link(rel);
         }
 
-        private class ValuesVisitor : IPeriodVisitor<object>
+        private class ValuesVisitor : IPeriodVisitor<(string, object)>
         {
-            public object VisitYear(int year)
+            public (string, object) VisitYear(int year)
             {
-                return new { year };
+                return ("GetYear", new { year });
             }
 
-            public object VisitMonth(int year, int month)
+            public (string, object) VisitMonth(int year, int month)
             {
-                return new { year, month };
+                return ("GetMonth", new { year, month });
             }
 
-            public object VisitDay(int year, int month, int day)
+            public (string, object) VisitDay(int year, int month, int day)
             {
-                return new { year, month, day };
+                return ("GetDay", new { year, month, day });
             }
         }
 
         internal static LinkDto LinkToSchedule(
             this IUrlHelper url,
+            int restaurantId,
             int year,
             int month,
             int day)
         {
             return schedule
-                .WithValues(new { year, month, day })
+                .WithValues(new { restaurantId, year, month, day })
                 .BuildAbsolute(url)
                 .Link("urn:schedule");
         }

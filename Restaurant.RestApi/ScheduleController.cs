@@ -13,19 +13,36 @@ namespace Ploeh.Samples.Restaurant.RestApi
     public class ScheduleController
     {
         public ScheduleController(
+            IRestaurantDatabase restaurantDatabase,
             IReservationsRepository repository,
             MaitreD maitreD)
         {
+            RestaurantDatabase = restaurantDatabase;
             Repository = repository;
             MaitreD = maitreD;
         }
 
+        public IRestaurantDatabase RestaurantDatabase { get; }
         public IReservationsRepository Repository { get; }
         public MaitreD MaitreD { get; }
 
         [HttpGet("{year}/{month}/{day}"), Authorize(Roles = "MaitreD")]
-        public async Task<ActionResult> Get(int year, int month, int day)
+        public Task<ActionResult> Get(int year, int month, int day)
         {
+            return Get(Grandfather.Id, year, month, day);
+        }
+
+        [Authorize(Roles = "MaitreD")]
+        [HttpGet("{restaurantId}/{year}/{month}/{day}")]
+        public async Task<ActionResult> Get(
+            int restaurantId,
+            int year,
+            int month,
+            int day)
+        {
+            var name = await RestaurantDatabase.GetName(restaurantId)
+                .ConfigureAwait(false);
+
             var date = new DateTime(year, month, day);
             var firstTick = date;
             var lastTick = firstTick.AddDays(1).AddTicks(-1);
@@ -35,30 +52,31 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             var schedule = MaitreD.Schedule(reservations);
 
-            return MakeCalendar(date, schedule);
+            var dto = MakeCalendar(date, schedule);
+            dto.Name = name;
+            return new OkObjectResult(dto);
         }
 
-        private ActionResult MakeCalendar(
+        private CalendarDto MakeCalendar(
             DateTime date,
             IEnumerable<Occurrence<IEnumerable<Table>>> schedule)
         {
             var entries = schedule.Select(MakeEntry).ToArray();
 
-            return new OkObjectResult(
-                new CalendarDto
+            return new CalendarDto
+            {
+                Year = date.Year,
+                Month = date.Month,
+                Day = date.Day,
+                Days = new[]
                 {
-                    Year = date.Year,
-                    Month = date.Month,
-                    Day = date.Day,
-                    Days = new[]
+                    new DayDto
                     {
-                        new DayDto
-                        {
-                            Date = date.ToIso8601DateString(),
-                            Entries = entries
-                        }
+                        Date = date.ToIso8601DateString(),
+                        Entries = entries
                     }
-                });
+                }
+            };
         }
 
         private TimeDto MakeEntry(Occurrence<IEnumerable<Table>> occurrence)

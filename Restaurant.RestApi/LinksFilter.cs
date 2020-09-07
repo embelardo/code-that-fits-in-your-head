@@ -178,7 +178,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
                         date.Year,
                         date.Month,
                         date.Day),
-                    url.LinkToSchedule(date.Year, date.Month, date.Day)
+                    url.LinkToSchedule(
+                        restaurantId,
+                        date.Year,
+                        date.Month,
+                        date.Day)
                 };
         }
     }

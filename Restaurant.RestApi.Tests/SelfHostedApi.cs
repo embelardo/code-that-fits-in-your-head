@@ -3,10 +3,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,6 +19,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 {
     public sealed class SelfHostedApi : WebApplicationFactory<Startup>
     {
+        private bool authorizeClient;
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             if (builder is null)
@@ -59,6 +65,44 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             return await CreateClient().PostAsync(address, content);
         }
+
+        internal void AuthorizeClient()
+        {
+            authorizeClient = true;
+        }
+
+        protected override void ConfigureClient(HttpClient client)
+        {
+            base.ConfigureClient(client);
+            if (client is null)
+                throw new ArgumentNullException(nameof(client));
+
+            if (!authorizeClient)
+                return;
+
+            var token = GenerateJwtToken();
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        private static string GenerateJwtToken()
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(
+                "This is not the secret used in production.");
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject =
+                    new ClaimsIdentity(new[] { new Claim("role", "MaitreD") }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
         public async Task<HttpResponseMessage> PutReservation(
            Uri address,
            object reservation)
@@ -113,6 +157,22 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var target = new DateTime(year, month, day).ToIso8601DateString();
             var dayCalendar = dto.Days.Single(d => d.Date == target);
             var address = dayCalendar.Links.FindAddress("urn:day");
+            return await CreateClient().GetAsync(address);
+        }
+
+        internal async Task<HttpResponseMessage> GetSchedule(
+            string name,
+            int year,
+            int month,
+            int day)
+        {
+            var resp = await GetYear(name, year);
+            resp.EnsureSuccessStatusCode();
+            var dto = await resp.ParseJsonContent<CalendarDto>();
+
+            var target = new DateTime(year, month, day).ToIso8601DateString();
+            var dayCalendar = dto.Days.Single(d => d.Date == target);
+            var address = dayCalendar.Links.FindAddress("urn:schedule");
             return await CreateClient().GetAsync(address);
         }
     }

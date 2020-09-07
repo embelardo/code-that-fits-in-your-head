@@ -1,5 +1,6 @@
 /* Copyright (c) Mark Seemann 2020. All rights reserved. */
 ﻿using Microsoft.AspNetCore.Mvc;
+using Ploeh.Samples.Restaurant.RestApi.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,11 +52,41 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 dayDto.Date);
         }
 
+        [Theory]
+        [InlineData(         "Hipgnosta", 2024, 11,  2)]
+        [InlineData(              "Nono", 2018,  9,  9)]
+        [InlineData("The Vatican Cellar", 2021, 10, 10)]
+        public async Task GetRestaurantScheduleWhileAuthorized(
+            string name,
+            int year,
+            int month,
+            int day)
+        {
+            using var api = new SelfHostedApi();
+            api.AuthorizeClient();
+
+            var response =
+                await api.GetSchedule(name, year, month, day);
+
+            Assert.True(
+                response.IsSuccessStatusCode,
+                $"Actual status code: {response.StatusCode}.");
+            var actual = await response.ParseJsonContent<CalendarDto>();
+            Assert.Equal(name, actual.Name);
+            var dayDto = Assert.Single(actual.Days);
+            Assert.Equal(
+                new DateTime(year, month, day).ToIso8601DateString(),
+                dayDto.Date);
+        }
+
         [Fact]
         public async Task GetScheduleForDateWithoutReservations()
         {
-            var db = new FakeDatabase();
-            var sut = new ScheduleController(db, Some.MaitreD);
+            var sut = new ScheduleController(
+                new OptionsRestaurantDatabase(
+                    RestaurantOptionsBuilder.Grandfather.Build()),
+                new FakeDatabase(),
+                Some.MaitreD);
 
             var actual = await sut.Get(2020, 8, 26);
 
@@ -71,7 +102,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var r = Some.Reservation;
             var db = new FakeDatabase();
             await db.Create(Grandfather.Id, r);
-            var sut = new ScheduleController(db, Some.MaitreD);
+            var sut = new ScheduleController(
+                new OptionsRestaurantDatabase(
+                    RestaurantOptionsBuilder.Grandfather.Build()),
+                db,
+                Some.MaitreD);
 
             var actual = await sut.Get(r.At.Year, r.At.Month, r.At.Day);
 
