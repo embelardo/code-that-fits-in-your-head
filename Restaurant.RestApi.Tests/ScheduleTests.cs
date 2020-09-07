@@ -142,5 +142,33 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var day = Assert.Single(calendar.Days);
             Assert.Empty(day.Entries);
         }
+
+        [Fact]
+        public async Task GetScheduleWhenSeatingDurationIsShort()
+        {
+            var r1 = Some.Reservation;
+            var r2 = r1.OneHourLater().WithId(Guid.NewGuid());
+            var db = new FakeDatabase();
+            await db.Create(2, r1);
+            await db.Create(2, r2);
+            var sut = new ScheduleController(
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder()
+                        .WithId(2)
+                        .WithSeatingDuration(TimeSpan.FromHours(.5))
+                        .Build()),
+                db,
+                Some.MaitreD);
+
+            var actual = await sut.Get(2, r1.At.Year, r1.At.Month, r1.At.Day);
+
+            var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
+            var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
+            var day = Assert.Single(calendar.Days);
+            // Because the seating duration is so short, the entries shouldn't
+            // overlap; thus, each entry should contain only a single
+            // reservation.
+            Assert.All(day.Entries, e => Assert.Single(e.Reservations));
+        }
     }
 }
