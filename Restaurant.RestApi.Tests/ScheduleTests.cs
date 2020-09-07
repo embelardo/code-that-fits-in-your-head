@@ -170,5 +170,19 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             // reservation.
             Assert.All(day.Entries, e => Assert.Single(e.Reservations));
         }
+
+        [Fact]
+        public async Task GetScheduleForAbsentRestaurant()
+        {
+            var sut = new ScheduleController(
+                new OptionsRestaurantDatabase(
+                    new RestaurantOptionsBuilder().WithId(2).Build()),
+                new FakeDatabase(),
+                Some.MaitreD);
+
+            var actual = await sut.Get(3, 2089, 12, 9);
+
+            Assert.IsAssignableFrom<NotFoundResult>(actual);
+        }
     }
 }

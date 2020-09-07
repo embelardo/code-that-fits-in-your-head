@@ -44,6 +44,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 .ConfigureAwait(false);
             var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
                 .ConfigureAwait(false);
+            if (maitreD is null)
+                return new NotFoundResult();
 
             var date = new DateTime(year, month, day);
             var firstTick = date;
@@ -52,7 +54,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 .ReadReservations(restaurantId, firstTick, lastTick)
                 .ConfigureAwait(false);
 
-            var schedule = maitreD!.Schedule(reservations);
+            var schedule = maitreD.Schedule(reservations);
 
             var dto = MakeCalendar(date, schedule);
             dto.Name = name;
