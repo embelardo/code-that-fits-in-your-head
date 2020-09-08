@@ -198,5 +198,20 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             Assert.Equal(HttpStatusCode.Unauthorized, actual.StatusCode);
         }
+
+        [Fact]
+        public async Task BookmarksStillWork()
+        {
+            using var api = new LegacyApi();
+            api.AuthorizeClient();
+
+            var bookmarkedAddress = new Uri("http://localhost/schedule/2018/11/25?sig=ICAFhWqYDMz2GzWNLpdBsuefSNnf%2BKtmvbPAQout%2BvY%3D");
+            var actual =
+                await api.CreateDefaultClient().GetAsync(bookmarkedAddress);
+
+            Assert.True(
+                actual.IsSuccessStatusCode,
+                $"Actual status code: {actual.StatusCode}.");
+        }
     }
 }

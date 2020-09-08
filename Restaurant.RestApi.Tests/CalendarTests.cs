@@ -677,5 +677,19 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             Assert.IsAssignableFrom<NotFoundResult>(actual);
         }
+
+        [Theory]
+        [InlineData("http://localhost/calendar/2020?sig=ePBoUg5gDw2RKMVWz8KIVzF%2Fgq74RL6ynECiPpDwVks%3D")]
+        [InlineData("http://localhost/calendar/2020/9?sig=ZgxaZqg5ubDp0Z7IUx4dkqTzS%2Fyjv6veDUc2swdysDU%3D")]
+        [InlineData("http://localhost/calendar/2020/9/8?sig=K%2FSVCXwk5LN1Ph0igx3AV6d3P56q7IVqCPmRZTjQL94%3D")]
+        public async Task BookmarksStillWork(string bookmarkedAddress)
+        {
+            using var api = new LegacyApi();
+            var actual = await api.CreateDefaultClient()
+                .GetAsync(new Uri(bookmarkedAddress));
+            Assert.True(
+                actual.IsSuccessStatusCode,
+                $"Actual status code: {actual.StatusCode}.");
+        }
     }
 }
