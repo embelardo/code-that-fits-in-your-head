@@ -63,7 +63,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int day)
         {
             using var api = new SelfHostedApi();
-            api.AuthorizeClient();
+            api.AuthorizeClient(1, 2112, 90125);
 
             var response =
                 await api.GetSchedule(name, year, month, day);
@@ -85,7 +85,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var sut = new ScheduleController(
                 new OptionsRestaurantDatabase(
                     RestaurantOptionsBuilder.Grandfather.Build()),
-                new FakeDatabase());
+                new FakeDatabase(),
+                new AccessControlList(Grandfather.Id));
 
             var actual = await sut.Get(2020, 8, 26);
 
@@ -104,7 +105,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var sut = new ScheduleController(
                 new OptionsRestaurantDatabase(
                     RestaurantOptionsBuilder.Grandfather.Build()),
-                db);
+                db,
+                new AccessControlList(Grandfather.Id));
 
             var actual = await sut.Get(r.At.Year, r.At.Month, r.At.Day);
 
@@ -129,7 +131,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 new OptionsRestaurantDatabase(
                     RestaurantOptionsBuilder.Grandfather.Build(),
                     new RestaurantOptionsBuilder().WithId(restaurantId).Build()),
-                db);
+                db,
+                new AccessControlList(restaurantId));
 
             var actual =
                 await sut.Get(restaurantId, r.At.Year, r.At.Month, r.At.Day);
@@ -154,7 +157,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                         .WithId(2)
                         .WithSeatingDuration(TimeSpan.FromHours(.5))
                         .Build()),
-                db);
+                db,
+                new AccessControlList(2));
 
             var actual = await sut.Get(2, r1.At.Year, r1.At.Month, r1.At.Day);
 
@@ -173,11 +177,26 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var sut = new ScheduleController(
                 new OptionsRestaurantDatabase(
                     new RestaurantOptionsBuilder().WithId(2).Build()),
-                new FakeDatabase());
+                new FakeDatabase(),
+                new AccessControlList(3));
 
             var actual = await sut.Get(3, 2089, 12, 9);
 
             Assert.IsAssignableFrom<NotFoundResult>(actual);
+        }
+
+        [Theory]
+        [InlineData( 5)]
+        [InlineData(44)]
+        public async Task GetScheduleWithoutCorrectRestaurantRight(
+            int restaurantId)
+        {
+            using var api = new SelfHostedApi();
+            api.AuthorizeClient(restaurantId);
+
+            var actual = await api.GetSchedule("Nono", 2024, 3, 2);
+
+            Assert.Equal(HttpStatusCode.Unauthorized, actual.StatusCode);
         }
     }
 }

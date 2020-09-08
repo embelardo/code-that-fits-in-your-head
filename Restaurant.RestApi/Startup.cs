@@ -99,6 +99,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 };
                 opts.RequireHttpsMetadata = false;
             });
+
+            services.AddHttpContextAccessor();
+            services.AddTransient(sp => AccessControlList.FromUser(
+                sp.GetService<IHttpContextAccessor>().HttpContext.User));
         }
 
         public static void Configure(

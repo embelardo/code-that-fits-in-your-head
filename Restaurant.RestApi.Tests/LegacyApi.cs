@@ -92,7 +92,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject =
-                    new ClaimsIdentity(new[] { new Claim("role", "MaitreD") }),
+                    new ClaimsIdentity(new[]
+                    {
+                        new Claim("role", "MaitreD"),
+                        new Claim("restaurant", $"{Grandfather.Id}")
+                    }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),

@@ -14,14 +14,17 @@ namespace Ploeh.Samples.Restaurant.RestApi
     {
         public ScheduleController(
             IRestaurantDatabase restaurantDatabase,
-            IReservationsRepository repository)
+            IReservationsRepository repository,
+            AccessControlList accessControlList)
         {
             RestaurantDatabase = restaurantDatabase;
             Repository = repository;
+            AccessControlList = accessControlList;
         }
 
         public IRestaurantDatabase RestaurantDatabase { get; }
         public IReservationsRepository Repository { get; }
+        public AccessControlList AccessControlList { get; }
 
         [HttpGet("{year}/{month}/{day}"), Authorize(Roles = "MaitreD")]
         public Task<ActionResult> Get(int year, int month, int day)
@@ -37,6 +40,9 @@ namespace Ploeh.Samples.Restaurant.RestApi
             int month,
             int day)
         {
+            if (!AccessControlList.Authorize(restaurantId))
+                return new UnauthorizedResult();
+
             var name = await RestaurantDatabase.GetName(restaurantId)
                 .ConfigureAwait(false);
             var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)

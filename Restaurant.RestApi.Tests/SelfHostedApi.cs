@@ -20,6 +20,12 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
     public sealed class SelfHostedApi : WebApplicationFactory<Startup>
     {
         private bool authorizeClient;
+        private int[] restaurantIds;
+
+        public SelfHostedApi()
+        {
+            restaurantIds = Array.Empty<int>();
+        }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -66,9 +72,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             return await CreateClient().PostAsync(address, content);
         }
 
-        internal void AuthorizeClient()
+        internal void AuthorizeClient(params int[] restaurantIds)
         {
             authorizeClient = true;
+            this.restaurantIds = restaurantIds;
         }
 
         protected override void ConfigureClient(HttpClient client)
@@ -85,15 +92,20 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 new AuthenticationHeaderValue("Bearer", token);
         }
 
-        private static string GenerateJwtToken()
+        private string GenerateJwtToken()
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(
                 "This is not the secret used in production.");
+
+            var restaurantClaims = restaurantIds
+                .Select(id => new Claim("restaurant", $"{id}"));
+            var roleClaim = new Claim("role", "MaitreD");
+            var claims = restaurantClaims.Append(roleClaim).ToArray();
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject =
-                    new ClaimsIdentity(new[] { new Claim("role", "MaitreD") }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
