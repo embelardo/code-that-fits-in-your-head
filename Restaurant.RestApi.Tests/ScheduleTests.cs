@@ -64,9 +64,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         {
             using var api = new SelfHostedApi();
             api.AuthorizeClient(1, 2112, 90125);
+            var client = api.CreateClient();
 
             var response =
-                await api.GetSchedule(name, year, month, day);
+                await client.GetSchedule(name, year, month, day);
 
             Assert.True(
                 response.IsSuccessStatusCode,
@@ -194,8 +195,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         {
             using var api = new SelfHostedApi();
             api.AuthorizeClient(restaurantId);
+            var client = api.CreateClient();
 
-            var actual = await api.GetSchedule("Nono", 2024, 3, 2);
+            var actual = await client.GetSchedule("Nono", 2024, 3, 2);
 
             Assert.Equal(HttpStatusCode.Unauthorized, actual.StatusCode);
         }

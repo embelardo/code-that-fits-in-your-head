@@ -19,8 +19,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task GetRestaurant(string name)
         {
             using var api = new SelfHostedApi();
+            var client = api.CreateClient();
 
-            var response = await api.GetRestaurant(name);
+            var response = await client.GetRestaurant(name);
 
             Assert.True(
                 response.IsSuccessStatusCode,
@@ -36,8 +37,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task RestaurantReturnsCorrectLinks(string name)
         {
             using var api = new SelfHostedApi();
+            var client = api.CreateClient();
 
-            var response = await api.GetRestaurant(name);
+            var response = await client.GetRestaurant(name);
 
             var expected = new HashSet<string?>(new[]
             {

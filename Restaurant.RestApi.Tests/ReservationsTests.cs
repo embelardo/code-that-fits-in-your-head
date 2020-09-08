@@ -567,24 +567,25 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task ReserveTableAtNono()
         {
             using var api = new SelfHostedApi();
+            var client = api.CreateClient();
             var dto = Some.Reservation.ToDto();
             dto.Quantity = 6;
 
-            var response = await api.PostReservation("Nono", dto);
+            var response = await client.PostReservation("Nono", dto);
 
             var at = Some.Reservation.At;
-            await AssertRemainingCapacity(api, at, "Nono", 4);
-            await AssertRemainingCapacity(api, at, "Hipgnosta", 10);
+            await AssertRemainingCapacity(client, at, "Nono", 4);
+            await AssertRemainingCapacity(client, at, "Hipgnosta", 10);
         }
 
         private static async Task AssertRemainingCapacity(
-            SelfHostedApi service,
+            HttpClient client,
             DateTime date,
             string name,
             int expected)
         {
             var response =
-                await service.GetDay(name, date.Year, date.Month, date.Day);
+                await client.GetDay(name, date.Year, date.Month, date.Day);
             var day = await response.ParseJsonContent<CalendarDto>();
             Assert.All(
                 day.Days.Single().Entries,
@@ -595,6 +596,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task ReserveTableAtTheVaticanCellar()
         {
             using var api = new SelfHostedApi();
+            var client = api.CreateClient();
             var timeOfDayLaterThanLastSeatingAtTheOtherRestaurants =
                 TimeSpan.FromHours(21.5);
 
@@ -603,7 +605,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 .AddDate(timeOfDayLaterThanLastSeatingAtTheOtherRestaurants)
                 .ToDto();
             var response =
-                await api.PostReservation("The Vatican Cellar", dto);
+                await client.PostReservation("The Vatican Cellar", dto);
 
             Assert.True(
                 response.IsSuccessStatusCode,
@@ -633,7 +635,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task ChangeTableAtTheVaticanCellar()
         {
             using var api = new SelfHostedApi();
-            var postResponse = await api.PostReservation(
+            var client = api.CreateClient();
+            var postResponse = await client.PostReservation(
                 "The Vatican Cellar",
                 Some.Reservation.ToDto());
             postResponse.EnsureSuccessStatusCode();
@@ -641,7 +644,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             var timeOfDayLaterThanLastSeatingAtTheOtherRestaurants =
                 TimeSpan.FromHours(21.5);
-            var putResponse = await api.PutReservation(
+            var putResponse = await client.PutReservation(
                 address,
                 Some.Reservation
                     .WithDate(Some.Reservation.At.Date)
