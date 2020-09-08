@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
-    [Route("schedule")]
     public class ScheduleController
     {
         public ScheduleController(
@@ -26,14 +25,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public IReservationsRepository Repository { get; }
         public AccessControlList AccessControlList { get; }
 
-        [HttpGet("{year}/{month}/{day}"), Authorize(Roles = "MaitreD")]
+        [HttpGet("schedule/{year}/{month}/{day}"), Authorize(Roles = "MaitreD")]
         public Task<ActionResult> Get(int year, int month, int day)
         {
             return Get(Grandfather.Id, year, month, day);
         }
 
         [Authorize(Roles = "MaitreD")]
-        [HttpGet("{restaurantId}/{year}/{month}/{day}")]
+        [HttpGet("restaurants/{restaurantId}/schedule/{year}/{month}/{day}")]
         public async Task<ActionResult> Get(
             int restaurantId,
             int year,

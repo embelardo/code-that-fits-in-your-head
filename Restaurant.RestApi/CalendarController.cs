@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
-    [Route("")]
     public class CalendarController
     {
         public CalendarController(

@@ -11,7 +11,7 @@ using System.Transactions;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
-    [ApiController, Route("reservations")]
+    [ApiController]
     public class ReservationsController
     {
         public ReservationsController(
@@ -28,13 +28,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public IReservationsRepository Repository { get; }
         public IPostOffice PostOffice { get; }
 
-        [HttpPost]
+        [HttpPost("reservations")]
         public Task<ActionResult> Post(ReservationDto dto)
         {
             return Post(Grandfather.Id, dto);
         }
 
-        [HttpPost("{restaurantId}")]
+        [HttpPost("restaurants/{restaurantId}/reservations")]
         public async Task<ActionResult> Post(
             int restaurantId,
             ReservationDto dto)
@@ -90,7 +90,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 r.ToDto());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("reservations/{id}")]
         public Task<ActionResult> Get(string id)
         {
             return Get(Grandfather.Id, id);
@@ -100,7 +100,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             "Usage",
             "CA1801:Review unused parameters",
             Justification = "The restaurantId parameter is required in order to keep the REST API's URLs consistent across all verbs.")]
-        [HttpGet("{restaurantId}/{id}")]
+        [HttpGet("restaurants/{restaurantId}/reservations/{id}")]
         public async Task<ActionResult> Get(int restaurantId, string id)
         {
             if (!Guid.TryParse(id, out var rid))
@@ -114,13 +114,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new OkObjectResult(r.ToDto());
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("reservations/{id}")]
         public Task<ActionResult> Put(string id, ReservationDto dto)
         {
             return Put(Grandfather.Id, id, dto);
         }
 
-        [HttpPut("{restaurantId}/{id}")]
+        [HttpPut("restaurants/{restaurantId}/reservations/{id}")]
         public async Task<ActionResult> Put(
             int restaurantId,
             string id,
@@ -166,7 +166,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return new OkObjectResult(res.ToDto());
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("reservations/{id}")]
         public Task Delete(string id)
         {
             return Delete(Grandfather.Id, id);
@@ -176,7 +176,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             "Usage",
             "CA1801:Review unused parameters",
             Justification = "The restaurantId parameter is required in order to keep the REST API's URLs consistent across all verbs.")]
-        [HttpDelete("{restaurantId}/{id}")]
+        [HttpDelete("restaurants/{restaurantId}/reservations/{id}")]
         public async Task Delete(int restaurantId, string id)
         {
             if (Guid.TryParse(id, out var rid))
