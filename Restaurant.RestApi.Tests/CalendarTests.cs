@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -350,7 +351,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             private void AddYear(int year, int expectedDays, int tableSize)
             {
                 Add(
-                    sut => sut.GetYear(year),
+                    sut => sut.GetYear(Grandfather.Id, year),
                     year,
                     null,
                     null,
@@ -365,7 +366,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 int tableSize)
             {
                 Add(
-                    sut => sut.GetMonth(year, month),
+                    sut => sut.GetMonth(Grandfather.Id, year, month),
                     year,
                     month,
                     null,
@@ -376,7 +377,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             private void AddDay(int year, int month, int day, int tableSize)
             {
                 Add(
-                    sut => sut.GetDay(year, month, day),
+                    sut => sut.GetDay(Grandfather.Id, year, month, day),
                     year,
                     month,
                     day,
@@ -685,11 +686,16 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
         public async Task BookmarksStillWork(string bookmarkedAddress)
         {
             using var api = new LegacyApi();
+
             var actual = await api.CreateDefaultClient()
                 .GetAsync(new Uri(bookmarkedAddress));
+
+            Assert.Equal(HttpStatusCode.MovedPermanently, actual.StatusCode);
+            var follow =
+                await api.CreateClient().GetAsync(actual.Headers.Location);
             Assert.True(
-                actual.IsSuccessStatusCode,
-                $"Actual status code: {actual.StatusCode}.");
+                follow.IsSuccessStatusCode,
+                $"Actual status code: {follow.StatusCode}.");
         }
     }
 }

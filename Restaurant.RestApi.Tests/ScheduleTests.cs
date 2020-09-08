@@ -88,7 +88,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 new FakeDatabase(),
                 new AccessControlList(Grandfather.Id));
 
-            var actual = await sut.Get(2020, 8, 26);
+            var actual = await sut.Get(Grandfather.Id, 2020, 8, 26);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
@@ -108,7 +108,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 db,
                 new AccessControlList(Grandfather.Id));
 
-            var actual = await sut.Get(r.At.Year, r.At.Month, r.At.Day);
+            var actual =
+                await sut.Get(Grandfather.Id, r.At.Year, r.At.Month, r.At.Day);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
@@ -209,9 +210,12 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var actual =
                 await api.CreateDefaultClient().GetAsync(bookmarkedAddress);
 
+            Assert.Equal(HttpStatusCode.MovedPermanently, actual.StatusCode);
+            var follow =
+                await api.CreateClient().GetAsync(actual.Headers.Location);
             Assert.True(
-                actual.IsSuccessStatusCode,
-                $"Actual status code: {actual.StatusCode}.");
+                follow.IsSuccessStatusCode,
+                $"Actual status code: {follow.StatusCode}.");
         }
     }
 }

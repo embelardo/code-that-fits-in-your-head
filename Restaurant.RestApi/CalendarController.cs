@@ -24,7 +24,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
         [HttpGet("calendar/{year}"), ResponseCache(Duration = 60)]
         public Task<ActionResult> GetYear(int year)
         {
-            return GetYear(Grandfather.Id, year);
+            var result = new RedirectToActionResult(
+                nameof(GetYear),
+                null,
+                new { restaurantId = Grandfather.Id, year },
+                permanent: true);
+            return Task.FromResult<ActionResult>(result);
         }
 
         /* This method loads a year's worth of reservation in order to segment
@@ -61,7 +66,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
         [HttpGet("calendar/{year}/{month}")]
         public Task<ActionResult> GetMonth(int year, int month)
         {
-            return GetMonth(Grandfather.Id, year, month);
+            var result = new RedirectToActionResult(
+                nameof(GetMonth),
+                null,
+                new { restaurantId = Grandfather.Id, year, month },
+                permanent: true);
+            return Task.FromResult<ActionResult>(result);
         }
 
         /* See comment about Get(int year). */
@@ -94,7 +104,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
         [HttpGet("calendar/{year}/{month}/{day}")]
         public Task<ActionResult> GetDay(int year, int month, int day)
         {
-            return GetDay(Grandfather.Id, year, month, day);
+            var result = new RedirectToActionResult(
+                nameof(GetDay),
+                null,
+                new { restaurantId = Grandfather.Id, year, month, day },
+                permanent: true);
+            return Task.FromResult<ActionResult>(result);
         }
 
         [HttpGet("restaurants/{restaurantId}/calendar/{year}/{month}/{day}")]

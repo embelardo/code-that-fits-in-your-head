@@ -32,6 +32,13 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public string Action(UrlActionContext actionContext)
         {
             var url = inner.Action(actionContext);
+            if (IsLocalUrl(url))
+            {
+                var b = new UriBuilder(
+                    ActionContext.HttpContext.Request.Scheme,
+                    ActionContext.HttpContext.Request.Host.ToUriComponent());
+                url = new Uri(b.Uri, url).AbsoluteUri;
+            }
             var ub = new UriBuilder(url);
 
             using var hmac = new HMACSHA256(urlSigningKey);

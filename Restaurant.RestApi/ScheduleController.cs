@@ -1,5 +1,6 @@
 /* Copyright (c) Mark Seemann 2020. All rights reserved. */
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
@@ -28,7 +29,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
         [HttpGet("schedule/{year}/{month}/{day}"), Authorize(Roles = "MaitreD")]
         public Task<ActionResult> Get(int year, int month, int day)
         {
-            return Get(Grandfather.Id, year, month, day);
+            var result = new RedirectToActionResult(
+                nameof(Get),
+                null,
+                new { restaurantId = Grandfather.Id, year, month, day },
+                permanent: true);
+            return Task.FromResult<ActionResult>(result);
         }
 
         [Authorize(Roles = "MaitreD")]
