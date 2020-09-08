@@ -14,17 +14,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
     {
         public ScheduleController(
             IRestaurantDatabase restaurantDatabase,
-            IReservationsRepository repository,
-            MaitreD maitreD)
+            IReservationsRepository repository)
         {
             RestaurantDatabase = restaurantDatabase;
             Repository = repository;
-            MaitreD = maitreD;
         }
 
         public IRestaurantDatabase RestaurantDatabase { get; }
         public IReservationsRepository Repository { get; }
-        public MaitreD MaitreD { get; }
 
         [HttpGet("{year}/{month}/{day}"), Authorize(Roles = "MaitreD")]
         public Task<ActionResult> Get(int year, int month, int day)

@@ -85,8 +85,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var sut = new ScheduleController(
                 new OptionsRestaurantDatabase(
                     RestaurantOptionsBuilder.Grandfather.Build()),
-                new FakeDatabase(),
-                Some.MaitreD);
+                new FakeDatabase());
 
             var actual = await sut.Get(2020, 8, 26);
 
@@ -105,8 +104,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var sut = new ScheduleController(
                 new OptionsRestaurantDatabase(
                     RestaurantOptionsBuilder.Grandfather.Build()),
-                db,
-                Some.MaitreD);
+                db);
 
             var actual = await sut.Get(r.At.Year, r.At.Month, r.At.Day);
 
@@ -131,8 +129,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 new OptionsRestaurantDatabase(
                     RestaurantOptionsBuilder.Grandfather.Build(),
                     new RestaurantOptionsBuilder().WithId(restaurantId).Build()),
-                db,
-                Some.MaitreD);
+                db);
 
             var actual =
                 await sut.Get(restaurantId, r.At.Year, r.At.Month, r.At.Day);
@@ -157,8 +154,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                         .WithId(2)
                         .WithSeatingDuration(TimeSpan.FromHours(.5))
                         .Build()),
-                db,
-                Some.MaitreD);
+                db);
 
             var actual = await sut.Get(2, r1.At.Year, r1.At.Month, r1.At.Day);
 
@@ -177,8 +173,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var sut = new ScheduleController(
                 new OptionsRestaurantDatabase(
                     new RestaurantOptionsBuilder().WithId(2).Build()),
-                new FakeDatabase(),
-                Some.MaitreD);
+                new FakeDatabase());
 
             var actual = await sut.Get(3, 2089, 12, 9);
 
