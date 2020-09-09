@@ -55,31 +55,9 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             if (!authorizeClient)
                 return;
 
-            var token = GenerateJwtToken();
+            var generator = new JwtTokenGenerator(restaurantIds, "MaitreD");
+            var token = generator.GenerateJwtToken();
             client.Authorize(token);
-        }
-
-        private string GenerateJwtToken()
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(
-                "This is not the secret used in production.");
-
-            var restaurantClaims = restaurantIds
-                .Select(id => new Claim("restaurant", $"{id}"));
-            var roleClaim = new Claim("role", "MaitreD");
-            var claims = restaurantClaims.Append(roleClaim).ToArray();
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
         }
     }
 }
