@@ -47,7 +47,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             int day)
         {
             if (!AccessControlList.Authorize(restaurantId))
-                return new UnauthorizedResult();
+                return new ForbidResult();
 
             var name = await RestaurantDatabase.GetName(restaurantId)
                 .ConfigureAwait(false);

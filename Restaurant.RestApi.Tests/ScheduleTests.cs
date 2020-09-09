@@ -203,7 +203,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             var actual = await client.GetSchedule("Nono", 2024, 3, 2);
 
-            Assert.Equal(HttpStatusCode.Unauthorized, actual.StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, actual.StatusCode);
         }
 
         [Fact]
