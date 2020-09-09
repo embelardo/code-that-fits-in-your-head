@@ -26,7 +26,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public Task<ActionResult> LegacyGet(int year)
         {
             var result = new RedirectToActionResult(
-                nameof(GetYear),
+                nameof(Get),
                 null,
                 new { restaurantId = Grandfather.Id, year },
                 permanent: true);
@@ -43,7 +43,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
          */
         [ResponseCache(Duration = 60)]
         [HttpGet("restaurants/{restaurantId}/calendar/{year}")]
-        public async Task<ActionResult> GetYear(int restaurantId, int year)
+        public async Task<ActionResult> Get(int restaurantId, int year)
         {
             var name = await RestaurantDatabase.GetName(restaurantId)
                 .ConfigureAwait(false);
@@ -69,7 +69,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public Task<ActionResult> LegacyGet(int year, int month)
         {
             var result = new RedirectToActionResult(
-                nameof(GetMonth),
+                nameof(Get),
                 null,
                 new { restaurantId = Grandfather.Id, year, month },
                 permanent: true);
@@ -78,7 +78,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         /* See comment about Get(int year). */
         [HttpGet("restaurants/{restaurantId}/calendar/{year}/{month}")]
-        public async Task<ActionResult> GetMonth(
+        public async Task<ActionResult> Get(
             int restaurantId,
             int year,
             int month)
@@ -108,7 +108,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public Task<ActionResult> LegacyGet(int year, int month, int day)
         {
             var result = new RedirectToActionResult(
-                nameof(GetDay),
+                nameof(Get),
                 null,
                 new { restaurantId = Grandfather.Id, year, month, day },
                 permanent: true);
@@ -116,7 +116,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         }
 
         [HttpGet("restaurants/{restaurantId}/calendar/{year}/{month}/{day}")]
-        public async Task<ActionResult> GetDay(
+        public async Task<ActionResult> Get(
             int restaurantId,
             int year,
             int month,

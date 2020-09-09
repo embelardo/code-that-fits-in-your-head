@@ -351,7 +351,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             private void AddYear(int year, int expectedDays, int tableSize)
             {
                 Add(
-                    sut => sut.GetYear(Grandfather.Id, year),
+                    sut => sut.Get(Grandfather.Id, year),
                     year,
                     null,
                     null,
@@ -366,7 +366,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 int tableSize)
             {
                 Add(
-                    sut => sut.GetMonth(Grandfather.Id, year, month),
+                    sut => sut.Get(Grandfather.Id, year, month),
                     year,
                     month,
                     null,
@@ -377,7 +377,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             private void AddDay(int year, int month, int day, int tableSize)
             {
                 Add(
-                    sut => sut.GetDay(Grandfather.Id, year, month, day),
+                    sut => sut.Get(Grandfather.Id, year, month, day),
                     year,
                     month,
                     day,
@@ -470,7 +470,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                         .Build()),
                 db);
 
-            var actual = await sut.GetDay(
+            var actual = await sut.Get(
                 restaurantId,
                 date.Year,
                 date.Month,
@@ -520,7 +520,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                         .Build()),
                 db);
 
-            var actual = await sut.GetMonth(restaurantId, 2020, 8);
+            var actual = await sut.Get(restaurantId, 2020, 8);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
@@ -572,7 +572,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                         .Build()),
                 db);
 
-            var actual = await sut.GetYear(restaurantId, 2020);
+            var actual = await sut.Get(restaurantId, 2020);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
@@ -617,7 +617,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             var sut = new CalendarController(restaurantDb, db);
 
-            var actual = await sut.GetDay(restaurantId, 2020, 9, 5);
+            var actual = await sut.Get(restaurantId, 2020, 9, 5);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
@@ -638,7 +638,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
             Assert.Null(m);
 
-            var actual = await sut.GetYear(absentRestaurantId, 2029);
+            var actual = await sut.Get(absentRestaurantId, 2029);
 
             Assert.IsAssignableFrom<NotFoundResult>(actual);
         }
@@ -656,7 +656,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
             Assert.Null(m);
 
-            var actual = await sut.GetMonth(absentRestaurantId, 1999, 12);
+            var actual = await sut.Get(absentRestaurantId, 1999, 12);
 
             Assert.IsAssignableFrom<NotFoundResult>(actual);
         }
@@ -674,7 +674,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
             Assert.Null(m);
 
-            var actual = await sut.GetDay(absentRestaurantId, 2101, 2, 28);
+            var actual = await sut.Get(absentRestaurantId, 2101, 2, 28);
 
             Assert.IsAssignableFrom<NotFoundResult>(actual);
         }

@@ -19,6 +19,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 .WithController(nameof(RestaurantsController));
         private readonly static UrlBuilder calendar =
             new UrlBuilder()
+                .WithAction(nameof(CalendarController.Get))
                 .WithController(nameof(CalendarController));
         private readonly static UrlBuilder schedule =
             new UrlBuilder()
@@ -63,7 +64,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             string rel)
         {
             return calendar
-                .WithAction(nameof(CalendarController.GetYear))
                 .WithValues(new { restaurantId, year })
                 .BuildAbsolute(url)
                 .Link(rel);
@@ -86,7 +86,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             string rel)
         {
             return calendar
-                .WithAction(nameof(CalendarController.GetMonth))
                 .WithValues(new { restaurantId, year, month })
                 .BuildAbsolute(url)
                 .Link(rel);
@@ -111,7 +110,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             string rel)
         {
             return calendar
-                .WithAction(nameof(CalendarController.GetDay))
                 .WithValues(new { restaurantId, year, month, day })
                 .BuildAbsolute(url)
                 .Link(rel);
@@ -123,15 +121,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
             IPeriod period,
             string rel)
         {
-            var (action, values) = period.Accept(new ValuesVisitor(restaurantId));
+            var values = period.Accept(new ValuesVisitor(restaurantId));
             return calendar
-                .WithAction(action)
                 .WithValues(values)
                 .BuildAbsolute(url)
                 .Link(rel);
         }
 
-        private class ValuesVisitor : IPeriodVisitor<(string, object)>
+        private class ValuesVisitor : IPeriodVisitor<object>
         {
             private readonly int restaurantId;
 
@@ -140,19 +137,19 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 this.restaurantId = restaurantId;
             }
 
-            public (string, object) VisitYear(int year)
+            public object VisitYear(int year)
             {
-                return ("GetYear", new { restaurantId, year });
+                return new { restaurantId, year };
             }
 
-            public (string, object) VisitMonth(int year, int month)
+            public object VisitMonth(int year, int month)
             {
-                return ("GetMonth", new { restaurantId, year, month });
+                return new { restaurantId, year, month };
             }
 
-            public (string, object) VisitDay(int year, int month, int day)
+            public object VisitDay(int year, int month, int day)
             {
-                return ("GetDay", new { restaurantId, year, month, day });
+                return new { restaurantId, year, month, day };
             }
         }
 
