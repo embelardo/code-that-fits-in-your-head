@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi
 {
+    [Authorize(Roles = "MaitreD")]
     public class ScheduleController
     {
         public ScheduleController(
@@ -26,7 +27,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public IReservationsRepository Repository { get; }
         public AccessControlList AccessControlList { get; }
 
-        [HttpGet("schedule/{year}/{month}/{day}"), Authorize(Roles = "MaitreD")]
+        [HttpGet("schedule/{year}/{month}/{day}")]
         public Task<ActionResult> Get(int year, int month, int day)
         {
             var result = new RedirectToActionResult(
@@ -37,7 +38,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return Task.FromResult<ActionResult>(result);
         }
 
-        [Authorize(Roles = "MaitreD")]
         [HttpGet("restaurants/{restaurantId}/schedule/{year}/{month}/{day}")]
         public async Task<ActionResult> Get(
             int restaurantId,
