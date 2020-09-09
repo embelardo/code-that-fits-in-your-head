@@ -19,14 +19,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 {
     public sealed class SelfHostedApi : WebApplicationFactory<Startup>
     {
-        private bool authorizeClient;
-        private int[] restaurantIds;
-
-        public SelfHostedApi()
-        {
-            restaurantIds = Array.Empty<int>();
-        }
-
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             if (builder is null)
@@ -38,26 +30,6 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 services.AddSingleton<IReservationsRepository>(
                     new FakeDatabase());
             });
-        }
-
-        internal void AuthorizeClient(params int[] restaurantIds)
-        {
-            authorizeClient = true;
-            this.restaurantIds = restaurantIds;
-        }
-
-        protected override void ConfigureClient(HttpClient client)
-        {
-            base.ConfigureClient(client);
-            if (client is null)
-                throw new ArgumentNullException(nameof(client));
-
-            if (!authorizeClient)
-                return;
-
-            var generator = new JwtTokenGenerator(restaurantIds, "MaitreD");
-            var token = generator.GenerateJwtToken();
-            client.Authorize(token);
         }
     }
 }

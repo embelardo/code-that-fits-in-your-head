@@ -63,8 +63,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int day)
         {
             using var api = new SelfHostedApi();
-            api.AuthorizeClient(1, 2112, 90125);
-            var client = api.CreateClient();
+            var token =
+                new JwtTokenGenerator(new[] { 1, 2112, 90125 }, "MaitreD")
+                    .GenerateJwtToken();
+            var client = api.CreateClient().Authorize(token);
 
             var response =
                 await client.GetSchedule(name, year, month, day);
@@ -194,8 +196,10 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             int restaurantId)
         {
             using var api = new SelfHostedApi();
-            api.AuthorizeClient(restaurantId);
-            var client = api.CreateClient();
+            var token =
+                new JwtTokenGenerator(new[] { restaurantId }, "MaitreD")
+                    .GenerateJwtToken();
+            var client = api.CreateClient().Authorize(token);
 
             var actual = await client.GetSchedule("Nono", 2024, 3, 2);
 
