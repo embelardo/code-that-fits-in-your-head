@@ -223,5 +223,24 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 follow.IsSuccessStatusCode,
                 $"Actual status code: {follow.StatusCode}.");
         }
+
+        [Theory]
+        [InlineData(    1, "Hipgnosta")]
+        [InlineData( 2112, "Nono")]
+        [InlineData(90125, "The Vatican Cellar")]
+        public async Task GetScheduleWithoutRequiredRole(
+            int restaurantId,
+            string name)
+        {
+            using var api = new SelfHostedApi();
+            var token =
+                new JwtTokenGenerator(new[] { restaurantId }, "Foo", "Bar")
+                    .GenerateJwtToken();
+            var client = api.CreateClient().Authorize(token);
+
+            var actual = await client.GetSchedule(name, 2021, 12, 6);
+
+            Assert.Equal(HttpStatusCode.Forbidden, actual.StatusCode);
+        }
     }
 }
