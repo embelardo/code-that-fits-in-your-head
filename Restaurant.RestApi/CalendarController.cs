@@ -23,7 +23,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         [Obsolete("Use Get method with restaurant ID.")]
         [HttpGet("calendar/{year}"), ResponseCache(Duration = 60)]
-        public Task<ActionResult> GetYear(int year)
+        public Task<ActionResult> LegacyGet(int year)
         {
             var result = new RedirectToActionResult(
                 nameof(GetYear),
@@ -66,7 +66,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         [Obsolete("Use Get method with restaurant ID.")]
         [HttpGet("calendar/{year}/{month}")]
-        public Task<ActionResult> GetMonth(int year, int month)
+        public Task<ActionResult> LegacyGet(int year, int month)
         {
             var result = new RedirectToActionResult(
                 nameof(GetMonth),
@@ -105,7 +105,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         [Obsolete("Use Get method with restaurant ID.")]
         [HttpGet("calendar/{year}/{month}/{day}")]
-        public Task<ActionResult> GetDay(int year, int month, int day)
+        public Task<ActionResult> LegacyGet(int year, int month, int day)
         {
             var result = new RedirectToActionResult(
                 nameof(GetDay),

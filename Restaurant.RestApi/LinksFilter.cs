@@ -106,8 +106,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             dto.Links = new[]
             {
-                url.LinkToPeriod(previous, "previous"),
-                url.LinkToPeriod(next, "next")
+                url.LinkToPeriod(restaurantId.Value, previous, "previous"),
+                url.LinkToPeriod(restaurantId.Value, next, "next")
             };
 
             if (dto.Days is { })

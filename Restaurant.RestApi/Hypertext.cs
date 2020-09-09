@@ -119,10 +119,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         internal static LinkDto LinkToPeriod(
             this IUrlHelper url,
+            int restaurantId,
             IPeriod period,
             string rel)
         {
-            var (action, values) = period.Accept(new ValuesVisitor());
+            var (action, values) = period.Accept(new ValuesVisitor(restaurantId));
             return calendar
                 .WithAction(action)
                 .WithValues(values)
@@ -132,19 +133,26 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private class ValuesVisitor : IPeriodVisitor<(string, object)>
         {
+            private readonly int restaurantId;
+
+            public ValuesVisitor(int restaurantId)
+            {
+                this.restaurantId = restaurantId;
+            }
+
             public (string, object) VisitYear(int year)
             {
-                return ("GetYear", new { year });
+                return ("GetYear", new { restaurantId, year });
             }
 
             public (string, object) VisitMonth(int year, int month)
             {
-                return ("GetMonth", new { year, month });
+                return ("GetMonth", new { restaurantId, year, month });
             }
 
             public (string, object) VisitDay(int year, int month, int day)
             {
-                return ("GetDay", new { year, month, day });
+                return ("GetDay", new { restaurantId, year, month, day });
             }
         }
 
