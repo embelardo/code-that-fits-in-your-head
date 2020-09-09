@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
@@ -123,6 +124,15 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var dayCalendar = dto.Days.Single(d => d.Date == target);
             var address = dayCalendar.Links.FindAddress("urn:schedule");
             return await client.GetAsync(address);
+        }
+
+        internal static HttpClient Authorize(
+            this HttpClient client,
+            string token)
+        {
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+            return client;
         }
     }
 }

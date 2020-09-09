@@ -56,8 +56,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 return;
 
             var token = GenerateJwtToken();
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
+            client.Authorize(token);
         }
 
         private string GenerateJwtToken()
