@@ -27,6 +27,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public IReservationsRepository Repository { get; }
         public AccessControlList AccessControlList { get; }
 
+        [Obsolete("Use Get method with restaurant ID.")]
         [HttpGet("schedule/{year}/{month}/{day}")]
         public Task<ActionResult> Get(int year, int month, int day)
         {

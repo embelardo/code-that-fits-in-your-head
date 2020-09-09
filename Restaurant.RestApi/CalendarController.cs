@@ -21,6 +21,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public IRestaurantDatabase RestaurantDatabase { get; }
         public IReservationsRepository Repository { get; }
 
+        [Obsolete("Use Get method with restaurant ID.")]
         [HttpGet("calendar/{year}"), ResponseCache(Duration = 60)]
         public Task<ActionResult> GetYear(int year)
         {
@@ -63,6 +64,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 });
         }
 
+        [Obsolete("Use Get method with restaurant ID.")]
         [HttpGet("calendar/{year}/{month}")]
         public Task<ActionResult> GetMonth(int year, int month)
         {
@@ -101,6 +103,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 });
         }
 
+        [Obsolete("Use Get method with restaurant ID.")]
         [HttpGet("calendar/{year}/{month}/{day}")]
         public Task<ActionResult> GetDay(int year, int month, int day)
         {
