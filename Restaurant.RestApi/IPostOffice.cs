@@ -8,12 +8,20 @@ namespace Ploeh.Samples.Restaurant.RestApi
 {
     public interface IPostOffice
     {
-        Task EmailReservationCreated(Reservation reservation);
+        Task EmailReservationCreated(
+            int restaurantId,
+            Reservation reservation);
 
-        Task EmailReservationDeleted(Reservation reservation);
+        Task EmailReservationDeleted(
+            int restaurantId,
+            Reservation reservation);
 
-        Task EmailReservationUpdating(Reservation reservation);
+        Task EmailReservationUpdating(
+            int restaurantId,
+            Reservation reservation);
 
-        Task EmailReservationUpdated(Reservation reservation);
+        Task EmailReservationUpdated(
+            int restaurantId,
+            Reservation reservation);
     }
 }

@@ -14,7 +14,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Options
         public string? Password { get; set; }
         public string? FromAddress { get; set; }
 
-        public IPostOffice ToPostOffice()
+        public IPostOffice ToPostOffice(IRestaurantDatabase restaurantDatabase)
         {
             if (string.IsNullOrWhiteSpace(Host) ||
                 string.IsNullOrWhiteSpace(UserName) ||
@@ -27,7 +27,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Options
                 Port,
                 UserName,
                 Password,
-                FromAddress);
+                FromAddress,
+                restaurantDatabase);
         }
     }
 }

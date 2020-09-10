@@ -33,7 +33,8 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 Password = password,
                 FromAddress = fromAddress
             };
-            IPostOffice actual = sut.ToPostOffice();
+            IPostOffice actual =
+                sut.ToPostOffice(new OptionsRestaurantDatabase());
             Assert.Equal(NullPostOffice.Instance, actual);
         }
 
@@ -56,14 +57,16 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
                 FromAddress = fromAddress
             };
 
-            var actual = sut.ToPostOffice();
+            var db = new OptionsRestaurantDatabase();
+            var actual = sut.ToPostOffice(db);
 
             var expected = new SmtpPostOffice(
                 host,
                 port,
                 userName,
                 password,
-                fromAddress);
+                fromAddress,
+                db);
             Assert.Equal(expected, actual);
         }
     }

@@ -21,43 +21,55 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public ILogger<LoggingPostOffice> Logger { get; }
         public IPostOffice Inner { get; }
 
-        public async Task EmailReservationCreated(Reservation reservation)
+        public async Task EmailReservationCreated(
+            int restaurantId,
+            Reservation reservation)
         {
             Logger.LogInformation(
-                "{method}(reservation: {reservation})",
+                "{method}(restaurantId: {restaurantId}, reservation: {reservation})",
                 nameof(EmailReservationCreated),
+                restaurantId,
                 JsonSerializer.Serialize(reservation.ToDto()));
-            await Inner.EmailReservationCreated(reservation)
+            await Inner.EmailReservationCreated(restaurantId, reservation)
                 .ConfigureAwait(false);
         }
 
-        public async Task EmailReservationDeleted(Reservation reservation)
+        public async Task EmailReservationDeleted(
+            int restaurantId,
+            Reservation reservation)
         {
             Logger.LogInformation(
-                "{method}(reservation: {reservation})",
+                "{method}(restaurantId: {restaurantId}, reservation: {reservation})",
                 nameof(EmailReservationDeleted),
+                restaurantId,
                 JsonSerializer.Serialize(reservation.ToDto()));
-            await Inner.EmailReservationDeleted(reservation)
+            await Inner.EmailReservationDeleted(restaurantId, reservation)
                 .ConfigureAwait(false);
         }
 
-        public async Task EmailReservationUpdated(Reservation reservation)
+        public async Task EmailReservationUpdated(
+            int restaurantId,
+            Reservation reservation)
         {
             Logger.LogInformation(
-                "{method}(reservation: {reservation})",
+                "{method}(restaurantId: {restaurantId}, reservation: {reservation})",
+                restaurantId,
                 nameof(EmailReservationUpdated),
                 JsonSerializer.Serialize(reservation.ToDto()));
-            await Inner.EmailReservationUpdated(reservation)
+            await Inner.EmailReservationUpdated(restaurantId, reservation)
                 .ConfigureAwait(false);
         }
 
-        public async Task EmailReservationUpdating(Reservation reservation)
+        public async Task EmailReservationUpdating(
+            int restaurantId,
+            Reservation reservation)
         {
             Logger.LogInformation(
-                "{method}(reservation: {reservation})",
+                "{method}(restaurantId: {restaurantId}, reservation: {reservation})",
+                restaurantId,
                 nameof(EmailReservationUpdating),
                 JsonSerializer.Serialize(reservation.ToDto()));
-            await Inner.EmailReservationUpdating(reservation)
+            await Inner.EmailReservationUpdating(restaurantId, reservation)
                 .ConfigureAwait(false);
         }
     }

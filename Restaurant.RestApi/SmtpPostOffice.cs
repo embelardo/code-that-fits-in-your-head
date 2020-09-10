@@ -19,25 +19,33 @@ namespace Ploeh.Samples.Restaurant.RestApi
             int port,
             string userName,
             string password,
-            string fromAddress)
+            string fromAddress,
+            IRestaurantDatabase restaurantDatabase)
         {
             Host = host;
             Port = port;
             this.userName = userName;
             this.password = password;
             FromAddress = fromAddress;
+            RestaurantDatabase = restaurantDatabase;
         }
 
         public string Host { get; }
         public int Port { get; }
         public string FromAddress { get; }
+        public IRestaurantDatabase RestaurantDatabase { get; }
 
-        public async Task EmailReservationCreated(Reservation reservation)
+        public async Task EmailReservationCreated(
+            int restaurantId,
+            Reservation reservation)
         {
             if (reservation is null)
                 throw new ArgumentNullException(nameof(reservation));
 
-            var subject = $"Your reservation for {reservation.Quantity}.";
+            var name = await RestaurantDatabase.GetName(restaurantId)
+                .ConfigureAwait(false);
+
+            var subject = $"Your reservation for {name}.";
             var body = CreateBodyForCreated(reservation);
             var email = reservation.Email.ToString();
 
@@ -58,13 +66,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             return sb.ToString();
         }
-        public async Task EmailReservationDeleted(Reservation reservation)
+        public async Task EmailReservationDeleted(
+            int restaurantId,
+            Reservation reservation)
         {
             if (reservation is null)
                 throw new ArgumentNullException(nameof(reservation));
 
+            var name = await RestaurantDatabase.GetName(restaurantId)
+                .ConfigureAwait(false);
+
             var subject =
-                $"Your reservation for {reservation.Quantity} was cancelled.";
+                $"Your reservation for {name} was cancelled.";
             var body = CreateBodyForDeleted(reservation);
             var email = reservation.Email.ToString();
 
@@ -86,13 +99,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return sb.ToString();
         }
 
-        public async Task EmailReservationUpdating(Reservation reservation)
+        public async Task EmailReservationUpdating(
+            int restaurantId,
+            Reservation reservation)
         {
             if (reservation is null)
                 throw new ArgumentNullException(nameof(reservation));
 
+            var name = await RestaurantDatabase.GetName(restaurantId)
+                .ConfigureAwait(false);
+
             var subject =
-                $"Your reservation for {reservation.Quantity} is changing.";
+                $"Your reservation for {name} is changing.";
             var body = CreateBodyForUpdating(reservation);
             var email = reservation.Email.ToString();
 
@@ -114,13 +132,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return sb.ToString();
         }
 
-        public async Task EmailReservationUpdated(Reservation reservation)
+        public async Task EmailReservationUpdated(
+            int restaurantId,
+            Reservation reservation)
         {
             if (reservation is null)
                 throw new ArgumentNullException(nameof(reservation));
 
+            var name = await RestaurantDatabase.GetName(restaurantId)
+                .ConfigureAwait(false);
+
             var subject =
-                $"Your reservation for {reservation.Quantity} changed.";
+                $"Your reservation for {name} changed.";
             var body = CreateBodyForUpdated(reservation);
             var email = reservation.Email.ToString();
 
@@ -164,14 +187,19 @@ namespace Ploeh.Samples.Restaurant.RestApi
                    Port == other.Port &&
                    FromAddress == other.FromAddress &&
                    userName == other.userName &&
-                   password == other.password;
-                   
+                   password == other.password &&
+                   Equals(RestaurantDatabase, other.RestaurantDatabase);
         }
 
         public override int GetHashCode()
         {
-            return
-                HashCode.Combine(Host, Port, FromAddress, userName, password);
+            return HashCode.Combine(
+                Host,
+                Port,
+                FromAddress,
+                userName,
+                password,
+                RestaurantDatabase);
         }
     }
 }

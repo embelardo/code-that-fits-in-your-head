@@ -76,9 +76,10 @@ namespace Ploeh.Samples.Restaurant.RestApi
             services.AddSingleton<IPostOffice>(sp =>
             {
                 var logger = sp.GetService<ILogger<LoggingPostOffice>>();
+                var db = sp.GetService<IRestaurantDatabase>();
                 return new LoggingPostOffice(
                     logger,
-                    smtpOptions.ToPostOffice());
+                    smtpOptions.ToPostOffice(db));
             });
         }
 

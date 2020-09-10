@@ -12,22 +12,30 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
         }
 
-        public Task EmailReservationCreated(Reservation reservation)
+        public Task EmailReservationCreated(
+            int restaurantId,
+            Reservation reservation)
         {
             return Task.CompletedTask;
         }
 
-        public Task EmailReservationDeleted(Reservation reservation)
+        public Task EmailReservationDeleted(
+            int restaurantId,
+            Reservation reservation)
         {
             return Task.CompletedTask;
         }
 
-        public Task EmailReservationUpdating(Reservation reservation)
+        public Task EmailReservationUpdating(
+            int restaurantId,
+            Reservation reservation)
         {
             return Task.CompletedTask;
         }
 
-        public Task EmailReservationUpdated(Reservation reservation)
+        public Task EmailReservationUpdated(
+            int restaurantId,
+            Reservation reservation)
         {
             return Task.CompletedTask;
         }

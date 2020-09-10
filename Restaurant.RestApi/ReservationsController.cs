@@ -65,7 +65,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 return NoTables500InternalServerError();
 
             await Repository.Create(restaurantId, r).ConfigureAwait(false);
-            await PostOffice.EmailReservationCreated(r).ConfigureAwait(false);
+            await PostOffice.EmailReservationCreated(restaurantId, r)
+                .ConfigureAwait(false);
             scope.Complete();
 
             return Reservation201Created(restaurantId, r);
@@ -161,10 +162,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 return NoTables500InternalServerError();
 
             if (existing.Email != res.Email)
-                await PostOffice.EmailReservationUpdating(existing)
+                await PostOffice
+                    .EmailReservationUpdating(restaurantId, existing)
                     .ConfigureAwait(false);
             await Repository.Update(res).ConfigureAwait(false);
-            await PostOffice.EmailReservationUpdated(res).ConfigureAwait(false);
+            await PostOffice.EmailReservationUpdated(restaurantId, res)
+                .ConfigureAwait(false);
 
             scope.Complete();
 
@@ -177,10 +180,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             return Delete(Grandfather.Id, id);
         }
 
-        [SuppressMessage(
-            "Usage",
-            "CA1801:Review unused parameters",
-            Justification = "The restaurantId parameter is required in order to keep the REST API's URLs consistent across all verbs.")]
         [HttpDelete("restaurants/{restaurantId}/reservations/{id}")]
         public async Task Delete(int restaurantId, string id)
         {
@@ -190,7 +189,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                     .ConfigureAwait(false);
                 await Repository.Delete(rid).ConfigureAwait(false);
                 if (r is { })
-                    await PostOffice.EmailReservationDeleted(r)
+                    await PostOffice.EmailReservationDeleted(restaurantId, r)
                         .ConfigureAwait(false);
             }
         }

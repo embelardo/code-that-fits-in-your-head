@@ -75,6 +75,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             var expected = new SpyPostOffice.Observation(
                 SpyPostOffice.Event.Created,
+                Grandfather.Id,
                 new Reservation(
                     Guid.Parse(dto.Id),
                     DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
@@ -300,6 +301,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             var expected = new SpyPostOffice.Observation(
                 SpyPostOffice.Event.Deleted,
+                Grandfather.Id,
                 r);
             Assert.Contains(expected, postOffice);
         }
@@ -536,6 +538,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
 
             var expected = new SpyPostOffice.Observation(
                 SpyPostOffice.Event.Updated,
+                Grandfather.Id,
                 r.WithName(new Name(newName)));
             Assert.Contains(expected, postOffice);
             Assert.DoesNotContain(
@@ -565,9 +568,11 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var expected = new[] {
                 new SpyPostOffice.Observation(
                     SpyPostOffice.Event.Updating,
+                    Grandfather.Id,
                     r),
                 new SpyPostOffice.Observation(
                     SpyPostOffice.Event.Updated,
+                    Grandfather.Id,
                     r.WithEmail(new Email(newEmail))) }.ToHashSet();
             Assert.Superset(expected, postOffice.ToHashSet());
         }
