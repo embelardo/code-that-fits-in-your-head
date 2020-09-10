@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Ploeh.Samples.Restaurant.RestApi.Options;
 
@@ -49,8 +50,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
             ConfigureAuthorization(services);
 
             var connStr = Configuration.GetConnectionString("Restaurant");
-            services.AddSingleton<IReservationsRepository>(
-                new SqlReservationsRepository(connStr));
+            services.AddSingleton<IReservationsRepository>(sp =>
+            {
+                var logger =
+                    sp.GetService<ILogger<LoggingReservationsRepository>>();
+                return new LoggingReservationsRepository(
+                    logger,
+                    new SqlReservationsRepository(connStr));
+            });
 
             var restaurantsOptions = Configuration.GetSection("Restaurants")
                 .Get<RestaurantOptions[]>();
