@@ -65,12 +65,17 @@ namespace Ploeh.Samples.Restaurant.RestApi
             services.AddSingleton<IRestaurantDatabase>(
                 new OptionsRestaurantDatabase(restaurantsOptions));
 
+            services.AddSingleton<IClock>(sp =>
+            {
+                var logger = sp.GetService<ILogger<LoggingClock>>();
+                return new LoggingClock(logger, new SystemClock());
+            });
+
             var smtpOptions = new SmtpOptions();
             Configuration.Bind("Smtp", smtpOptions);
             services.AddSingleton<IPostOffice>(sp =>
             {
-                var logger =
-                    sp.GetService<ILogger<LoggingPostOffice>>();
+                var logger = sp.GetService<ILogger<LoggingPostOffice>>();
                 return new LoggingPostOffice(
                     logger,
                     smtpOptions.ToPostOffice());

@@ -57,6 +57,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
+                new SystemClock(),
                 new OptionsRestaurantDatabase(
                     RestaurantOptionsBuilder.Grandfather.Build()),
                 db,
@@ -289,6 +290,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             db.Grandfather.Add(r);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
+                new SystemClock(),
                 new OptionsRestaurantDatabase(
                     new RestaurantOptionsBuilder().Build()),
                 db,
@@ -308,6 +310,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
+                new SystemClock(),
                 new OptionsRestaurantDatabase(
                     new RestaurantOptionsBuilder().Build()),
                 db,
@@ -394,6 +397,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
+                new SystemClock(),
                 new OptionsRestaurantDatabase(
                     new RestaurantOptionsBuilder().Build()),
                 db,
@@ -418,6 +422,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             db.Grandfather.Add(Some.Reservation);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
+                new SystemClock(),
                 new OptionsRestaurantDatabase(
                     RestaurantOptionsBuilder.Grandfather.Build()),
                 db,
@@ -440,6 +445,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
+                new SystemClock(),
                 new OptionsRestaurantDatabase(
                     new RestaurantOptionsBuilder().Build()),
                 db,
@@ -471,6 +477,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             db.Grandfather.Add(r2);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
+                new SystemClock(),
                 new OptionsRestaurantDatabase(
                     RestaurantOptionsBuilder.Grandfather.Build()),
                 db,
@@ -518,6 +525,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             db.Grandfather.Add(r);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
+                new SystemClock(),
                 new OptionsRestaurantDatabase(
                     RestaurantOptionsBuilder.Grandfather.Build()),
                 db,
@@ -545,6 +553,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             db.Grandfather.Add(r);
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
+                new SystemClock(),
                 new OptionsRestaurantDatabase(
                     RestaurantOptionsBuilder.Grandfather.Build()),
                 db,
@@ -618,6 +627,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var restaurantDb = new OptionsRestaurantDatabase(
                     new RestaurantOptionsBuilder().Build());
             var sut = new ReservationsController(
+                new SystemClock(),
                 restaurantDb,
                 new FakeDatabase(),
                 new SpyPostOffice());
@@ -665,6 +675,7 @@ namespace Ploeh.Samples.Restaurant.RestApi.Tests
             var db = new FakeDatabase();
             await db.Create(absentRestaurantId, Some.Reservation);
             var sut = new ReservationsController(
+                new SystemClock(),
                 restaurantDb,
                 db,
                 new SpyPostOffice());

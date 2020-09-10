@@ -15,15 +15,18 @@ namespace Ploeh.Samples.Restaurant.RestApi
     public class ReservationsController
     {
         public ReservationsController(
+            IClock clock,
             IRestaurantDatabase restaurantDatabase,
             IReservationsRepository repository,
             IPostOffice postOffice)
         {
+            Clock = clock;
             RestaurantDatabase = restaurantDatabase;
             Repository = repository;
             PostOffice = postOffice;
         }
 
+        public IClock Clock { get; }
         public IRestaurantDatabase RestaurantDatabase { get; }
         public IReservationsRepository Repository { get; }
         public IPostOffice PostOffice { get; }
@@ -57,7 +60,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
             var reservations = await Repository
                 .ReadReservations(restaurantId, r.At)
                 .ConfigureAwait(false);
-            if (!maitreD.WillAccept(DateTime.Now, reservations, r))
+            var now = Clock.GetCurrentDateTime();
+            if (!maitreD.WillAccept(now, reservations, r))
                 return NoTables500InternalServerError();
 
             await Repository.Create(restaurantId, r).ConfigureAwait(false);
@@ -152,7 +156,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 .ReadReservations(restaurantId, res.At)
                 .ConfigureAwait(false);
             reservations = reservations.Where(r => r.Id != res.Id).ToList();
-            if (!maitreD!.WillAccept(DateTime.Now, reservations, res))
+            var now = Clock.GetCurrentDateTime();
+            if (!maitreD!.WillAccept(now, reservations, res))
                 return NoTables500InternalServerError();
 
             if (existing.Email != res.Email)

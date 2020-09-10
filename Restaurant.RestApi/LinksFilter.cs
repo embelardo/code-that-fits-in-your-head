@@ -18,13 +18,16 @@ namespace Ploeh.Samples.Restaurant.RestApi
     {
         public IUrlHelperFactory UrlHelperFactory { get; }
         public IRestaurantDatabase Database { get; }
+        public IClock Clock { get; }
 
         public LinksFilter(
+            IClock clock,
             IUrlHelperFactory urlHelperFactory,
             IRestaurantDatabase database)
         {
             UrlHelperFactory = urlHelperFactory;
             Database = database;
+            Clock = clock;
         }
 
         public async Task OnActionExecutionAsync(
@@ -54,7 +57,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
         private async Task AddLinks(HomeDto dto, IUrlHelper url)
         {
-            var now = DateTime.Now;
+            var now = Clock.GetCurrentDateTime();
             dto.Links = new[]
             {
                 url.LinkToReservations(Grandfather.Id),
@@ -78,7 +81,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (restaurantId is null)
                 return;
 
-            var now = DateTime.Now;
+            var now = Clock.GetCurrentDateTime();
 
             restaurant.Links = new[]
             {
