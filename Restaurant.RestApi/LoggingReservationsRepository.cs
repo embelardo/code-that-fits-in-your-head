@@ -31,27 +31,49 @@ namespace Ploeh.Samples.Restaurant.RestApi
             await Inner.Create(restaurantId, reservation).ConfigureAwait(false);
         }
 
-        public Task Delete(Guid id)
+        public async Task Delete(Guid id)
         {
-            return Inner.Delete(id);
+            Logger.LogInformation(
+                "{method}(id: {id})",
+                nameof(Delete),
+                id);
+            await Inner.Delete(id).ConfigureAwait(false);
         }
 
-        public Task<Reservation?> ReadReservation(Guid id)
+        public async Task<Reservation?> ReadReservation(Guid id)
         {
-            return Inner.ReadReservation(id);
+            var output = await Inner.ReadReservation(id).ConfigureAwait(false);
+            Logger.LogInformation(
+                "{method}(id: {id}) => {output}",
+                nameof(ReadReservation),
+                id,
+                output?.ToDto());
+            return output;
         }
 
-        public Task<IReadOnlyCollection<Reservation>> ReadReservations(
+        public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
             int restaurantId,
             DateTime min,
             DateTime max)
         {
-            return Inner.ReadReservations(restaurantId, min, max);
+
+            var output = await Inner.ReadReservations(restaurantId, min, max)
+                .ConfigureAwait(false);
+            Logger.LogInformation(
+                "{method}(restaurantId: {restaurantId}, min: {min}, max: {max}) => {output}",
+                restaurantId,
+                min,
+                max,
+                output.Select(r => r.ToDto()).ToArray());
+            return output;
         }
 
-        public Task Update(Reservation reservation)
+        public async Task Update(Reservation reservation)
         {
-            return Inner.Update(reservation);
+            Logger.LogInformation(
+                "{method}(reservation: {reservation})",
+                reservation.ToDto());
+            await Inner.Update(reservation).ConfigureAwait(false);
         }
     }
 }
