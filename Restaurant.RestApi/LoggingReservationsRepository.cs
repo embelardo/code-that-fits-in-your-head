@@ -61,6 +61,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 .ConfigureAwait(false);
             Logger.LogInformation(
                 "{method}(restaurantId: {restaurantId}, min: {min}, max: {max}) => {output}",
+                nameof(ReadReservations),
                 restaurantId,
                 min,
                 max,
@@ -72,6 +73,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         {
             Logger.LogInformation(
                 "{method}(reservation: {reservation})",
+                nameof(Update),
                 reservation.ToDto());
             await Inner.Update(reservation).ConfigureAwait(false);
         }

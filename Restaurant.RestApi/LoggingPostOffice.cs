@@ -25,7 +25,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Logger.LogInformation(
                 "{method}(reservation: {reservation})",
                 nameof(EmailReservationCreated),
-                reservation);
+                reservation.ToDto());
             await Inner.EmailReservationCreated(reservation)
                 .ConfigureAwait(false);
         }
@@ -35,7 +35,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Logger.LogInformation(
                 "{method}(reservation: {reservation})",
                 nameof(EmailReservationDeleted),
-                reservation);
+                reservation.ToDto());
             await Inner.EmailReservationDeleted(reservation)
                 .ConfigureAwait(false);
         }
@@ -45,7 +45,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Logger.LogInformation(
                 "{method}(reservation: {reservation})",
                 nameof(EmailReservationUpdated),
-                reservation);
+                reservation.ToDto());
             await Inner.EmailReservationUpdated(reservation)
                 .ConfigureAwait(false);
         }
@@ -55,7 +55,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Logger.LogInformation(
                 "{method}(reservation: {reservation})",
                 nameof(EmailReservationUpdating),
-                reservation);
+                reservation.ToDto());
             await Inner.EmailReservationUpdating(reservation)
                 .ConfigureAwait(false);
         }
