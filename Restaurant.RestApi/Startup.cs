@@ -67,7 +67,14 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             var smtpOptions = new SmtpOptions();
             Configuration.Bind("Smtp", smtpOptions);
-            services.AddSingleton(smtpOptions.ToPostOffice());
+            services.AddSingleton<IPostOffice>(sp =>
+            {
+                var logger =
+                    sp.GetService<ILogger<LoggingPostOffice>>();
+                return new LoggingPostOffice(
+                    logger,
+                    smtpOptions.ToPostOffice());
+            });
         }
 
         private static void ConfigureUrSigning(
