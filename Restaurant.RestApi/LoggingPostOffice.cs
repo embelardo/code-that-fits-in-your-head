@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurant.RestApi
@@ -25,7 +26,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Logger.LogInformation(
                 "{method}(reservation: {reservation})",
                 nameof(EmailReservationCreated),
-                reservation.ToDto());
+                JsonSerializer.Serialize(reservation.ToDto()));
             await Inner.EmailReservationCreated(reservation)
                 .ConfigureAwait(false);
         }
@@ -35,7 +36,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Logger.LogInformation(
                 "{method}(reservation: {reservation})",
                 nameof(EmailReservationDeleted),
-                reservation.ToDto());
+                JsonSerializer.Serialize(reservation.ToDto()));
             await Inner.EmailReservationDeleted(reservation)
                 .ConfigureAwait(false);
         }
@@ -45,7 +46,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Logger.LogInformation(
                 "{method}(reservation: {reservation})",
                 nameof(EmailReservationUpdated),
-                reservation.ToDto());
+                JsonSerializer.Serialize(reservation.ToDto()));
             await Inner.EmailReservationUpdated(reservation)
                 .ConfigureAwait(false);
         }
@@ -55,7 +56,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Logger.LogInformation(
                 "{method}(reservation: {reservation})",
                 nameof(EmailReservationUpdating),
-                reservation.ToDto());
+                JsonSerializer.Serialize(reservation.ToDto()));
             await Inner.EmailReservationUpdating(reservation)
                 .ConfigureAwait(false);
         }

@@ -47,7 +47,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 "{method}(id: {id}) => {output}",
                 nameof(ReadReservation),
                 id,
-                output?.ToDto());
+                JsonSerializer.Serialize(output?.ToDto()));
             return output;
         }
 
@@ -65,7 +65,8 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 restaurantId,
                 min,
                 max,
-                output.Select(r => r.ToDto()).ToArray());
+                JsonSerializer.Serialize(
+                    output.Select(r => r.ToDto()).ToArray()));
             return output;
         }
 
@@ -74,7 +75,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             Logger.LogInformation(
                 "{method}(reservation: {reservation})",
                 nameof(Update),
-                reservation.ToDto());
+                JsonSerializer.Serialize(reservation.ToDto()));
             await Inner.Update(reservation).ConfigureAwait(false);
         }
     }
