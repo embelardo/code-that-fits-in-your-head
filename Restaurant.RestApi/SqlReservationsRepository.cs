@@ -57,13 +57,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
             using var rdr =
                 await cmd.ExecuteReaderAsync().ConfigureAwait(false);
             while (await rdr.ReadAsync().ConfigureAwait(false))
-                result.Add(
-                    new Reservation(
-                        (Guid)rdr["PublicId"],
-                        (DateTime)rdr["At"],
-                        new Email((string)rdr["Email"]),
-                        new Name((string)rdr["Name"]),
-                        (int)rdr["Quantity"]));
+                result.Add(ReadReservationRow(rdr));
 
             return result.AsReadOnly();
         }
@@ -91,6 +85,11 @@ namespace Ploeh.Samples.Restaurant.RestApi
             if (!rdr.Read())
                 return null;
 
+            return ReadReservationRow(rdr);
+        }
+
+        private static Reservation ReadReservationRow(SqlDataReader rdr)
+        {
             return new Reservation(
                 (Guid)rdr["PublicId"],
                 (DateTime)rdr["At"],
@@ -106,7 +105,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             const string updateSql = @"
                 UPDATE [dbo].[Reservations]
-                SET [At]     = @at,
+                SET [At]       = @at,
                     [Name]     = @name,
                     [Email]    = @email,
                     [Quantity] = @quantity
