@@ -29,14 +29,6 @@ namespace Ploeh.Samples.Restaurants.RestApi.Options
                 .SingleOrDefault());
         }
 
-        public Task<string?> GetName(int id)
-        {
-            return Task.FromResult(restaurants
-                .Where(r => r.Id == id)
-                .Select(r => r.Name)
-                .SingleOrDefault());
-        }
-
         public Task<Restaurant?> GetRestaurant(int id)
         {
             var restaurant =
