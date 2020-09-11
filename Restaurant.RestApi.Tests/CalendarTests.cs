@@ -603,11 +603,10 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         public async Task ViewYearForAbsentRestaurant()
         {
             var absentRestaurantId = 4;
-            var restaurantDb = new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().Build());
+            var restaurantDB = new InMemoryRestaurantDatabase(Some.Restaurant);
             var db = new FakeDatabase();
-            var sut = new CalendarController(restaurantDb, db);
-            var r = await restaurantDb.GetRestaurant(absentRestaurantId);
+            var sut = new CalendarController(restaurantDB, db);
+            var r = await restaurantDB.GetRestaurant(absentRestaurantId);
             Assert.Null(r);
 
             var actual = await sut.Get(absentRestaurantId, 2029);
