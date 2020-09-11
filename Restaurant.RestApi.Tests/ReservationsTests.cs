@@ -637,8 +637,8 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 new FakeDatabase(),
                 new SpyPostOffice());
             var absentRestaurantId = 4;
-            MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
-            Assert.Null(m);
+            var r = await restaurantDb.GetRestaurant(absentRestaurantId);
+            Assert.Null(r);
 
             var actual =
                 await sut.Post(absentRestaurantId, Some.Reservation.ToDto());
@@ -684,8 +684,8 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 restaurantDb,
                 db,
                 new SpyPostOffice());
-            MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
-            Assert.Null(m);
+            var r = await restaurantDb.GetRestaurant(absentRestaurantId);
+            Assert.Null(r);
 
             var actual = await sut.Put(
                 absentRestaurantId,
