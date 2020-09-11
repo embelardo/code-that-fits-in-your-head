@@ -34,7 +34,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 FromAddress = fromAddress
             };
             IPostOffice actual =
-                sut.ToPostOffice(new OptionsRestaurantDatabase());
+                sut.ToPostOffice(new InMemoryRestaurantDatabase());
             Assert.Equal(NullPostOffice.Instance, actual);
         }
 
