@@ -175,8 +175,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         public async Task GetScheduleForAbsentRestaurant()
         {
             var sut = new ScheduleController(
-                new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().WithId(2).Build()),
+                new InMemoryRestaurantDatabase(Some.Restaurant.WithId(2)),
                 new FakeDatabase(),
                 new AccessControlList(3));
 
