@@ -20,9 +20,9 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         public async Task<ActionResult> Get()
         {
-            var names = await Database.GetAllNames().ConfigureAwait(false);
-            var restaurants = names
-                .Select(n => new RestaurantDto { Name = n })
+            var rs = await Database.GetAll().ConfigureAwait(false);
+            var restaurants = rs
+                .Select(r => new RestaurantDto { Name = r.Name })
                 .ToArray();
 
             return new OkObjectResult(
