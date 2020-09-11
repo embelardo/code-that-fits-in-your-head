@@ -25,5 +25,15 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(12),
                 Table.Communal(10));
+
+        public readonly static Restaurant Restaurant =
+            new Restaurant(
+                id: 9, // Not the grandfather ID
+                name: "Foo",
+                new MaitreD(
+                    TimeSpan.FromHours(12),
+                    TimeSpan.FromHours(22),
+                    TimeSpan.FromHours(2.5),
+                    Table.Standard(1)));
     }
 }

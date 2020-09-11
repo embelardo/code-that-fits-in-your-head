@@ -453,17 +453,14 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                     .WithQuantity(3)
                     .WithDate(new DateTime(2020, 8, 21, 19, 0, 0)));
             var sut = new CalendarController(
-                new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder()
+                new InMemoryRestaurantDatabase(
+                    Some.Restaurant
                         .WithId(restaurantId)
-                        .WithOpensAt(TimeSpan.FromHours(18))
-                        .WithLastSeating(TimeSpan.FromHours(20))
-                        .WithSeatingDuration(TimeSpan.FromHours(.75))
-                        .WithTables(new TableOptionsBuilder()
-                            .Standard()
-                            .WithSeats(4)
-                            .Build())
-                        .Build()),
+                        .Select(m => m
+                            .WithOpensAt(TimeSpan.FromHours(18))
+                            .WithLastSeating(TimeSpan.FromHours(20))
+                            .WithSeatingDuration(TimeSpan.FromHours(.75))
+                            .WithTables(Table.Standard(4)))),
                 db);
 
             var actual = await sut.Get(
