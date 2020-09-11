@@ -57,7 +57,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 FromAddress = fromAddress
             };
 
-            var db = new OptionsRestaurantDatabase();
+            var db = new InMemoryRestaurantDatabase();
             var actual = sut.ToPostOffice(db);
 
             var expected = new SmtpPostOffice(
