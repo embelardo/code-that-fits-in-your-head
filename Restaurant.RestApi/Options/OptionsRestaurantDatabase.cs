@@ -44,5 +44,19 @@ namespace Ploeh.Samples.Restaurants.RestApi.Options
                 restaurant.Name,
                 restaurant.ToMaitreD()));
         }
+
+        public Task<Restaurant?> GetRestaurant(string name)
+        {
+            var restaurant =
+                restaurants.Where(r => r.Name == name).SingleOrDefault();
+
+            if (restaurant is null)
+                return Task.FromResult<Restaurant?>(null);
+
+            return Task.FromResult<Restaurant?>(new Restaurant(
+                restaurant.Id,
+                name,
+                restaurant.ToMaitreD()));
+        }
     }
 }
