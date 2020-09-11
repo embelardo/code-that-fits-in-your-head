@@ -583,15 +583,13 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             int restaurantId,
             string opensAt)
         {
-            var restaurant = new RestaurantOptionsBuilder()
-                .WithId(restaurantId)
-                .WithOpensAt(TimeSpan.Parse(
-                    opensAt,
-                    CultureInfo.InvariantCulture))
-                .Build();
-            var restaurantDb = new OptionsRestaurantDatabase(restaurant);
+            var restaurant = from m in Some.Restaurant.WithId(restaurantId)
+                             select m.WithOpensAt(TimeSpan.Parse(
+                                 opensAt,
+                                 CultureInfo.InvariantCulture));
+            var restaurantDB = new InMemoryRestaurantDatabase(restaurant);
             var db = new FakeDatabase();
-            var sut = new CalendarController(restaurantDb, db);
+            var sut = new CalendarController(restaurantDB, db);
 
             var actual = await sut.Get(restaurantId, 2020, 9, 5);
 
