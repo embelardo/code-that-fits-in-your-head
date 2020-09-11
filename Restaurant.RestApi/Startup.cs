@@ -62,7 +62,10 @@ namespace Ploeh.Samples.Restaurants.RestApi
             var restaurantsOptions = Configuration.GetSection("Restaurants")
                 .Get<RestaurantOptions[]>();
             services.AddSingleton<IRestaurantDatabase>(
-                new OptionsRestaurantDatabase(restaurantsOptions));
+                new InMemoryRestaurantDatabase(restaurantsOptions
+                    .Select(r => r.ToRestaurant())
+                    .OfType<Restaurant>()
+                    .ToArray()));
 
             services.AddSingleton<IClock>(sp =>
             {
