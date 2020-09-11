@@ -158,7 +158,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 .ConfigureAwait(false);
             reservations = reservations.Where(r => r.Id != res.Id).ToList();
             var now = Clock.GetCurrentDateTime();
-            if (!restaurant.MaitreD!.WillAccept(now, reservations, res))
+            if (!restaurant.MaitreD.WillAccept(now, reservations, res))
                 return NoTables500InternalServerError();
 
             if (existing.Email != res.Email)
