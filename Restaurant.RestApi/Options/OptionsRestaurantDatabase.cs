@@ -37,14 +37,6 @@ namespace Ploeh.Samples.Restaurants.RestApi.Options
                 .SingleOrDefault());
         }
 
-        public Task<MaitreD?> GetMaitreD(int id)
-        {
-            return Task.FromResult(restaurants
-                .Where(r => r.Id == id)
-                .Select(r => (MaitreD?)r.ToMaitreD())
-                .SingleOrDefault());
-        }
-
         public Task<Restaurant?> GetRestaurant(int id)
         {
             var restaurant =

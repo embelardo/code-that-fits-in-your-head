@@ -11,7 +11,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
         Task<string?> GetName(int id);
         Task<int?> GetId(string name);
         Task<IEnumerable<string>> GetAllNames();
-        Task<MaitreD?> GetMaitreD(int id);
         Task<Restaurant?> GetRestaurant(int id);
     }
 }
