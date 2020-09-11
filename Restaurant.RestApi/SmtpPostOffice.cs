@@ -106,11 +106,11 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (reservation is null)
                 throw new ArgumentNullException(nameof(reservation));
 
-            var name = await RestaurantDatabase.GetName(restaurantId)
+            var r = await RestaurantDatabase.GetRestaurant(restaurantId)
                 .ConfigureAwait(false);
 
             var subject =
-                $"Your reservation for {name} is changing.";
+                $"Your reservation for {r?.Name} is changing.";
             var body = CreateBodyForUpdating(reservation);
             var email = reservation.Email.ToString();
 
