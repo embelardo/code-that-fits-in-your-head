@@ -632,9 +632,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var restaurantDb = new OptionsRestaurantDatabase(
                     new RestaurantOptionsBuilder().Build());
             var db = new FakeDatabase();
-            var sut = new CalendarController(
-                restaurantDb,
-                db);
+            var sut = new CalendarController(restaurantDb, db);
             MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
             Assert.Null(m);
 
@@ -650,9 +648,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var restaurantDb = new OptionsRestaurantDatabase(
                     new RestaurantOptionsBuilder().Build());
             var db = new FakeDatabase();
-            var sut = new CalendarController(
-                restaurantDb,
-                db);
+            var sut = new CalendarController(restaurantDb, db);
             MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
             Assert.Null(m);
 
@@ -668,9 +664,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var restaurantDb = new OptionsRestaurantDatabase(
                     new RestaurantOptionsBuilder().Build());
             var db = new FakeDatabase();
-            var sut = new CalendarController(
-                restaurantDb,
-                db);
+            var sut = new CalendarController(restaurantDb, db);
             MaitreD? m = await restaurantDb.GetMaitreD(absentRestaurantId);
             Assert.Null(m);
 
