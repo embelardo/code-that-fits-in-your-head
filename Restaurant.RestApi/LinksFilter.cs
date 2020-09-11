@@ -98,9 +98,9 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (dto.Name is null)
                 return;
 
-            var restaurantId =
-                await Database.GetId(dto.Name).ConfigureAwait(false);
-            if (restaurantId is null)
+            var r = await Database.GetRestaurant(dto.Name)
+                .ConfigureAwait(false);
+            if (r is null)
                 return;
 
             var period = dto.ToPeriod();
@@ -109,13 +109,13 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
             dto.Links = new[]
             {
-                url.LinkToPeriod(restaurantId.Value, previous, "previous"),
-                url.LinkToPeriod(restaurantId.Value, next, "next")
+                url.LinkToPeriod(r.Id, previous, "previous"),
+                url.LinkToPeriod(r.Id, next, "next")
             };
 
             if (dto.Days is { })
                 foreach (var day in dto.Days)
-                    AddLinks(restaurantId.Value, day, url);
+                    AddLinks(r.Id, day, url);
         }
 
         private class PreviousPeriodVisitor : IPeriodVisitor<IPeriod>
