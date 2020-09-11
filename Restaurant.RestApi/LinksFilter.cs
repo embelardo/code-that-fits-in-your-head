@@ -76,20 +76,20 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (restaurant.Name is null)
                 return;
 
-            var restaurantId =
-                await Database.GetId(restaurant.Name).ConfigureAwait(false);
-            if (restaurantId is null)
+            var r = await Database.GetRestaurant(restaurant.Name)
+                .ConfigureAwait(false);
+            if (r is null)
                 return;
 
             var now = Clock.GetCurrentDateTime();
 
             restaurant.Links = new[]
             {
-                url.LinkToRestaurant(restaurantId.Value),
-                url.LinkToReservations(restaurantId.Value),
-                url.LinkToYear(restaurantId.Value, now.Year),
-                url.LinkToMonth(restaurantId.Value, now.Year, now.Month),
-                url.LinkToDay(restaurantId.Value, now.Year, now.Month, now.Day)
+                url.LinkToRestaurant(r.Id),
+                url.LinkToReservations(r.Id),
+                url.LinkToYear(r.Id, now.Year),
+                url.LinkToMonth(r.Id, now.Year, now.Month),
+                url.LinkToDay(r.Id, now.Year, now.Month, now.Day)
             };
         }
 
