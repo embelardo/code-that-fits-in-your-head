@@ -29,5 +29,12 @@ namespace Ploeh.Samples.Restaurants.RestApi.Options
                 SeatingDuration,
                 Tables.Select(ts => ts.ToTable()));
         }
+
+        internal Restaurant? ToRestaurant()
+        {
+            if (Name is null)
+                return null;
+            return new Restaurant(Id, Name, ToMaitreD());
+        }
     }
 }

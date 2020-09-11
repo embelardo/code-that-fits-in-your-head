@@ -15,6 +15,15 @@ namespace Ploeh.Samples.Restaurants.RestApi.Options
             this.restaurants = restaurants;
         }
 
+        public Task<IReadOnlyCollection<Restaurant>> GetAll()
+        {
+            var list = restaurants
+                .Select(r => r.ToRestaurant())
+                .OfType<Restaurant>()
+                .ToList();
+            return Task.FromResult<IReadOnlyCollection<Restaurant>>(list);
+        }
+
         public Task<IEnumerable<string>> GetAllNames()
         {
             return Task.FromResult(
