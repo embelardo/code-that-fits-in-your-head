@@ -118,20 +118,18 @@ namespace Ploeh.Samples.Restaurants.RestApi
             int month,
             int day)
         {
-            var name = await RestaurantDatabase.GetName(restaurantId)
-                .ConfigureAwait(false);
-            var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
-                .ConfigureAwait(false);
-            if (maitreD is null)
+            var restaurant = await RestaurantDatabase
+                .GetRestaurant(restaurantId).ConfigureAwait(false);
+            if (restaurant is null)
                 return new NotFoundResult();
 
             var period = Period.Day(year, month, day);
-            var days = await MakeDays(restaurantId, maitreD, period)
+            var days = await MakeDays(restaurantId, restaurant.MaitreD, period)
                 .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
                 {
-                    Name = name,
+                    Name = restaurant.Name,
                     Year = year,
                     Month = month,
                     Day = day,
