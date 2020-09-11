@@ -399,14 +399,10 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             int expectedDays,
             int tableSize)
         {
-            var restaurant = RestaurantOptionsBuilder.Grandfather
-                .WithTables(new TableOptionsBuilder()
-                    .Communal()
-                    .WithSeats(tableSize)
-                    .Build())
-                .Build();
+            var restaurant = from m in Grandfather.Restaurant
+                             select m.WithTables(Table.Communal(tableSize));
             var sut = new CalendarController(
-                new OptionsRestaurantDatabase(restaurant),
+                new InMemoryRestaurantDatabase(restaurant),
                 new FakeDatabase());
 
             var actual = await act(sut);
@@ -434,12 +430,12 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             Assert.All(
                 dto.Days,
                 d => Assert.Contains(
-                    restaurant.OpensAt.ToIso8601TimeString(),
+                    restaurant.MaitreD.OpensAt.ToIso8601TimeString(),
                     d.Entries.Select(e => e.Time)));
             Assert.All(
                 dto.Days,
                 d => Assert.Contains(
-                    restaurant.LastSeating.ToIso8601TimeString(),
+                    restaurant.MaitreD.LastSeating.ToIso8601TimeString(),
                     d.Entries.Select(e => e.Time)));
         }
 

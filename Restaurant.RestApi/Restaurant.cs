@@ -34,6 +34,14 @@ namespace Ploeh.Samples.Restaurants.RestApi
             return new Restaurant(Id, Name, newMaitreD);
         }
 
+        public Restaurant Select(Func<MaitreD, MaitreD> selector)
+        {
+            if (selector is null)
+                throw new ArgumentNullException(nameof(selector));
+
+            return WithMaitreD(selector(MaitreD));
+        }
+
         public override bool Equals(object? obj)
         {
             return obj is Restaurant restaurant &&

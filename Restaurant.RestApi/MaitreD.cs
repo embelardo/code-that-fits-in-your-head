@@ -34,13 +34,28 @@ namespace Ploeh.Samples.Restaurants.RestApi
         public TimeSpan SeatingDuration { get; }
         public IEnumerable<Table> Tables { get; }
 
+        public MaitreD WithOpensAt(TimeOfDay newOpensAt)
+        {
+            return
+                new MaitreD(newOpensAt, LastSeating, SeatingDuration, Tables);
+        }
+
+        public MaitreD WithLastSeating(TimeOfDay newLastSeating)
+        {
+            return
+                new MaitreD(OpensAt, newLastSeating, SeatingDuration, Tables);
+        }
+
+        public MaitreD WithSeatingDuration(TimeSpan newSeatingDuration)
+        {
+            return
+                new MaitreD(OpensAt, LastSeating, newSeatingDuration, Tables);
+        }
+
         public MaitreD WithTables(params Table[] newTables)
         {
-            return new MaitreD(
-                OpensAt,
-                LastSeating,
-                SeatingDuration,
-                newTables);
+            return
+                new MaitreD(OpensAt, LastSeating, SeatingDuration, newTables);
         }
 
         public bool WillAccept(
