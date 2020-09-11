@@ -21,6 +21,13 @@ namespace Ploeh.Samples.Restaurants.RestApi.Options
             Justification = "With the .NET configuration system, it seems like it's either this, or some collection object with a public setter, which causes other code analysis warnings.")]
         public TableOptions[]? Tables { get; set; }
 
+        internal Restaurant? ToRestaurant()
+        {
+            if (Name is null)
+                return null;
+            return new Restaurant(Id, Name, ToMaitreD());
+        }
+
         private MaitreD ToMaitreD()
         {
             return new MaitreD(
@@ -28,13 +35,6 @@ namespace Ploeh.Samples.Restaurants.RestApi.Options
                 LastSeating,
                 SeatingDuration,
                 Tables.Select(ts => ts.ToTable()));
-        }
-
-        internal Restaurant? ToRestaurant()
-        {
-            if (Name is null)
-                return null;
-            return new Restaurant(Id, Name, ToMaitreD());
         }
     }
 }
