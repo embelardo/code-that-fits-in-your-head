@@ -8,7 +8,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
 {
     public interface IRestaurantDatabase
     {
-        Task<int?> GetId(string name);
         Task<IEnumerable<string>> GetAllNames();
         Task<Restaurant?> GetRestaurant(int id);
         Task<Restaurant?> GetRestaurant(string name);

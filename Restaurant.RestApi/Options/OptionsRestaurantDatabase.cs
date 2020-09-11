@@ -21,14 +21,6 @@ namespace Ploeh.Samples.Restaurants.RestApi.Options
                 restaurants.Select(r => r.Name).OfType<string>());
         }
 
-        public Task<int?> GetId(string name)
-        {
-            return Task.FromResult(restaurants
-                .Where(r => r.Name == name)
-                .Select(r => (int?)r.Id)
-                .SingleOrDefault());
-        }
-
         public Task<Restaurant?> GetRestaurant(int id)
         {
             var restaurant =
