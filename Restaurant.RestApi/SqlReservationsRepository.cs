@@ -45,12 +45,6 @@ namespace Ploeh.Samples.Restaurant.RestApi
             DateTime min,
             DateTime max)
         {
-            const string readByRangeSql = @"
-                SELECT [PublicId], [At], [Name], [Email], [Quantity]
-                FROM [dbo].[Reservations]
-                WHERE [RestaurantId] = @RestaurantId AND
-                      @Min <= [At] AND [At] <= @Max";
-
             var result = new List<Reservation>();
 
             using var conn = new SqlConnection(ConnectionString);
@@ -73,6 +67,12 @@ namespace Ploeh.Samples.Restaurant.RestApi
 
             return result.AsReadOnly();
         }
+
+        private const string readByRangeSql = @"
+            SELECT [PublicId], [At], [Name], [Email], [Quantity]
+            FROM [dbo].[Reservations]
+            WHERE [RestaurantId] = @RestaurantId AND
+                  @Min <= [At] AND [At] <= @Max";
 
         public async Task<Reservation?> ReadReservation(Guid id)
         {
