@@ -20,9 +20,9 @@ namespace Ploeh.Samples.Restaurants.RestApi
         [HttpGet("{id}")]
         public async Task<ActionResult> Get(int id)
         {
-            var name = await Database.GetName(id).ConfigureAwait(false);
+            var r = await Database.GetRestaurant(id).ConfigureAwait(false);
 
-            return new OkObjectResult(new RestaurantDto { Name = name });
+            return new OkObjectResult(new RestaurantDto { Name = r?.Name });
         }
     }
 }
