@@ -454,13 +454,11 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                     .WithDate(new DateTime(2020, 8, 21, 19, 0, 0)));
             var sut = new CalendarController(
                 new InMemoryRestaurantDatabase(
-                    Some.Restaurant
-                        .WithId(restaurantId)
-                        .Select(m => m
-                            .WithOpensAt(TimeSpan.FromHours(18))
-                            .WithLastSeating(TimeSpan.FromHours(20))
-                            .WithSeatingDuration(TimeSpan.FromHours(.75))
-                            .WithTables(Table.Standard(4)))),
+                    Some.Restaurant.WithId(restaurantId).Select(m => m
+                        .WithOpensAt(TimeSpan.FromHours(18))
+                        .WithLastSeating(TimeSpan.FromHours(20))
+                        .WithSeatingDuration(TimeSpan.FromHours(.75))
+                        .WithTables(Table.Standard(4)))),
                 db);
 
             var actual = await sut.Get(
@@ -501,13 +499,11 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                     .WithDate(new DateTime(2020, 8, 22, 20, 30, 0)));
             var sut = new CalendarController(
                 new InMemoryRestaurantDatabase(
-                    Some.Restaurant
-                        .WithId(restaurantId)
-                        .Select(m => m
-                            .WithOpensAt(TimeSpan.FromHours(20))
-                            .WithLastSeating(TimeSpan.FromHours(22))
-                            .WithSeatingDuration(TimeSpan.FromHours(1))
-                            .WithTables(Table.Communal(12)))),
+                    Some.Restaurant.WithId(restaurantId).Select(m => m
+                        .WithOpensAt(TimeSpan.FromHours(20))
+                        .WithLastSeating(TimeSpan.FromHours(22))
+                        .WithSeatingDuration(TimeSpan.FromHours(1))
+                        .WithTables(Table.Communal(12)))),
                 db);
 
             var actual = await sut.Get(restaurantId, 2020, 8);
