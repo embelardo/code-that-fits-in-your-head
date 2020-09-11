@@ -51,7 +51,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 return new NotFoundResult();
 
             var period = Period.Year(year);
-            var days = await MakeDays(restaurant, restaurant.MaitreD, period)
+            var days = await MakeDays(restaurant, period)
                 .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
@@ -87,7 +87,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 return new NotFoundResult();
 
             var period = Period.Month(year, month);
-            var days = await MakeDays(restaurant, restaurant.MaitreD, period)
+            var days = await MakeDays(restaurant, period)
                 .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
@@ -124,7 +124,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 return new NotFoundResult();
 
             var period = Period.Day(year, month, day);
-            var days = await MakeDays(restaurant, restaurant.MaitreD, period)
+            var days = await MakeDays(restaurant, period)
                 .ConfigureAwait(false);
             return new OkObjectResult(
                 new CalendarDto
@@ -139,7 +139,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         private async Task<DayDto[]> MakeDays(
             Restaurant restaurant,
-            MaitreD maitreD,
             IPeriod period)
         {
             var firstTick = period.Accept(new FirstTickVisitor());
@@ -149,7 +148,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 .ConfigureAwait(false);
 
             var days = period.Accept(new DaysVisitor())
-                .Select(d => MakeDay(d, reservations, maitreD!))
+                .Select(d => MakeDay(d, reservations, restaurant.MaitreD!))
                 .ToArray();
             return days;
         }
