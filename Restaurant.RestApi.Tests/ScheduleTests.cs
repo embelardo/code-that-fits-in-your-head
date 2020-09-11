@@ -130,9 +130,9 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var db = new FakeDatabase();
             await db.Create(Grandfather.Id, r);
             var sut = new ScheduleController(
-                new OptionsRestaurantDatabase(
-                    RestaurantOptionsBuilder.Grandfather.Build(),
-                    new RestaurantOptionsBuilder().WithId(restaurantId).Build()),
+                new InMemoryRestaurantDatabase(
+                    Grandfather.Restaurant,
+                    Some.Restaurant.WithId(restaurantId)),
                 db,
                 new AccessControlList(restaurantId));
 
