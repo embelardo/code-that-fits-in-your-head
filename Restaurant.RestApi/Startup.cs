@@ -61,7 +61,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
             var restaurantsOptions = Configuration.GetSection("Restaurants")
                 .Get<RestaurantOptions[]>();
-            services.AddSingleton(restaurantsOptions.First().ToMaitreD());
             services.AddSingleton<IRestaurantDatabase>(
                 new OptionsRestaurantDatabase(restaurantsOptions));
 

@@ -31,13 +31,8 @@ namespace Ploeh.Samples.Restaurants.RestApi.Options
 
             if (restaurant is null)
                 return Task.FromResult<Restaurant?>(null);
-            if (restaurant.Name is null)
-                return Task.FromResult<Restaurant?>(null);
 
-            return Task.FromResult<Restaurant?>(new Restaurant(
-                restaurant.Id,
-                restaurant.Name,
-                restaurant.ToMaitreD()));
+            return Task.FromResult(restaurant.ToRestaurant());
         }
 
         public Task<Restaurant?> GetRestaurant(string name)
@@ -48,10 +43,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Options
             if (restaurant is null)
                 return Task.FromResult<Restaurant?>(null);
 
-            return Task.FromResult<Restaurant?>(new Restaurant(
-                restaurant.Id,
-                name,
-                restaurant.ToMaitreD()));
+            return Task.FromResult(restaurant.ToRestaurant());
         }
     }
 }
