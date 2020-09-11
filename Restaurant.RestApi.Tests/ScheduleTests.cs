@@ -154,11 +154,9 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             await db.Create(2, r1);
             await db.Create(2, r2);
             var sut = new ScheduleController(
-                new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder()
-                        .WithId(2)
-                        .WithSeatingDuration(TimeSpan.FromHours(.5))
-                        .Build()),
+                new InMemoryRestaurantDatabase(
+                    Some.Restaurant.WithId(2).Select(m => m
+                        .WithSeatingDuration(TimeSpan.FromHours(.5)))),
                 db,
                 new AccessControlList(2));
 
