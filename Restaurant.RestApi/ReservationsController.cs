@@ -50,9 +50,9 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (r is null)
                 return new BadRequestResult();
 
-            var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
-                .ConfigureAwait(false);
-            if (maitreD is null)
+            var restaurant = await RestaurantDatabase
+                .GetRestaurant(restaurantId).ConfigureAwait(false);
+            if (restaurant is null)
                 return new NotFoundResult();
 
             using var scope = new TransactionScope(
@@ -61,7 +61,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 .ReadReservations(restaurantId, r.At)
                 .ConfigureAwait(false);
             var now = Clock.GetCurrentDateTime();
-            if (!maitreD.WillAccept(now, reservations, r))
+            if (!restaurant.MaitreD.WillAccept(now, reservations, r))
                 return NoTables500InternalServerError();
 
             await Repository.Create(restaurantId, r).ConfigureAwait(false);
