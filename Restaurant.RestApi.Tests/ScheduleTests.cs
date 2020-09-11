@@ -86,8 +86,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         public async Task GetScheduleForDateWithoutReservations()
         {
             var sut = new ScheduleController(
-                new OptionsRestaurantDatabase(
-                    RestaurantOptionsBuilder.Grandfather.Build()),
+                new InMemoryRestaurantDatabase(Grandfather.Restaurant),
                 new FakeDatabase(),
                 new AccessControlList(Grandfather.Id));
 
