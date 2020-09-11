@@ -665,16 +665,15 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         public async Task PutToAbsentRestaurant()
         {
             var absentRestaurantId = 4;
-            var restaurantDb = new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().Build());
+            var restaurantDB = new InMemoryRestaurantDatabase(Some.Restaurant);
             var db = new FakeDatabase();
             await db.Create(absentRestaurantId, Some.Reservation);
             var sut = new ReservationsController(
                 new SystemClock(),
-                restaurantDb,
+                restaurantDB,
                 db,
                 new SpyPostOffice());
-            var r = await restaurantDb.GetRestaurant(absentRestaurantId);
+            var r = await restaurantDB.GetRestaurant(absentRestaurantId);
             Assert.Null(r);
 
             var actual = await sut.Put(
