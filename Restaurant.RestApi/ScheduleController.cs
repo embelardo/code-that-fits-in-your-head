@@ -49,11 +49,9 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (!AccessControlList.Authorize(restaurantId))
                 return new ForbidResult();
 
-            var name = await RestaurantDatabase.GetName(restaurantId)
-                .ConfigureAwait(false);
-            var maitreD = await RestaurantDatabase.GetMaitreD(restaurantId)
-                .ConfigureAwait(false);
-            if (maitreD is null)
+            var restaurant = await RestaurantDatabase
+                .GetRestaurant(restaurantId).ConfigureAwait(false);
+            if (restaurant is null)
                 return new NotFoundResult();
 
             var date = new DateTime(year, month, day);
@@ -63,10 +61,10 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 .ReadReservations(restaurantId, firstTick, lastTick)
                 .ConfigureAwait(false);
 
-            var schedule = maitreD.Schedule(reservations);
+            var schedule = restaurant.MaitreD.Schedule(reservations);
 
             var dto = MakeCalendar(date, schedule);
-            dto.Name = name;
+            dto.Name = restaurant.Name;
             return new OkObjectResult(dto);
         }
 
