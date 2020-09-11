@@ -24,12 +24,6 @@ namespace Ploeh.Samples.Restaurants.RestApi.Options
             return Task.FromResult<IReadOnlyCollection<Restaurant>>(list);
         }
 
-        public Task<IEnumerable<string>> GetAllNames()
-        {
-            return Task.FromResult(
-                restaurants.Select(r => r.Name).OfType<string>());
-        }
-
         public Task<Restaurant?> GetRestaurant(int id)
         {
             var restaurant =
