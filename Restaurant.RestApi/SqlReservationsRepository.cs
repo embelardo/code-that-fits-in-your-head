@@ -77,7 +77,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
         public async Task<Reservation?> ReadReservation(Guid id)
         {
             const string readByIdSql = @"
-                SELECT [At], [Name], [Email], [Quantity]
+                SELECT [PublicId], [At], [Name], [Email], [Quantity]
                 FROM [dbo].[Reservations]
                 WHERE [PublicId] = @id";
 
@@ -92,7 +92,7 @@ namespace Ploeh.Samples.Restaurant.RestApi
                 return null;
 
             return new Reservation(
-                id,
+                (Guid)rdr["PublicId"],
                 (DateTime)rdr["At"],
                 new Email((string)rdr["Email"]),
                 new Name((string)rdr["Name"]),
