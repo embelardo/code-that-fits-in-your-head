@@ -291,8 +291,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
                 new SystemClock(),
-                new OptionsRestaurantDatabase(
-                    new RestaurantOptionsBuilder().Build()),
+                new InMemoryRestaurantDatabase(Some.Restaurant),
                 db,
                 postOffice);
 
