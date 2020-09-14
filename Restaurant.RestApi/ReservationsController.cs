@@ -136,8 +136,8 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (!Guid.TryParse(id, out var rid))
                 return new NotFoundResult();
 
-            Reservation? res = dto.Validate(rid);
-            if (res is null)
+            Reservation? reservation = dto.Validate(rid);
+            if (reservation is null)
                 return new BadRequestResult();
 
             var restaurant = await RestaurantDatabase
@@ -149,13 +149,13 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 TransactionScopeAsyncFlowOption.Enabled);
 
             var result =
-                await TryUpdate(res, restaurant).ConfigureAwait(false);
+                await TryUpdate(reservation, restaurant).ConfigureAwait(false);
             if (result is { })
                 return result;
 
             scope.Complete();
 
-            return new OkObjectResult(res.ToDto());
+            return new OkObjectResult(reservation.ToDto());
         }
 
         private async Task<ActionResult?> TryUpdate(
