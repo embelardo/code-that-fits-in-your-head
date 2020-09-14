@@ -159,28 +159,30 @@ namespace Ploeh.Samples.Restaurants.RestApi
         }
 
         private async Task<ActionResult?> TryUpdate(
-            Reservation res,
+            Reservation reservation,
             Restaurant restaurant)
         {
-            var existing =
-                await Repository.ReadReservation(res.Id).ConfigureAwait(false);
+            var existing = await Repository.ReadReservation(reservation.Id)
+                .ConfigureAwait(false);
             if (existing is null)
                 return new NotFoundResult();
 
             var reservations = await Repository
-                .ReadReservations(restaurant.Id, res.At)
+                .ReadReservations(restaurant.Id, reservation.At)
                 .ConfigureAwait(false);
-            reservations = reservations.Where(r => r.Id != res.Id).ToList();
+            reservations =
+                reservations.Where(r => r.Id != reservation.Id).ToList();
             var now = Clock.GetCurrentDateTime();
-            if (!restaurant.MaitreD.WillAccept(now, reservations, res))
+            if (!restaurant.MaitreD.WillAccept(now, reservations, reservation))
                 return NoTables500InternalServerError();
 
-            if (existing.Email != res.Email)
+            if (existing.Email != reservation.Email)
                 await PostOffice
                     .EmailReservationUpdating(restaurant.Id, existing)
                     .ConfigureAwait(false);
-            await Repository.Update(res).ConfigureAwait(false);
-            await PostOffice.EmailReservationUpdated(restaurant.Id, res)
+            await Repository.Update(reservation).ConfigureAwait(false);
+            await PostOffice
+                .EmailReservationUpdated(restaurant.Id, reservation)
                 .ConfigureAwait(false);
 
             return null;
