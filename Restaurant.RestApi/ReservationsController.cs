@@ -148,13 +148,27 @@ namespace Ploeh.Samples.Restaurants.RestApi
             using var scope = new TransactionScope(
                 TransactionScopeAsyncFlowOption.Enabled);
 
+            var result =
+                await TryUpdate(res, restaurant).ConfigureAwait(false);
+            if (result is { })
+                return result;
+
+            scope.Complete();
+
+            return new OkObjectResult(res.ToDto());
+        }
+
+        private async Task<ActionResult?> TryUpdate(
+            Reservation res,
+            Restaurant restaurant)
+        {
             var existing =
-                await Repository.ReadReservation(rid).ConfigureAwait(false);
+                await Repository.ReadReservation(res.Id).ConfigureAwait(false);
             if (existing is null)
                 return new NotFoundResult();
 
             var reservations = await Repository
-                .ReadReservations(restaurantId, res.At)
+                .ReadReservations(restaurant.Id, res.At)
                 .ConfigureAwait(false);
             reservations = reservations.Where(r => r.Id != res.Id).ToList();
             var now = Clock.GetCurrentDateTime();
@@ -163,15 +177,13 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
             if (existing.Email != res.Email)
                 await PostOffice
-                    .EmailReservationUpdating(restaurantId, existing)
+                    .EmailReservationUpdating(restaurant.Id, existing)
                     .ConfigureAwait(false);
             await Repository.Update(res).ConfigureAwait(false);
-            await PostOffice.EmailReservationUpdated(restaurantId, res)
+            await PostOffice.EmailReservationUpdated(restaurant.Id, res)
                 .ConfigureAwait(false);
 
-            scope.Complete();
-
-            return new OkObjectResult(res.ToDto());
+            return null;
         }
 
         [HttpDelete("reservations/{id}")]
