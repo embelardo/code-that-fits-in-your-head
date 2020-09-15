@@ -49,15 +49,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
             ConfigureAuthorization(services);
 
-            var connStr = Configuration.GetConnectionString("Restaurant");
-            services.AddSingleton<IReservationsRepository>(sp =>
-            {
-                var logger =
-                    sp.GetService<ILogger<LoggingReservationsRepository>>();
-                return new LoggingReservationsRepository(
-                    logger,
-                    new SqlReservationsRepository(connStr));
-            });
+            ConfigureRepository(services);
 
             var restaurantsOptions = Configuration.GetSection("Restaurants")
                 .Get<RestaurantOptions[]>();
@@ -125,6 +117,19 @@ namespace Ploeh.Samples.Restaurants.RestApi
             services.AddHttpContextAccessor();
             services.AddTransient(sp => AccessControlList.FromUser(
                 sp.GetService<IHttpContextAccessor>().HttpContext.User));
+        }
+
+        private void ConfigureRepository(IServiceCollection services)
+        {
+            var connStr = Configuration.GetConnectionString("Restaurant");
+            services.AddSingleton<IReservationsRepository>(sp =>
+            {
+                var logger =
+                    sp.GetService<ILogger<LoggingReservationsRepository>>();
+                return new LoggingReservationsRepository(
+                    logger,
+                    new SqlReservationsRepository(connStr));
+            });
         }
 
         public static void Configure(
