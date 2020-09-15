@@ -46,8 +46,8 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 throw new ArgumentNullException(nameof(dto));
 
             var id = dto.ParseId() ?? Guid.NewGuid();
-            Reservation? r = dto.Validate(id);
-            if (r is null)
+            Reservation? reservation = dto.Validate(id);
+            if (reservation is null)
                 return new BadRequestResult();
 
             var restaurant = await RestaurantDatabase
@@ -55,21 +55,33 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (restaurant is null)
                 return new NotFoundResult();
 
-            using var scope = new TransactionScope(
-                TransactionScopeAsyncFlowOption.Enabled);
+            return await TryCreate(restaurant, reservation)
+                .ConfigureAwait(false);
+        }
+
+        private async Task<ActionResult> TryCreate(
+            Restaurant restaurant,
+            Reservation reservation)
+        {
+            using var scope =
+                new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             var reservations = await Repository
-                .ReadReservations(restaurantId, r.At)
+                .ReadReservations(restaurant.Id, reservation.At)
                 .ConfigureAwait(false);
             var now = Clock.GetCurrentDateTime();
-            if (!restaurant.MaitreD.WillAccept(now, reservations, r))
+            if (!restaurant.MaitreD.WillAccept(now, reservations, reservation))
                 return NoTables500InternalServerError();
 
-            await Repository.Create(restaurantId, r).ConfigureAwait(false);
-            await PostOffice.EmailReservationCreated(restaurantId, r)
+            await Repository.Create(restaurant.Id, reservation)
                 .ConfigureAwait(false);
+            await PostOffice
+                .EmailReservationCreated(restaurant.Id, reservation)
+                .ConfigureAwait(false);
+
             scope.Complete();
 
-            return Reservation201Created(restaurantId, r);
+            return Reservation201Created(restaurant.Id, reservation);
         }
 
         private static ActionResult NoTables500InternalServerError()
