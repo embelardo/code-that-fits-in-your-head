@@ -161,13 +161,9 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (existing is null)
                 return new NotFoundResult();
 
-            var reservations = await Repository
-                .ReadReservations(restaurant.Id, reservation.At)
+            var ok = await WillAcceptUpdate(restaurant, reservation)
                 .ConfigureAwait(false);
-            reservations =
-                reservations.Where(r => r.Id != reservation.Id).ToList();
-            var now = Clock.GetCurrentDateTime();
-            if (!restaurant.MaitreD.WillAccept(now, reservations, reservation))
+            if (!ok)
                 return NoTables500InternalServerError();
 
             await Update(restaurant, reservation, existing)
@@ -176,6 +172,22 @@ namespace Ploeh.Samples.Restaurants.RestApi
             scope.Complete();
 
             return new OkObjectResult(reservation.ToDto());
+        }
+
+        private async Task<bool> WillAcceptUpdate(
+            Restaurant restaurant,
+            Reservation reservation)
+        {
+            var reservations = await Repository
+                .ReadReservations(restaurant.Id, reservation.At)
+                .ConfigureAwait(false);
+            reservations =
+                reservations.Where(r => r.Id != reservation.Id).ToList();
+            var now = Clock.GetCurrentDateTime();
+            return restaurant.MaitreD.WillAccept(
+                now,
+                reservations,
+                reservation);
         }
 
         private async Task Update(
