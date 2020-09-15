@@ -53,11 +53,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
             ConfigureRestaurants(services);
 
-            services.AddSingleton<IClock>(sp =>
-            {
-                var logger = sp.GetService<ILogger<LoggingClock>>();
-                return new LoggingClock(logger, new SystemClock());
-            });
+            ConfigureClock(services);
 
             var smtpOptions = new SmtpOptions();
             Configuration.Bind("Smtp", smtpOptions);
@@ -135,6 +131,15 @@ namespace Ploeh.Samples.Restaurants.RestApi
                     .Select(r => r.ToRestaurant())
                     .OfType<Restaurant>()
                     .ToArray()));
+        }
+
+        private static void ConfigureClock(IServiceCollection services)
+        {
+            services.AddSingleton<IClock>(sp =>
+            {
+                var logger = sp.GetService<ILogger<LoggingClock>>();
+                return new LoggingClock(logger, new SystemClock());
+            });
         }
 
         public static void Configure(
