@@ -146,12 +146,12 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 return new NotFoundResult();
 
             return
-                await TryUpdate(reservation, restaurant).ConfigureAwait(false);
+                await TryUpdate(restaurant, reservation).ConfigureAwait(false);
         }
 
         private async Task<ActionResult> TryUpdate(
-            Reservation reservation,
-            Restaurant restaurant)
+            Restaurant restaurant,
+            Reservation reservation)
         {
             using var scope = new TransactionScope(
                 TransactionScopeAsyncFlowOption.Enabled);
@@ -170,6 +170,19 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (!restaurant.MaitreD.WillAccept(now, reservations, reservation))
                 return NoTables500InternalServerError();
 
+            await Update(restaurant, reservation, existing)
+                .ConfigureAwait(false);
+
+            scope.Complete();
+
+            return new OkObjectResult(reservation.ToDto());
+        }
+
+        private async Task Update(
+            Restaurant restaurant,
+            Reservation reservation,
+            Reservation existing)
+        {
             if (existing.Email != reservation.Email)
                 await PostOffice
                     .EmailReservationUpdating(restaurant.Id, existing)
@@ -178,10 +191,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
             await PostOffice
                 .EmailReservationUpdated(restaurant.Id, reservation)
                 .ConfigureAwait(false);
-
-            scope.Complete();
-
-            return new OkObjectResult(reservation.ToDto());
         }
 
         [HttpDelete("reservations/{id}")]
