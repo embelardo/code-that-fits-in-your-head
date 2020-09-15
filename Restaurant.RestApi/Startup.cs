@@ -51,13 +51,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
             ConfigureRepository(services);
 
-            var restaurantsOptions = Configuration.GetSection("Restaurants")
-                .Get<RestaurantOptions[]>();
-            services.AddSingleton<IRestaurantDatabase>(
-                new InMemoryRestaurantDatabase(restaurantsOptions
-                    .Select(r => r.ToRestaurant())
-                    .OfType<Restaurant>()
-                    .ToArray()));
+            ConfigureRestaurants(services);
 
             services.AddSingleton<IClock>(sp =>
             {
@@ -130,6 +124,17 @@ namespace Ploeh.Samples.Restaurants.RestApi
                     logger,
                     new SqlReservationsRepository(connStr));
             });
+        }
+
+        private void ConfigureRestaurants(IServiceCollection services)
+        {
+            var restaurantsOptions = Configuration.GetSection("Restaurants")
+                .Get<RestaurantOptions[]>();
+            services.AddSingleton<IRestaurantDatabase>(
+                new InMemoryRestaurantDatabase(restaurantsOptions
+                    .Select(r => r.ToRestaurant())
+                    .OfType<Restaurant>()
+                    .ToArray()));
         }
 
         public static void Configure(
