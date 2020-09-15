@@ -141,10 +141,8 @@ namespace Ploeh.Samples.Restaurants.RestApi
             Restaurant restaurant,
             IPeriod period)
         {
-            var firstTick = period.Accept(new FirstTickVisitor());
-            var lastTick = period.Accept(new LastTickVisitor());
             var reservations = await Repository
-                .ReadReservations(restaurant.Id, firstTick, lastTick)
+                .ReadReservations(restaurant.Id, period)
                 .ConfigureAwait(false);
 
             var days = period.Accept(new DaysVisitor())
@@ -172,42 +170,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 Date = date.ToIso8601DateString(),
                 Entries = segments
             };
-        }
-
-        private sealed class FirstTickVisitor : IPeriodVisitor<DateTime>
-        {
-            public DateTime VisitDay(int year, int month, int day)
-            {
-                return new DateTime(year, month, day);
-            }
-
-            public DateTime VisitMonth(int year, int month)
-            {
-                return new DateTime(year, month, 1);
-            }
-
-            public DateTime VisitYear(int year)
-            {
-                return new DateTime(year, 1, 1);
-            }
-        }
-
-        private sealed class LastTickVisitor : IPeriodVisitor<DateTime>
-        {
-            public DateTime VisitDay(int year, int month, int day)
-            {
-                return new DateTime(year, month, day).AddDays(1).AddTicks(-1);
-            }
-
-            public DateTime VisitMonth(int year, int month)
-            {
-                return new DateTime(year, month, 1).AddMonths(1).AddTicks(-1);
-            }
-
-            public DateTime VisitYear(int year)
-            {
-                return new DateTime(year, 1, 1).AddYears(1).AddTicks(-1);
-            }
         }
 
         private sealed class DaysVisitor :

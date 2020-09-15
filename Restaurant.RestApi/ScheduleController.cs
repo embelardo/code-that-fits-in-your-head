@@ -54,16 +54,12 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (restaurant is null)
                 return new NotFoundResult();
 
-            var date = new DateTime(year, month, day);
-            var firstTick = date;
-            var lastTick = firstTick.AddDays(1).AddTicks(-1);
             var reservations = await Repository
-                .ReadReservations(restaurantId, firstTick, lastTick)
+                .ReadReservations(restaurantId, Period.Day(year, month, day))
                 .ConfigureAwait(false);
-
             var schedule = restaurant.MaitreD.Schedule(reservations);
 
-            var dto = MakeCalendar(date, schedule);
+            var dto = MakeCalendar(new DateTime(year, month, day), schedule);
             dto.Name = restaurant.Name;
             return new OkObjectResult(dto);
         }
