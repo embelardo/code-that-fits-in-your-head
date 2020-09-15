@@ -29,6 +29,19 @@ namespace Ploeh.Samples.Restaurants.RestApi
             Configuration = configuration;
         }
 
+        public static void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+                app.UseDeveloperExceptionPage();
+
+            app.UseAuthentication();
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             var urlSigningKey = Encoding.ASCII.GetBytes(
@@ -140,19 +153,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
                     logger,
                     smtpOptions.ToPostOffice(db));
             });
-        }
-
-        public static void Configure(
-            IApplicationBuilder app,
-            IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
-
-            app.UseAuthentication();
-            app.UseRouting();
-            app.UseAuthorization();
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }
