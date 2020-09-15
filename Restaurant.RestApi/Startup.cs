@@ -55,16 +55,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
             ConfigureClock(services);
 
-            var smtpOptions = new SmtpOptions();
-            Configuration.Bind("Smtp", smtpOptions);
-            services.AddSingleton<IPostOffice>(sp =>
-            {
-                var logger = sp.GetService<ILogger<LoggingPostOffice>>();
-                var db = sp.GetService<IRestaurantDatabase>();
-                return new LoggingPostOffice(
-                    logger,
-                    smtpOptions.ToPostOffice(db));
-            });
+            ConfigurePostOffice(services);
         }
 
         private static void ConfigureUrSigning(
@@ -139,6 +130,20 @@ namespace Ploeh.Samples.Restaurants.RestApi
             {
                 var logger = sp.GetService<ILogger<LoggingClock>>();
                 return new LoggingClock(logger, new SystemClock());
+            });
+        }
+
+        private void ConfigurePostOffice(IServiceCollection services)
+        {
+            var smtpOptions = new SmtpOptions();
+            Configuration.Bind("Smtp", smtpOptions);
+            services.AddSingleton<IPostOffice>(sp =>
+            {
+                var logger = sp.GetService<ILogger<LoggingPostOffice>>();
+                var db = sp.GetService<IRestaurantDatabase>();
+                return new LoggingPostOffice(
+                    logger,
+                    smtpOptions.ToPostOffice(db));
             });
         }
 
