@@ -145,26 +145,21 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (restaurant is null)
                 return new NotFoundResult();
 
-            using var scope = new TransactionScope(
-                TransactionScopeAsyncFlowOption.Enabled);
-            var e =
+            return
                 await TryUpdate(reservation, restaurant).ConfigureAwait(false);
-            return e.Select(_ =>
-            {
-                scope.Complete();
-                return (ActionResult)new OkObjectResult(reservation.ToDto());
-            }).Bifold();
         }
 
-        private async Task<Either<ActionResult, Unit>> TryUpdate(
+        private async Task<ActionResult> TryUpdate(
             Reservation reservation,
             Restaurant restaurant)
         {
+            using var scope = new TransactionScope(
+                TransactionScopeAsyncFlowOption.Enabled);
+
             var existing = await Repository.ReadReservation(reservation.Id)
                 .ConfigureAwait(false);
             if (existing is null)
-                return Either.CreateLeft<ActionResult, Unit>(
-                    new NotFoundResult());
+                return new NotFoundResult();
 
             var reservations = await Repository
                 .ReadReservations(restaurant.Id, reservation.At)
@@ -173,8 +168,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 reservations.Where(r => r.Id != reservation.Id).ToList();
             var now = Clock.GetCurrentDateTime();
             if (!restaurant.MaitreD.WillAccept(now, reservations, reservation))
-                return Either.CreateLeft<ActionResult, Unit>(
-                    NoTables500InternalServerError());
+                return NoTables500InternalServerError();
 
             if (existing.Email != reservation.Email)
                 await PostOffice
@@ -185,7 +179,9 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 .EmailReservationUpdated(restaurant.Id, reservation)
                 .ConfigureAwait(false);
 
-            return Either.CreateRight<ActionResult, Unit>(Unit.Instance);
+            scope.Complete();
+
+            return new OkObjectResult(reservation.ToDto());
         }
 
         [HttpDelete("reservations/{id}")]
