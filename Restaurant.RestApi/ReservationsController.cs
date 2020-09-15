@@ -147,32 +147,45 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
             using var scope = new TransactionScope(
                 TransactionScopeAsyncFlowOption.Enabled);
+            var e =
+                await TryUpdate(reservation, restaurant).ConfigureAwait(false);
+            return e.Select(_ =>
+            {
+                scope.Complete();
+                return (ActionResult)new OkObjectResult(reservation.ToDto());
+            }).Bifold();
+        }
 
-            var existing =
-                await Repository.ReadReservation(rid).ConfigureAwait(false);
+        private async Task<Either<ActionResult, Unit>> TryUpdate(
+            Reservation reservation,
+            Restaurant restaurant)
+        {
+            var existing = await Repository.ReadReservation(reservation.Id)
+                .ConfigureAwait(false);
             if (existing is null)
-                return new NotFoundResult();
+                return Either.CreateLeft<ActionResult, Unit>(
+                    new NotFoundResult());
 
             var reservations = await Repository
-                .ReadReservations(restaurantId, reservation.At)
+                .ReadReservations(restaurant.Id, reservation.At)
                 .ConfigureAwait(false);
             reservations =
                 reservations.Where(r => r.Id != reservation.Id).ToList();
             var now = Clock.GetCurrentDateTime();
             if (!restaurant.MaitreD.WillAccept(now, reservations, reservation))
-                return NoTables500InternalServerError();
+                return Either.CreateLeft<ActionResult, Unit>(
+                    NoTables500InternalServerError());
 
             if (existing.Email != reservation.Email)
                 await PostOffice
-                    .EmailReservationUpdating(restaurantId, existing)
+                    .EmailReservationUpdating(restaurant.Id, existing)
                     .ConfigureAwait(false);
             await Repository.Update(reservation).ConfigureAwait(false);
-            await PostOffice.EmailReservationUpdated(restaurantId, reservation)
+            await PostOffice
+                .EmailReservationUpdated(restaurant.Id, reservation)
                 .ConfigureAwait(false);
 
-            scope.Complete();
-
-            return new OkObjectResult(reservation.ToDto());
+            return Either.CreateRight<ActionResult, Unit>(Unit.Instance);
         }
 
         [HttpDelete("reservations/{id}")]

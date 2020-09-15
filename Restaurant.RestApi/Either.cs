@@ -58,7 +58,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
             public T Accept<T>(IEitherVisitor<TL, TR, T> visitor)
             {
-                return visitor.Visit(left);
+                return visitor.VisitLeft(left);
             }
 
             public override bool Equals(object? obj)
@@ -84,7 +84,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
             public T Accept<T>(IEitherVisitor<TL, TR, T> visitor)
             {
-                return visitor.Visit(right);
+                return visitor.VisitRight(right);
             }
 
             public override bool Equals(object? obj)
@@ -132,12 +132,12 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 this.selector = selector;
             }
 
-            public Either<TL, TR2> Visit(TL l)
+            public Either<TL, TR2> VisitLeft(TL l)
             {
                 return CreateLeft<TL, TR2>(l);
             }
 
-            public Either<TL, TR2> Visit(TR1 r)
+            public Either<TL, TR2> VisitRight(TR1 r)
             {
                 return CreateRight<TL, TR2>(selector(r));
             }
@@ -164,14 +164,35 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 this.selector = selector;
             }
 
-            public Either<TL, TR2> Visit(TL l)
+            public Either<TL, TR2> VisitLeft(TL l)
             {
                 return CreateLeft<TL, TR2>(l);
             }
 
-            public Either<TL, TR2> Visit(TR1 r)
+            public Either<TL, TR2> VisitRight(TR1 r)
             {
                 return selector(r);
+            }
+        }
+
+        public static T Bifold<T>(this Either<T, T> source)
+        {
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.Accept(new BifoldVisitor<T>());
+        }
+
+        private class BifoldVisitor<T> : IEitherVisitor<T, T, T>
+        {
+            public T VisitLeft(T l)
+            {
+                return l;
+            }
+
+            public T VisitRight(T r)
+            {
+                return r;
             }
         }
     }

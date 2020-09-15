@@ -3,7 +3,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
 {
     public interface IEitherVisitor<TL, TR, T>
     {
-        T Visit(TL l);
-        T Visit(TR r);
+        T VisitLeft(TL l);
+        T VisitRight(TR r);
     }
 }
