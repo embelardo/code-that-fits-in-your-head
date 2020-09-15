@@ -46,15 +46,10 @@ namespace Ploeh.Samples.Restaurants.RestApi
                     opts.JsonSerializerOptions.IgnoreNullValues = true);
 
             ConfigureUrSigning(services, urlSigningKey);
-
             ConfigureAuthorization(services);
-
             ConfigureRepository(services);
-
             ConfigureRestaurants(services);
-
             ConfigureClock(services);
-
             ConfigurePostOffice(services);
         }
 
