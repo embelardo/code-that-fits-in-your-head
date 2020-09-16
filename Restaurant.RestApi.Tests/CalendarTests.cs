@@ -445,7 +445,6 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         [InlineData(99)]
         public async Task ViewCalendarForDayWithReservation(int restaurantId)
         {
-            var date = new DateTime(2020, 8, 21);
             var db = new FakeDatabase();
             await db.Create(
                 restaurantId,
@@ -461,11 +460,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                         .WithTables(Table.Standard(4)))),
                 db);
 
-            var actual = await sut.Get(
-                restaurantId,
-                date.Year,
-                date.Month,
-                date.Day);
+            var actual = await sut.Get(restaurantId, 2020, 8, 21);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
             var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
