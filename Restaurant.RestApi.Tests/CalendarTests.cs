@@ -241,18 +241,11 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 response.IsSuccessStatusCode,
                 $"Actual status code: {response.StatusCode}.");
             var actual = await response.ParseJsonContent<CalendarDto>();
-            AssertOneOf(
-                before.AddDays(1).Year,
-                after.AddDays(1).Year,
-                actual.Year);
-            AssertOneOf(
-                before.AddDays(1).Month,
-                after.AddDays(1).Month,
-                actual.Month);
-            AssertOneOf(
-                before.AddDays(1).Day,
-                after.AddDays(1).Day,
-                actual.Day);
+            var afterBefore = before.AddDays(1);
+            var afterAfter = after.AddDays(1);
+            AssertOneOf(afterBefore.Year, afterAfter.Year, actual.Year);
+            AssertOneOf(afterBefore.Month, afterAfter.Month, actual.Month);
+            AssertOneOf(afterBefore.Day, afterAfter.Day, actual.Day);
         }
 
         [Theory]
