@@ -79,10 +79,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         private void ConfigureAuthorization(IServiceCollection services)
         {
-            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-
-            var secret = Configuration["JwtIssuerSigningKey"];
-
             services.AddAuthentication(opts =>
             {
                 opts.DefaultAuthenticateScheme =
@@ -91,21 +87,31 @@ namespace Ploeh.Samples.Restaurants.RestApi
                     JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(opts =>
             {
-                opts.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.ASCII.GetBytes(secret)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    RoleClaimType = "role"
-                };
+                opts.TokenValidationParameters =
+                    CreateTokenValidationParameters();
                 opts.RequireHttpsMetadata = false;
             });
 
             services.AddHttpContextAccessor();
             services.AddTransient(sp => AccessControlList.FromUser(
                 sp.GetService<IHttpContextAccessor>().HttpContext.User));
+        }
+
+        private TokenValidationParameters CreateTokenValidationParameters()
+        {
+            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+            var secret = Configuration["JwtIssuerSigningKey"];
+
+            return new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.ASCII.GetBytes(secret)),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RoleClaimType = "role"
+            };
         }
 
         private void ConfigureRepository(IServiceCollection services)
