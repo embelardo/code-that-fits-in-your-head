@@ -123,6 +123,12 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 quantity = 5
             });
 
+            await AssertOverbookResponse(response);
+        }
+
+        private static async Task AssertOverbookResponse(
+            HttpResponseMessage response)
+        {
             Assert.Equal(
                 HttpStatusCode.InternalServerError,
                 response.StatusCode);
