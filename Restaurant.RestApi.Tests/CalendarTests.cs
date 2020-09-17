@@ -575,8 +575,8 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var actual = await sut.Get(restaurantId, 2020, 9, 5);
 
             var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
-            var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
-            var day = Assert.Single(calendar.Days);
+            var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
+            var day = Assert.Single(dto.Days);
             Assert.Equal(opensAt, day.Entries.First().Time);
         }
 
