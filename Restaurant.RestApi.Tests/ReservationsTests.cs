@@ -35,9 +35,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             };
             var response = await api.PostReservation(expected);
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<ReservationDto>();
             Assert.Equal(expected, actual, new ReservationDtoComparer());
         }
@@ -160,9 +158,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 quantity = 4
             });
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
         }
 
         [Theory]
@@ -188,9 +184,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var getResp = await api.CreateClient().GetAsync(address);
 
-            Assert.True(
-                getResp.IsSuccessStatusCode,
-                $"Actual status code: {postResp.StatusCode}.");
+            getResp.AssertSuccess();
             var actual = await getResp.ParseJsonContent<ReservationDto>();
             Assert.Equal(expected, actual, new ReservationDtoComparer());
             Assert.DoesNotContain(
@@ -261,9 +255,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var deleteResp = await api.CreateClient().DeleteAsync(address);
 
-            Assert.True(
-                deleteResp.IsSuccessStatusCode,
-                $"Actual status code: {deleteResp.StatusCode}.");
+            deleteResp.AssertSuccess();
             var getResp = await api.CreateClient().GetAsync(address);
             Assert.Equal(HttpStatusCode.NotFound, getResp.StatusCode);
         }
@@ -283,9 +275,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             await api.CreateClient().DeleteAsync(url);
             var resp = await api.CreateClient().DeleteAsync(url);
 
-            Assert.True(
-                resp.IsSuccessStatusCode,
-                $"Actual status code: {resp.StatusCode}.");
+            resp.AssertSuccess();
         }
 
         [Fact]
@@ -352,9 +342,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             dto.Quantity = newQuantity;
             var putResp = await api.PutReservation(address, dto);
 
-            Assert.True(
-                putResp.IsSuccessStatusCode,
-                $"Actual status code: {putResp.StatusCode}.");
+            putResp.AssertSuccess();
             var getResp = await api.CreateClient().GetAsync(address);
             var persisted = await getResp.ParseJsonContent<ReservationDto>();
             Assert.Equal(dto, persisted, new ReservationDtoComparer());
@@ -511,9 +499,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             dto.Quantity++;
             var putResp = await api.PutReservation(address, dto);
 
-            Assert.True(
-                putResp.IsSuccessStatusCode,
-                $"Actual status code: {putResp.StatusCode}.");
+            putResp.AssertSuccess();
         }
 
         [Theory]
@@ -618,9 +604,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response =
                 await client.PostReservation("The Vatican Cellar", dto);
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
         }
 
         [Fact]
@@ -662,9 +646,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                     .AddDate(timeOfDayLaterThanLastSeatingAtTheOtherRestaurants)
                     .ToDto());
 
-            Assert.True(
-                putResponse.IsSuccessStatusCode,
-                $"Actual status code: {putResponse.StatusCode}.");
+            putResponse.AssertSuccess();
         }
 
         [Fact]

@@ -26,9 +26,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetCurrentYear();
             var after = DateTime.Now;
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(before.Year, after.Year, actual.Year);
             Assert.Null(actual.Month);
@@ -45,9 +43,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetPreviousYear();
             var after = DateTime.Now;
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(
                 before.AddYears(-1).Year,
@@ -66,9 +62,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetNextYear();
             var after = DateTime.Now;
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(
                 before.AddYears(1).Year,
@@ -90,9 +84,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var response = await api.GetYear(year);
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             Assert.Equal(year, actual.Year);
             Assert.Null(actual.Month);
@@ -109,9 +101,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetCurrentMonth();
             var after = DateTime.Now;
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(before.Year, after.Year, actual.Year);
             AssertOneOf(before.Month, after.Month, actual.Month);
@@ -128,9 +118,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetPreviousMonth();
             var after = DateTime.Now;
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(
                 before.AddMonths(-1).Year,
@@ -152,9 +140,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetNextMonth();
             var after = DateTime.Now;
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(
                 before.AddMonths(1).Year,
@@ -179,9 +165,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var response = await api.GetMonth(year, month);
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             Assert.Equal(year, actual.Year);
             Assert.Equal(month, actual.Month);
@@ -198,9 +182,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetCurrentDay();
             var after = DateTime.Now;
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(before.Year, after.Year, actual.Year);
             AssertOneOf(before.Month, after.Month, actual.Month);
@@ -217,9 +199,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetPreviousDay();
             var after = DateTime.Now;
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             var beforeBefore = before.AddDays(-1);
             var beforeAfter = after.AddDays(-1);
@@ -237,9 +217,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetNextDay();
             var after = DateTime.Now;
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             var afterBefore = before.AddDays(1);
             var afterAfter = after.AddDays(1);
@@ -260,9 +238,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var response = await api.GetDay(year, month, day);
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             Assert.Equal(year, actual.Year);
             Assert.Equal(month, actual.Month);
@@ -639,9 +615,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             Assert.Equal(HttpStatusCode.MovedPermanently, actual.StatusCode);
             var follow =
                 await api.CreateClient().GetAsync(actual.Headers.Location);
-            Assert.True(
-                follow.IsSuccessStatusCode,
-                $"Actual status code: {follow.StatusCode}.");
+            follow.AssertSuccess();
         }
     }
 }

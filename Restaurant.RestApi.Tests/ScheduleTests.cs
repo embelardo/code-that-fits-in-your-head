@@ -42,9 +42,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var response = await api.GetSchedule(year, month, day);
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             var dayDto = Assert.Single(actual.Days);
             Assert.Equal(
@@ -71,9 +69,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response =
                 await client.GetSchedule(name, year, month, day);
 
-            Assert.True(
-                response.IsSuccessStatusCode,
-                $"Actual status code: {response.StatusCode}.");
+            response.AssertSuccess();
             var actual = await response.ParseJsonContent<CalendarDto>();
             Assert.Equal(name, actual.Name);
             var dayDto = Assert.Single(actual.Days);
@@ -214,9 +210,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             Assert.Equal(HttpStatusCode.MovedPermanently, actual.StatusCode);
             var follow =
                 await api.CreateClient().GetAsync(actual.Headers.Location);
-            Assert.True(
-                follow.IsSuccessStatusCode,
-                $"Actual status code: {follow.StatusCode}.");
+            follow.AssertSuccess();
         }
 
         [Theory]
