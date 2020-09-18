@@ -8,22 +8,24 @@ namespace Ploeh.Samples.Restaurants.RestApi
     public sealed partial class Table
     {
         private readonly ITable table;
+        private readonly bool isStandard;
         private readonly int seats;
 
-        private Table(ITable table, int seats)
+        private Table(ITable table, bool isStandard, int seats)
         {
             this.table = table;
+            this.isStandard = isStandard;
             this.seats = seats;
         }
 
         public static Table Standard(int seats)
         {
-            return new Table(new StandardTable(seats), seats);
+            return new Table(new StandardTable(seats), true, seats);
         }
 
         public static Table Communal(int seats)
         {
-            return new Table(new CommunalTable(seats), seats);
+            return new Table(new CommunalTable(seats), false, seats);
         }
 
         public int Capacity
@@ -149,6 +151,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                     new CommunalTable(
                         seats,
                         reservations.Append(reservation).ToArray()),
+                    false,
                     seats);
             }
 
@@ -158,6 +161,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                     new StandardTable(
                         seats,
                         this.reservation),
+                    true,
                     seats);
             }
         }
