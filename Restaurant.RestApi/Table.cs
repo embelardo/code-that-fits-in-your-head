@@ -33,7 +33,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         public int Capacity
         {
-            get { return Accept(new CapacityVisitor()); }
+            get { return seats; }
         }
 
         public int RemainingSeats
@@ -117,21 +117,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
             public int VisitStandard(int seats, Reservation? reservation)
             {
                 return reservation is null ? seats : 0;
-            }
-        }
-
-        private sealed class CapacityVisitor : ITableVisitor<int>
-        {
-            public int VisitCommunal(
-                int seats,
-                IReadOnlyCollection<Reservation> reservations)
-            {
-                return seats;
-            }
-
-            public int VisitStandard(int seats, Reservation? reservation)
-            {
-                return seats;
             }
         }
     }
