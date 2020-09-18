@@ -172,13 +172,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             int quantity)
         {
             using var api = new LegacyApi();
-            var expected = new ReservationDto
-            {
-                At = date,
-                Email = email,
-                Name = name,
-                Quantity = quantity
-            };
+            var expected = Create.ReservationDto(date, email, name, quantity);
             var postResp = await api.PostReservation(expected);
             Uri address = FindReservationAddress(postResp);
 
@@ -252,13 +246,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             int quantity)
         {
             using var api = new LegacyApi();
-            var dto = new ReservationDto
-            {
-                At = at,
-                Email = email,
-                Name = name,
-                Quantity = quantity
-            };
+            var dto = Create.ReservationDto(at, email, name, quantity);
             var postResp = await api.PostReservation(dto);
             Uri address = FindReservationAddress(postResp);
 
@@ -338,13 +326,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             int newQuantity)
         {
             using var api = new LegacyApi();
-            var dto = new ReservationDto
-            {
-                At = at,
-                Email = email,
-                Name = name,
-                Quantity = quantity
-            };
+            var dto = Create.ReservationDto(at, email, name, quantity);
             var postResp = await api.PostReservation(dto);
             Uri address = FindReservationAddress(postResp);
 
