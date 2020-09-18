@@ -8,7 +8,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
     public sealed partial class Table
     {
         private readonly bool isStandard;
-        private readonly int seats;
         private readonly Reservation[] reservations;
 
         private Table(
@@ -17,7 +16,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
             params Reservation[] reservations)
         {
             this.isStandard = isStandard;
-            this.seats = seats;
+            Capacity = seats;
             this.reservations = reservations;
         }
 
@@ -31,19 +30,16 @@ namespace Ploeh.Samples.Restaurants.RestApi
             return new Table(false, seats);
         }
 
-        public int Capacity
-        {
-            get { return seats; }
-        }
+        public int Capacity { get; }
 
         public int RemainingSeats
         {
             get
             {
                 if (isStandard)
-                    return reservations.Any() ? 0 : seats;
+                    return reservations.Any() ? 0 : Capacity;
                 else
-                    return seats - reservations.Sum(r => r.Quantity);
+                    return Capacity - reservations.Sum(r => r.Quantity);
             }
         }
 
@@ -55,11 +51,11 @@ namespace Ploeh.Samples.Restaurants.RestApi
         public Table Reserve(Reservation reservation)
         {
             if (isStandard)
-                return new Table(isStandard, seats, reservation);
+                return new Table(isStandard, Capacity, reservation);
             else
                 return new Table(
                     isStandard,
-                    seats,
+                    Capacity,
                     reservations.Append(reservation).ToArray());
         }
 
@@ -70,23 +66,23 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
             if (isStandard)
                 return visitor.VisitStandard(
-                    seats,
+                    Capacity,
                     reservations.Any() ? reservations.First() : null);
             else
-                return visitor.VisitCommunal(seats, reservations.ToList());
+                return visitor.VisitCommunal(Capacity, reservations.ToList());
         }
 
         public override bool Equals(object? obj)
         {
             return obj is Table table &&
                    isStandard == table.isStandard &&
-                   seats == table.seats &&
+                   Capacity == table.Capacity &&
                    reservations.SequenceEqual(table.reservations);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(isStandard, seats, reservations);
+            return HashCode.Combine(isStandard, Capacity, reservations);
         }
     }
 }
