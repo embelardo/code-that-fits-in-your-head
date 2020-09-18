@@ -456,12 +456,11 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var db = new FakeDatabase();
             db.Grandfather.Add(r1);
             db.Grandfather.Add(r2);
-            var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
                 new SystemClock(),
                 new InMemoryRestaurantDatabase(Grandfather.Restaurant),
                 db,
-                postOffice);
+                new SpyPostOffice());
 
             var dto = r1.WithDate(r2.At).ToDto();
             var actual = await sut.Put(r1.Id.ToString("N"), dto);
