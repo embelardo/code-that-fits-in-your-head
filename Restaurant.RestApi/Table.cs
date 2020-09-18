@@ -54,7 +54,13 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         public Table Reserve(Reservation reservation)
         {
-            return Accept(new ReserveVisitor(reservation));
+            if (isStandard)
+                return new Table(isStandard, seats, reservation);
+            else
+                return new Table(
+                    isStandard,
+                    seats,
+                    reservations.Append(reservation).ToArray());
         }
 
         public T Accept<T>(ITableVisitor<T> visitor)
@@ -81,34 +87,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
         public override int GetHashCode()
         {
             return HashCode.Combine(isStandard, seats, reservations);
-        }
-
-        private sealed class ReserveVisitor : ITableVisitor<Table>
-        {
-            private readonly Reservation reservation;
-
-            public ReserveVisitor(Reservation reservation)
-            {
-                this.reservation = reservation;
-            }
-
-            public Table VisitCommunal(
-                int seats,
-                IReadOnlyCollection<Reservation> reservations)
-            {
-                return new Table(
-                    false,
-                    seats,
-                    reservations.Append(reservation).ToArray());
-            }
-
-            public Table VisitStandard(int seats, Reservation? reservation)
-            {
-                return new Table(
-                    true,
-                    seats,
-                    this.reservation);
-            }
         }
     }
 }
