@@ -46,27 +46,15 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             int port,
             string userName,
             string password,
-            string fromAddress)
+            string from)
         {
-            var sut = new SmtpOptions
-            {
-                Host = host,
-                Port = port,
-                UserName = userName,
-                Password = password,
-                FromAddress = fromAddress
-            };
+            var sut = Create.SmtpOptions(host, port, userName, password, from);
 
             var db = new InMemoryRestaurantDatabase();
             var actual = sut.ToPostOffice(db);
 
-            var expected = new SmtpPostOffice(
-                host,
-                port,
-                userName,
-                password,
-                fromAddress,
-                db);
+            var expected =
+                new SmtpPostOffice(host, port, userName, password, from, db);
             Assert.Equal(expected, actual);
         }
     }

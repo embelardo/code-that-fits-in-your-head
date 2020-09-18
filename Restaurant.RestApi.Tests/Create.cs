@@ -1,4 +1,5 @@
-﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+﻿using Ploeh.Samples.Restaurants.RestApi.Options;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,6 +20,23 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 Email = email,
                 Name = name,
                 Quantity = quantity
+            };
+        }
+
+        internal static SmtpOptions SmtpOptions(
+            string host,
+            int port,
+            string userName,
+            string password,
+            string fromAddress)
+        {
+            return new SmtpOptions
+            {
+                Host = host,
+                Port = port,
+                UserName = userName,
+                Password = password,
+                FromAddress = fromAddress
             };
         }
     }
