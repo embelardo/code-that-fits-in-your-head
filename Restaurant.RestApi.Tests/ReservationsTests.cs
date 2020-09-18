@@ -187,6 +187,15 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             getResp.EnsureSuccessStatusCode();
             var actual = await getResp.ParseJsonContent<ReservationDto>();
             Assert.Equal(expected, actual, new ReservationDtoComparer());
+            AssertUrlFormatIsIdiomatic(address);
+        }
+
+        private static void AssertUrlFormatIsIdiomatic(Uri address)
+        {
+            // Consider the URL to be idiomatically formatted if it's entirely
+            // in lower case. Exempt from this rule are querystring values,
+            // which may contain run-time data, or, as is more the case in this
+            // API, Base64-encoded HMAC signatures.
             Assert.DoesNotContain(
                 address.GetLeftPart(UriPartial.Path),
                 char.IsUpper);
