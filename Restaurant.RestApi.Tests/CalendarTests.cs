@@ -26,7 +26,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetCurrentYear();
             var after = DateTime.Now;
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(before.Year, after.Year, actual.Year);
             Assert.Null(actual.Month);
@@ -43,7 +43,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetPreviousYear();
             var after = DateTime.Now;
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(
                 before.AddYears(-1).Year,
@@ -62,7 +62,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetNextYear();
             var after = DateTime.Now;
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(
                 before.AddYears(1).Year,
@@ -84,7 +84,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var response = await api.GetYear(year);
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<CalendarDto>();
             Assert.Equal(year, actual.Year);
             Assert.Null(actual.Month);
@@ -101,7 +101,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetCurrentMonth();
             var after = DateTime.Now;
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(before.Year, after.Year, actual.Year);
             AssertOneOf(before.Month, after.Month, actual.Month);
@@ -118,7 +118,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetPreviousMonth();
             var after = DateTime.Now;
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(
                 before.AddMonths(-1).Year,
@@ -140,7 +140,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetNextMonth();
             var after = DateTime.Now;
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(
                 before.AddMonths(1).Year,
@@ -165,7 +165,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var response = await api.GetMonth(year, month);
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<CalendarDto>();
             Assert.Equal(year, actual.Year);
             Assert.Equal(month, actual.Month);
@@ -182,7 +182,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetCurrentDay();
             var after = DateTime.Now;
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<CalendarDto>();
             AssertOneOf(before.Year, after.Year, actual.Year);
             AssertOneOf(before.Month, after.Month, actual.Month);
@@ -199,7 +199,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetPreviousDay();
             var after = DateTime.Now;
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<CalendarDto>();
             var beforeBefore = before.AddDays(-1);
             var beforeAfter = after.AddDays(-1);
@@ -217,7 +217,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response = await api.GetNextDay();
             var after = DateTime.Now;
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<CalendarDto>();
             var afterBefore = before.AddDays(1);
             var afterAfter = after.AddDays(1);
@@ -238,7 +238,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var response = await api.GetDay(year, month, day);
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<CalendarDto>();
             Assert.Equal(year, actual.Year);
             Assert.Equal(month, actual.Month);
@@ -615,7 +615,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             Assert.Equal(HttpStatusCode.MovedPermanently, actual.StatusCode);
             var follow =
                 await api.CreateClient().GetAsync(actual.Headers.Location);
-            follow.AssertSuccess();
+            follow.EnsureSuccessStatusCode();
         }
     }
 }

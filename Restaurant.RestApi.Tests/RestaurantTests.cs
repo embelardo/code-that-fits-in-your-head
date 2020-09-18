@@ -23,7 +23,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var response = await client.GetRestaurant(name);
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var content = await response.ParseJsonContent<RestaurantDto>();
             Assert.Equal(name, content.Name);
         }

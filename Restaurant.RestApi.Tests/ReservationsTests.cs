@@ -35,7 +35,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             };
             var response = await api.PostReservation(expected);
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             var actual = await response.ParseJsonContent<ReservationDto>();
             Assert.Equal(expected, actual, new ReservationDtoComparer());
         }
@@ -158,7 +158,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 quantity = 4
             });
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
         }
 
         [Theory]
@@ -184,7 +184,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var getResp = await api.CreateClient().GetAsync(address);
 
-            getResp.AssertSuccess();
+            getResp.EnsureSuccessStatusCode();
             var actual = await getResp.ParseJsonContent<ReservationDto>();
             Assert.Equal(expected, actual, new ReservationDtoComparer());
             Assert.DoesNotContain(
@@ -255,7 +255,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var deleteResp = await api.CreateClient().DeleteAsync(address);
 
-            deleteResp.AssertSuccess();
+            deleteResp.EnsureSuccessStatusCode();
             var getResp = await api.CreateClient().GetAsync(address);
             Assert.Equal(HttpStatusCode.NotFound, getResp.StatusCode);
         }
@@ -275,7 +275,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             await api.CreateClient().DeleteAsync(url);
             var resp = await api.CreateClient().DeleteAsync(url);
 
-            resp.AssertSuccess();
+            resp.EnsureSuccessStatusCode();
         }
 
         [Fact]
@@ -342,7 +342,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             dto.Quantity = newQuantity;
             var putResp = await api.PutReservation(address, dto);
 
-            putResp.AssertSuccess();
+            putResp.EnsureSuccessStatusCode();
             var getResp = await api.CreateClient().GetAsync(address);
             var persisted = await getResp.ParseJsonContent<ReservationDto>();
             Assert.Equal(dto, persisted, new ReservationDtoComparer());
@@ -499,7 +499,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             dto.Quantity++;
             var putResp = await api.PutReservation(address, dto);
 
-            putResp.AssertSuccess();
+            putResp.EnsureSuccessStatusCode();
         }
 
         [Theory]
@@ -604,7 +604,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var response =
                 await client.PostReservation("The Vatican Cellar", dto);
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
         }
 
         [Fact]
@@ -646,7 +646,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                     .AddDate(timeOfDayLaterThanLastSeatingAtTheOtherRestaurants)
                     .ToDto());
 
-            putResponse.AssertSuccess();
+            putResponse.EnsureSuccessStatusCode();
         }
 
         [Fact]

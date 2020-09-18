@@ -27,7 +27,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             request.Headers.Accept.ParseAdd("application/json");
             var response = await client.SendAsync(request);
 
-            response.AssertSuccess();
+            response.EnsureSuccessStatusCode();
             Assert.Equal(
                 "application/json",
                 response.Content.Headers.ContentType?.MediaType);
