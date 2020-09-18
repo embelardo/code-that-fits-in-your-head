@@ -38,7 +38,13 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         public int RemainingSeats
         {
-            get { return Accept(new RemainingSeatsVisitor()); }
+            get
+            {
+                if (isStandard)
+                    return reservations.Any() ? 0 : seats;
+                else
+                    return seats - reservations.Sum(r => r.Quantity);
+            }
         }
 
         internal bool Fits(int quantity)
@@ -102,21 +108,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
                     true,
                     seats,
                     this.reservation);
-            }
-        }
-
-        private sealed class RemainingSeatsVisitor : ITableVisitor<int>
-        {
-            public int VisitCommunal(
-                int seats,
-                IReadOnlyCollection<Reservation> reservations)
-            {
-                return seats - reservations.Sum(r => r.Quantity);
-            }
-
-            public int VisitStandard(int seats, Reservation? reservation)
-            {
-                return reservation is null ? seats : 0;
             }
         }
     }
