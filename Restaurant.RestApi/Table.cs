@@ -10,12 +10,18 @@ namespace Ploeh.Samples.Restaurants.RestApi
         private readonly ITable table;
         private readonly bool isStandard;
         private readonly int seats;
+        private readonly Reservation[] reservations;
 
-        private Table(ITable table, bool isStandard, int seats)
+        private Table(
+            ITable table,
+            bool isStandard,
+            int seats,
+            params Reservation[] reservations)
         {
             this.table = table;
             this.isStandard = isStandard;
             this.seats = seats;
+            this.reservations = reservations;
         }
 
         public static Table Standard(int seats)
@@ -152,7 +158,8 @@ namespace Ploeh.Samples.Restaurants.RestApi
                         seats,
                         reservations.Append(reservation).ToArray()),
                     false,
-                    seats);
+                    seats,
+                    reservations.Append(reservation).ToArray());
             }
 
             public Table VisitStandard(int seats, Reservation? reservation)
@@ -162,7 +169,8 @@ namespace Ploeh.Samples.Restaurants.RestApi
                         seats,
                         this.reservation),
                     true,
-                    seats);
+                    seats,
+                    this.reservation);
             }
         }
 
