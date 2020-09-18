@@ -7,18 +7,15 @@ namespace Ploeh.Samples.Restaurants.RestApi
 {
     public sealed partial class Table
     {
-        private readonly ITable table;
         private readonly bool isStandard;
         private readonly int seats;
         private readonly Reservation[] reservations;
 
         private Table(
-            ITable table,
             bool isStandard,
             int seats,
             params Reservation[] reservations)
         {
-            this.table = table;
             this.isStandard = isStandard;
             this.seats = seats;
             this.reservations = reservations;
@@ -26,12 +23,12 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         public static Table Standard(int seats)
         {
-            return new Table(new StandardTable(seats), true, seats);
+            return new Table(true, seats);
         }
 
         public static Table Communal(int seats)
         {
-            return new Table(new CommunalTable(seats), false, seats);
+            return new Table(false, seats);
         }
 
         public int Capacity
@@ -56,88 +53,28 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         public T Accept<T>(ITableVisitor<T> visitor)
         {
-            return table.Accept(visitor);
+            if (visitor is null)
+                throw new ArgumentNullException(nameof(visitor));
+
+            if (isStandard)
+                return visitor.VisitStandard(
+                    seats,
+                    reservations.Any() ? reservations.First() : null);
+            else
+                return visitor.VisitCommunal(seats, reservations.ToList());
         }
 
         public override bool Equals(object? obj)
         {
             return obj is Table table &&
-                   Equals(this.table, table.table);
+                   isStandard == table.isStandard &&
+                   seats == table.seats &&
+                   reservations.SequenceEqual(table.reservations);
         }
 
         public override int GetHashCode()
         {
-            return table.GetHashCode();
-        }
-
-        private interface ITable
-        {
-            T Accept<T>(ITableVisitor<T> visitor);
-        }
-
-        private sealed class StandardTable : ITable
-        {
-            private readonly int seats;
-            private readonly Reservation? reservation;
-
-            public StandardTable(int seats)
-            {
-                this.seats = seats;
-            }
-
-            public StandardTable(int seats, Reservation reservation)
-            {
-                this.seats = seats;
-                this.reservation = reservation;
-            }
-
-            public T Accept<T>(ITableVisitor<T> visitor)
-            {
-                return visitor.VisitStandard(seats, reservation);
-            }
-
-            public override bool Equals(object? obj)
-            {
-                return obj is StandardTable table &&
-                       seats == table.seats &&
-                       Equals(reservation, table.reservation);
-            }
-
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(seats, reservation);
-            }
-        }
-
-        private sealed class CommunalTable : ITable
-        {
-            private readonly int seats;
-            private readonly IReadOnlyCollection<Reservation> reservations;
-
-            public CommunalTable(int seats, params Reservation[] reservations)
-            {
-                this.seats = seats;
-                this.reservations = reservations;
-            }
-
-            public T Accept<T>(ITableVisitor<T> visitor)
-            {
-                return visitor.VisitCommunal(seats, reservations);
-            }
-
-            public override bool Equals(object? obj)
-            {
-                return obj is CommunalTable table &&
-                       seats == table.seats &&
-                       Enumerable.SequenceEqual(
-                           reservations,
-                           table.reservations);
-            }
-
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(seats, reservations);
-            }
+            return HashCode.Combine(isStandard, seats, reservations);
         }
 
         private sealed class ReserveVisitor : ITableVisitor<Table>
@@ -154,9 +91,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 IReadOnlyCollection<Reservation> reservations)
             {
                 return new Table(
-                    new CommunalTable(
-                        seats,
-                        reservations.Append(reservation).ToArray()),
                     false,
                     seats,
                     reservations.Append(reservation).ToArray());
@@ -165,9 +99,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
             public Table VisitStandard(int seats, Reservation? reservation)
             {
                 return new Table(
-                    new StandardTable(
-                        seats,
-                        this.reservation),
                     true,
                     seats,
                     this.reservation);
