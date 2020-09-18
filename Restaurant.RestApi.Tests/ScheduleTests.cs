@@ -162,8 +162,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
             var day = Assert.Single(calendar.Days);
             // Because the seating duration is so short, the entries shouldn't
-            // overlap; thus, each entry should contain only a single
-            // reservation.
+            // overlap: each entry should contain only a single reservation.
             Assert.All(day.Entries, e => Assert.Single(e.Reservations));
         }
 
