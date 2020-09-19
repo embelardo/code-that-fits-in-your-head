@@ -37,7 +37,10 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             Assert.All(actual, o => AssertTables(sut.Tables, o.Value));
             Assert.All(
                 actual,
-                o => AssertRelevance(reservations, sut.SeatingDuration, o));
+                o => AssertRelevance(
+                    reservations,
+                    sut.SeatingDuration,
+                    o.ToTimeSlot()));
         }
 
         private static void AssertTables(
@@ -53,16 +56,16 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         private static void AssertRelevance(
             IEnumerable<Reservation> reservations,
             TimeSpan seatingDuration,
-            Occurrence<IEnumerable<Table>> occurrence)
+            TimeSlot timeSlot)
         {
-            var seating = new Seating(seatingDuration, occurrence.At);
+            var seating = new Seating(seatingDuration, timeSlot.At);
             var expected = reservations
                 .Select(r => (new Seating(seatingDuration, r.At), r))
                 .Where(t => seating.Overlaps(t.Item1))
                 .Select(t => t.r)
                 .ToHashSet();
 
-            var actual = occurrence.Value
+            var actual = timeSlot.Tables
                 .SelectMany(t => t.Accept(ReservationsVisitor.Instance))
                 .ToHashSet();
 
