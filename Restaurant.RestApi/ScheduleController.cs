@@ -59,17 +59,18 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 .ConfigureAwait(false);
             var schedule = restaurant.MaitreD.Schedule(reservations);
 
-            var dto = MakeCalendar(new DateTime(year, month, day), schedule);
+            var dto = MakeCalendar(
+                new DateTime(year, month, day),
+                schedule.Select(o => o.ToTimeSlot()));
             dto.Name = restaurant.Name;
             return new OkObjectResult(dto);
         }
 
         private static CalendarDto MakeCalendar(
             DateTime date,
-            IEnumerable<Occurrence<IEnumerable<Table>>> schedule)
+            IEnumerable<TimeSlot> schedule)
         {
-            var entries =
-                schedule.Select(o => MakeEntry(o.ToTimeSlot())).ToArray();
+            var entries = schedule.Select(MakeEntry).ToArray();
 
             return new CalendarDto
             {
