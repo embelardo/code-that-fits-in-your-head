@@ -102,18 +102,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
             return allocation;
         }
 
-        public IEnumerable<Occurrence<IEnumerable<Table>>> ScheduleOcc(
-            IEnumerable<Reservation> reservations)
-        {
-            return
-                from r in reservations
-                group r by r.At into g
-                orderby g.Key
-                let seating = new Seating(SeatingDuration, g.Key)
-                let overlapping = reservations.Where(seating.Overlaps)
-                select Allocate(overlapping).At(g.Key);
-        }
-
         public IEnumerable<TimeSlot> Schedule(
             IEnumerable<Reservation> reservations)
         {
