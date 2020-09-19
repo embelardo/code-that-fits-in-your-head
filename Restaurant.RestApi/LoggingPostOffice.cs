@@ -53,8 +53,8 @@ namespace Ploeh.Samples.Restaurants.RestApi
         {
             Logger.LogInformation(
                 "{method}(restaurantId: {restaurantId}, reservation: {reservation})",
-                restaurantId,
                 nameof(EmailReservationUpdated),
+                restaurantId,
                 JsonSerializer.Serialize(reservation.ToDto()));
             await Inner.EmailReservationUpdated(restaurantId, reservation)
                 .ConfigureAwait(false);
@@ -66,8 +66,8 @@ namespace Ploeh.Samples.Restaurants.RestApi
         {
             Logger.LogInformation(
                 "{method}(restaurantId: {restaurantId}, reservation: {reservation})",
-                restaurantId,
                 nameof(EmailReservationUpdating),
+                restaurantId,
                 JsonSerializer.Serialize(reservation.ToDto()));
             await Inner.EmailReservationUpdating(restaurantId, reservation)
                 .ConfigureAwait(false);
