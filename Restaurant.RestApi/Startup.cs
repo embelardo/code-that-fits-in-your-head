@@ -121,9 +121,12 @@ namespace Ploeh.Samples.Restaurants.RestApi
             {
                 var logger =
                     sp.GetService<ILogger<LoggingReservationsRepository>>();
-                return new LoggingReservationsRepository(
-                    logger,
-                    new SqlReservationsRepository(connStr));
+                var postOffice = sp.GetService<IPostOffice>();
+                return new EmailingReservationsRepository(
+                    postOffice,
+                    new LoggingReservationsRepository(
+                        logger,
+                        new SqlReservationsRepository(connStr)));
             });
         }
 

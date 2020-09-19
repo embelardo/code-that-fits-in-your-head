@@ -47,18 +47,13 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         [InlineData("2023-08-23 16:55", "kite@example.edu", null, 2)]
         [InlineData("2022-03-18 17:30", "shli@example.org", "Shanghai Li", 5)]
         public async Task PostValidReservationWhenDatabaseIsEmpty(
-            string at,
-            string email,
-            string name,
-            int quantity)
+            string at, string email, string name, int quantity)
         {
             var db = new FakeDatabase();
-            var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
                 new SystemClock(),
                 new InMemoryRestaurantDatabase(Grandfather.Restaurant),
-                db,
-                postOffice);
+                db);
 
             var dto = new ReservationDto
             {
@@ -70,17 +65,13 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             };
             await sut.Post(dto);
 
-            var expected = new SpyPostOffice.Observation(
-                SpyPostOffice.Event.Created,
-                Grandfather.Id,
-                new Reservation(
-                    Guid.Parse(dto.Id),
-                    DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
-                    new Email(dto.Email),
-                    new Name(dto.Name ?? ""),
-                    dto.Quantity));
-            Assert.Contains(expected.Reservation, db.Grandfather);
-            Assert.Contains(expected, postOffice);
+            var expected = new Reservation(
+                Guid.Parse(dto.Id),
+                DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
+                new Email(dto.Email),
+                new Name(dto.Name ?? ""),
+                dto.Quantity);
+            Assert.Contains(expected, db.Grandfather);
         }
 
         [Theory]
@@ -276,28 +267,6 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         }
 
         [Fact]
-        public async Task DeleteSendsEmail()
-        {
-            var r = Some.Reservation;
-            var db = new FakeDatabase();
-            db.Grandfather.Add(r);
-            var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(
-                new SystemClock(),
-                new InMemoryRestaurantDatabase(Some.Restaurant),
-                db,
-                postOffice);
-
-            await sut.Delete(r.Id.ToString("N"));
-
-            var expected = new SpyPostOffice.Observation(
-                SpyPostOffice.Event.Deleted,
-                Grandfather.Id,
-                r);
-            Assert.Contains(expected, postOffice);
-        }
-
-        [Fact]
         public async Task DeleteAbsentReservationDoesNotSendEmail()
         {
             var db = new FakeDatabase();
@@ -305,8 +274,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var sut = new ReservationsController(
                 new SystemClock(),
                 new InMemoryRestaurantDatabase(Some.Restaurant),
-                db,
-                postOffice);
+                db);
 
             await sut.Delete(Guid.NewGuid().ToString("N"));
 
@@ -379,12 +347,10 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         public async Task PutInvalidId(string invalidId)
         {
             var db = new FakeDatabase();
-            var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
                 new SystemClock(),
                 new InMemoryRestaurantDatabase(Some.Restaurant),
-                db,
-                postOffice);
+                db);
 
             var dummyDto = new ReservationDto
             {
@@ -403,12 +369,10 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         {
             var db = new FakeDatabase();
             db.Grandfather.Add(Some.Reservation);
-            var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
                 new SystemClock(),
                 new InMemoryRestaurantDatabase(Grandfather.Restaurant),
-                db,
-                postOffice);
+                db);
 
             var dto = Some.Reservation
                 .WithId(Guid.NewGuid())
@@ -425,12 +389,10 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         public async Task PutAbsentReservation()
         {
             var db = new FakeDatabase();
-            var postOffice = new SpyPostOffice();
             var sut = new ReservationsController(
                 new SystemClock(),
                 new InMemoryRestaurantDatabase(Some.Restaurant),
-                db,
-                postOffice);
+                db);
 
             var dto = new ReservationDto
             {
@@ -459,8 +421,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var sut = new ReservationsController(
                 new SystemClock(),
                 new InMemoryRestaurantDatabase(Grandfather.Restaurant),
-                db,
-                new SpyPostOffice());
+                db);
 
             var dto = r1.WithDate(r2.At).ToDto();
             var actual = await sut.Put(r1.Id.ToString("N"), dto);
@@ -490,64 +451,6 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var putResp = await api.PutReservation(address, dto);
 
             putResp.EnsureSuccessStatusCode();
-        }
-
-        [Theory]
-        [InlineData("ploeh")]
-        [InlineData("fnaah")]
-        public async Task PutSendsEmail(string newName)
-        {
-            var r = Some.Reservation;
-            var db = new FakeDatabase();
-            db.Grandfather.Add(r);
-            var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(
-                new SystemClock(),
-                new InMemoryRestaurantDatabase(Grandfather.Restaurant),
-                db,
-                postOffice);
-
-            var dto = r.WithName(new Name(newName)).ToDto();
-            await sut.Put(r.Id.ToString("N"), dto);
-
-            var expected = new SpyPostOffice.Observation(
-                SpyPostOffice.Event.Updated,
-                Grandfather.Id,
-                r.WithName(new Name(newName)));
-            Assert.Contains(expected, postOffice);
-            Assert.DoesNotContain(
-                postOffice,
-                o => o.Event == SpyPostOffice.Event.Updating);
-        }
-
-        [Theory]
-        [InlineData("foo@example.com")]
-        [InlineData("bar@example.gov")]
-        public async Task PutSendsEmailToOldAddresOnChange(string newEmail)
-        {
-            var r = Some.Reservation;
-            var db = new FakeDatabase();
-            db.Grandfather.Add(r);
-            var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(
-                new SystemClock(),
-                new InMemoryRestaurantDatabase(Grandfather.Restaurant),
-                db,
-                postOffice);
-
-            var dto = r.WithEmail(new Email(newEmail)).ToDto();
-            await sut.Put(r.Id.ToString("N"), dto);
-
-            var expected = new[] {
-                new SpyPostOffice.Observation(
-                    SpyPostOffice.Event.Updating,
-                    Grandfather.Id,
-                    r),
-                new SpyPostOffice.Observation(
-                    SpyPostOffice.Event.Updated,
-                    Grandfather.Id,
-                    r.WithEmail(new Email(newEmail))) }.ToHashSet();
-            Assert.Superset(expected, postOffice.ToHashSet());
         }
 
         [Fact]
@@ -604,8 +507,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var sut = new ReservationsController(
                 new SystemClock(),
                 restaurantDB,
-                new FakeDatabase(),
-                new SpyPostOffice());
+                new FakeDatabase());
             var absentRestaurantId = 4;
             var r = await restaurantDB.GetRestaurant(absentRestaurantId);
             Assert.Null(r);
@@ -649,8 +551,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var sut = new ReservationsController(
                 new SystemClock(),
                 restaurantDB,
-                db,
-                new SpyPostOffice());
+                db);
             var r = await restaurantDB.GetRestaurant(absentRestaurantId);
             Assert.Null(r);
 

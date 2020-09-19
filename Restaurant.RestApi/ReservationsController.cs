@@ -17,19 +17,16 @@ namespace Ploeh.Samples.Restaurants.RestApi
         public ReservationsController(
             IClock clock,
             IRestaurantDatabase restaurantDatabase,
-            IReservationsRepository repository,
-            IPostOffice postOffice)
+            IReservationsRepository repository)
         {
             Clock = clock;
             RestaurantDatabase = restaurantDatabase;
             Repository = repository;
-            PostOffice = postOffice;
         }
 
         public IClock Clock { get; }
         public IRestaurantDatabase RestaurantDatabase { get; }
         public IReservationsRepository Repository { get; }
-        public IPostOffice PostOffice { get; }
 
         [HttpPost("reservations")]
         public Task<ActionResult> Post(ReservationDto dto)
@@ -74,9 +71,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 return NoTables500InternalServerError();
 
             await Repository.Create(restaurant.Id, reservation)
-                .ConfigureAwait(false);
-            await PostOffice
-                .EmailReservationCreated(restaurant.Id, reservation)
                 .ConfigureAwait(false);
 
             scope.Complete();
@@ -174,7 +168,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (!ok)
                 return NoTables500InternalServerError();
 
-            await Update(restaurant, reservation, existing)
+            await Repository.Update(restaurant.Id, reservation)
                 .ConfigureAwait(false);
 
             scope.Complete();
@@ -198,22 +192,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 reservation);
         }
 
-        private async Task Update(
-            Restaurant restaurant,
-            Reservation reservation,
-            Reservation existing)
-        {
-            if (existing.Email != reservation.Email)
-                await PostOffice
-                    .EmailReservationUpdating(restaurant.Id, existing)
-                    .ConfigureAwait(false);
-            await Repository.Update(restaurant.Id, reservation)
-                .ConfigureAwait(false);
-            await PostOffice
-                .EmailReservationUpdated(restaurant.Id, reservation)
-                .ConfigureAwait(false);
-        }
-
         [HttpDelete("reservations/{id}")]
         public Task Delete(string id)
         {
@@ -224,15 +202,8 @@ namespace Ploeh.Samples.Restaurants.RestApi
         public async Task Delete(int restaurantId, string id)
         {
             if (Guid.TryParse(id, out var rid))
-            {
-                var r = await Repository.ReadReservation(restaurantId, rid)
+                await Repository.Delete(restaurantId, rid)
                     .ConfigureAwait(false);
-                await
-                    Repository.Delete(restaurantId, rid).ConfigureAwait(false);
-                if (r is { })
-                    await PostOffice.EmailReservationDeleted(restaurantId, r)
-                        .ConfigureAwait(false);
-            }
         }
     }
 }
