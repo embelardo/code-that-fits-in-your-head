@@ -55,5 +55,11 @@ namespace Ploeh.Samples.Restaurants.RestApi
         {
             return new Occurrence<T>(at, value);
         }
+
+        internal static TimeSlot ToTimeSlot(
+            this Occurrence<IEnumerable<Table>> source)
+        {
+            return new TimeSlot(source.At, source.Value.ToList());
+        }
     }
 }

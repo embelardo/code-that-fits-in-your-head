@@ -64,11 +64,12 @@ namespace Ploeh.Samples.Restaurants.RestApi
             return new OkObjectResult(dto);
         }
 
-        private CalendarDto MakeCalendar(
+        private static CalendarDto MakeCalendar(
             DateTime date,
             IEnumerable<Occurrence<IEnumerable<Table>>> schedule)
         {
-            var entries = schedule.Select(MakeEntry).ToArray();
+            var entries =
+                schedule.Select(o => MakeEntry(o.ToTimeSlot())).ToArray();
 
             return new CalendarDto
             {
@@ -86,12 +87,12 @@ namespace Ploeh.Samples.Restaurants.RestApi
             };
         }
 
-        private TimeDto MakeEntry(Occurrence<IEnumerable<Table>> occurrence)
+        private static TimeDto MakeEntry(TimeSlot timeSlot)
         {
             return new TimeDto
             {
-                Time = occurrence.At.TimeOfDay.ToIso8601TimeString(),
-                Reservations = occurrence.Value
+                Time = timeSlot.At.TimeOfDay.ToIso8601TimeString(),
+                Reservations = timeSlot.Tables
                     .SelectMany(t => t.Accept(ReservationsVisitor.Instance))
                     .Select(r => r.ToDto())
                     .ToArray()
