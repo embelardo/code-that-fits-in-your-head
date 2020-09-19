@@ -26,21 +26,18 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             MaitreD sut,
             Reservation[] reservations)
         {
-            var actual = sut.ScheduleOcc(reservations);
+            var actual = sut.Schedule(reservations);
 
             Assert.Equal(
                 reservations.Select(r => r.At).Distinct().Count(),
                 actual.Count());
             Assert.Equal(
-                actual.Select(o => o.At).OrderBy(d => d),
-                actual.Select(o => o.At));
-            Assert.All(actual, o => AssertTables(sut.Tables, o.Value));
+                actual.Select(ts => ts.At).OrderBy(d => d),
+                actual.Select(ts => ts.At));
+            Assert.All(actual, ts => AssertTables(sut.Tables, ts.Tables));
             Assert.All(
                 actual,
-                o => AssertRelevance(
-                    reservations,
-                    sut.SeatingDuration,
-                    o.ToTimeSlot()));
+                ts => AssertRelevance(reservations, sut.SeatingDuration, ts));
         }
 
         private static void AssertTables(
