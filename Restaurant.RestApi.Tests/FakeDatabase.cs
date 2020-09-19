@@ -74,7 +74,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             return Task.CompletedTask;
         }
 
-        public Task Delete(Guid id)
+        public Task Delete(int restaurantId, Guid id)
         {
             var restaurant =
                 Values.SingleOrDefault(rs => rs.Any(r => r.Id == id));

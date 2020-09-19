@@ -124,7 +124,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
             await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(int restaurantId, Guid id)
         {
             const string deleteSql = @"
                 DELETE [dbo].[Reservations]

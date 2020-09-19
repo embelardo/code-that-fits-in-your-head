@@ -31,13 +31,13 @@ namespace Ploeh.Samples.Restaurants.RestApi
             await Inner.Create(restaurantId, reservation).ConfigureAwait(false);
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(int restaurantId, Guid id)
         {
             Logger.LogInformation(
                 "{method}(id: {id})",
                 nameof(Delete),
                 id);
-            await Inner.Delete(id).ConfigureAwait(false);
+            await Inner.Delete(restaurantId, id).ConfigureAwait(false);
         }
 
         public async Task<Reservation?> ReadReservation(

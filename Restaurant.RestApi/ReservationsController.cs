@@ -227,7 +227,8 @@ namespace Ploeh.Samples.Restaurants.RestApi
             {
                 var r = await Repository.ReadReservation(restaurantId, rid)
                     .ConfigureAwait(false);
-                await Repository.Delete(rid).ConfigureAwait(false);
+                await
+                    Repository.Delete(restaurantId, rid).ConfigureAwait(false);
                 if (r is { })
                     await PostOffice.EmailReservationDeleted(restaurantId, r)
                         .ConfigureAwait(false);
