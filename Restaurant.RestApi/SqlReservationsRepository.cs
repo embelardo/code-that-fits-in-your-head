@@ -99,7 +99,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 (int)rdr["Quantity"]);
         }
 
-        public async Task Update(Reservation reservation)
+        public async Task Update(int restaurantId, Reservation reservation)
         {
             if (reservation is null)
                 throw new ArgumentNullException(nameof(reservation));

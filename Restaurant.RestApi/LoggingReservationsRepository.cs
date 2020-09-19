@@ -72,13 +72,14 @@ namespace Ploeh.Samples.Restaurants.RestApi
             return output;
         }
 
-        public async Task Update(Reservation reservation)
+        public async Task Update(int restaurantId, Reservation reservation)
         {
             Logger.LogInformation(
                 "{method}(reservation: {reservation})",
                 nameof(Update),
                 JsonSerializer.Serialize(reservation.ToDto()));
-            await Inner.Update(reservation).ConfigureAwait(false);
+            await
+                Inner.Update(restaurantId, reservation).ConfigureAwait(false);
         }
     }
 }

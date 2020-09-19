@@ -56,7 +56,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             return Task.FromResult((Reservation?)reservation);
         }
 
-        public Task Update(Reservation reservation)
+        public Task Update(int restaurantId, Reservation reservation)
         {
             if (reservation is null)
                 throw new ArgumentNullException(nameof(reservation));

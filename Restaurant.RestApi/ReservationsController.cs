@@ -207,7 +207,8 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 await PostOffice
                     .EmailReservationUpdating(restaurant.Id, existing)
                     .ConfigureAwait(false);
-            await Repository.Update(reservation).ConfigureAwait(false);
+            await Repository.Update(restaurant.Id, reservation)
+                .ConfigureAwait(false);
             await PostOffice
                 .EmailReservationUpdated(restaurant.Id, reservation)
                 .ConfigureAwait(false);

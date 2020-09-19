@@ -64,7 +64,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.SqlIntegrationTests
             await sut.Create(restaurantId, r);
 
             var expected = r.WithName(new Name(newName));
-            await sut.Update(expected);
+            await sut.Update(restaurantId, expected);
             var actual = await sut.ReadReservation(restaurantId, expected.Id);
 
             Assert.Equal(expected, actual);
