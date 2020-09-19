@@ -178,7 +178,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             "CA1812: Avoid uninstantiated internal classes",
             Justification = "This class is instantiated via Reflection.")]
         private class ScheduleTestCases :
-            TheoryData<MaitreD, IEnumerable<Reservation>, IEnumerable<Occurrence<Table[]>>>
+            TheoryData<MaitreD, IEnumerable<Reservation>, IEnumerable<TimeSlot>>
         {
             public ScheduleTestCases()
             {
@@ -194,7 +194,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                         TimeSpan.FromHours(6),
                         Table.Communal(12)),
                     Array.Empty<Reservation>(),
-                    Array.Empty<Occurrence<Table[]>>());
+                    Array.Empty<TimeSlot>());
             }
 
             private void SingleReservationCommunalTable()
@@ -207,7 +207,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                         TimeSpan.FromHours(6),
                         table),
                     new[] { r },
-                    new[] { new[] { table.Reserve(r) }.At(r.At) });
+                    new[] { new TimeSlot(r.At, table.Reserve(r)) });
             }
         }
 
@@ -219,12 +219,10 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         public void Schedule(
             MaitreD sut,
             IEnumerable<Reservation> reservations,
-            IEnumerable<Occurrence<Table[]>> expected)
+            IEnumerable<TimeSlot> expected)
         {
-            var actual = sut.ScheduleOcc(reservations);
-            Assert.Equal(
-                expected,
-                actual.Select(o => o.Select(ts => ts.ToArray())));
+            var actual = sut.Schedule(reservations);
+            Assert.Equal(expected, actual);
         }
     }
 }
