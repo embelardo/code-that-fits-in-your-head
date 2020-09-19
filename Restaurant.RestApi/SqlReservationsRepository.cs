@@ -68,7 +68,8 @@ namespace Ploeh.Samples.Restaurants.RestApi
             WHERE [RestaurantId] = @RestaurantId AND
                   @Min <= [At] AND [At] <= @Max";
 
-        public async Task<Reservation?> ReadReservation(Guid id)
+        public async Task<Reservation?> ReadReservation(
+            int restaurantId, Guid id)
         {
             const string readByIdSql = @"
                 SELECT [PublicId], [At], [Name], [Email], [Quantity]

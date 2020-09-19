@@ -48,7 +48,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                     .Where(r => min <= r.At && r.At <= max).ToList());
         }
 
-        public Task<Reservation?> ReadReservation(Guid id)
+        public Task<Reservation?> ReadReservation(int restaurantId, Guid id)
         {
             var reservation = Values
                 .SelectMany(rs => rs)

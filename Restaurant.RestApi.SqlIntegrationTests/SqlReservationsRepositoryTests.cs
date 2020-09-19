@@ -34,7 +34,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.SqlIntegrationTests
             var sut = new SqlReservationsRepository(connectionString);
 
             await sut.Create(restaurantId, expected);
-            var actual = await sut.ReadReservation(expected.Id);
+            var actual = await sut.ReadReservation(restaurantId, expected.Id);
 
             Assert.Equal(expected, actual);
         }
@@ -65,7 +65,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.SqlIntegrationTests
 
             var expected = r.WithName(new Name(newName));
             await sut.Update(expected);
-            var actual = await sut.ReadReservation(expected.Id);
+            var actual = await sut.ReadReservation(restaurantId, expected.Id);
 
             Assert.Equal(expected, actual);
         }

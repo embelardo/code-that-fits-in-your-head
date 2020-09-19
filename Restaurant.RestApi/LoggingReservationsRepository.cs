@@ -40,9 +40,11 @@ namespace Ploeh.Samples.Restaurants.RestApi
             await Inner.Delete(id).ConfigureAwait(false);
         }
 
-        public async Task<Reservation?> ReadReservation(Guid id)
+        public async Task<Reservation?> ReadReservation(
+            int restaurantId, Guid id)
         {
-            var output = await Inner.ReadReservation(id).ConfigureAwait(false);
+            var output = await Inner.ReadReservation(restaurantId, id)
+                .ConfigureAwait(false);
             Logger.LogInformation(
                 "{method}(id: {id}) => {output}",
                 nameof(ReadReservation),

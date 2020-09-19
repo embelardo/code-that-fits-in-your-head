@@ -113,18 +113,14 @@ namespace Ploeh.Samples.Restaurants.RestApi
             return Get(Grandfather.Id, id);
         }
 
-        [SuppressMessage(
-            "Usage",
-            "CA1801:Review unused parameters",
-            Justification = "The restaurantId parameter is required in order to keep the REST API's URLs consistent across all verbs.")]
         [HttpGet("restaurants/{restaurantId}/reservations/{id}")]
         public async Task<ActionResult> Get(int restaurantId, string id)
         {
             if (!Guid.TryParse(id, out var rid))
                 return new NotFoundResult();
 
-            Reservation? r =
-                await Repository.ReadReservation(rid).ConfigureAwait(false);
+            Reservation? r = await Repository
+                .ReadReservation(restaurantId, rid).ConfigureAwait(false);
             if (r is null)
                 return new NotFoundResult();
 
@@ -162,13 +158,13 @@ namespace Ploeh.Samples.Restaurants.RestApi
         }
 
         private async Task<ActionResult> TryUpdate(
-            Restaurant restaurant,
-            Reservation reservation)
+            Restaurant restaurant, Reservation reservation)
         {
             using var scope = new TransactionScope(
                 TransactionScopeAsyncFlowOption.Enabled);
 
-            var existing = await Repository.ReadReservation(reservation.Id)
+            var existing = await Repository
+                .ReadReservation(restaurant.Id, reservation.Id)
                 .ConfigureAwait(false);
             if (existing is null)
                 return new NotFoundResult();
@@ -228,7 +224,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
         {
             if (Guid.TryParse(id, out var rid))
             {
-                var r = await Repository.ReadReservation(rid)
+                var r = await Repository.ReadReservation(restaurantId, rid)
                     .ConfigureAwait(false);
                 await Repository.Delete(rid).ConfigureAwait(false);
                 if (r is { })
