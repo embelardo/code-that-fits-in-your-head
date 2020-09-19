@@ -374,11 +374,25 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             Assert.Equal(year, dto.Year);
             Assert.Equal(month, dto.Month);
             Assert.Equal(day, dto.Day);
+            AssertDays(expectedDays, dto);
+            AssertEntries(expectedDays, tableSize, restaurant, dto);
+        }
+
+        private static void AssertDays(int expectedDays, CalendarDto dto)
+        {
             Assert.NotNull(dto.Days);
             Assert.Equal(expectedDays, dto.Days?.Length);
             Assert.Equal(
                 expectedDays,
                 dto.Days.Select(d => d.Date).Distinct().Count());
+        }
+
+        private static void AssertEntries(
+            int expectedDays,
+            int tableSize,
+            Restaurant restaurant,
+            CalendarDto dto)
+        {
             var timeSlotEntries =
                 dto.Days.SelectMany(d => d.Entries ?? Array.Empty<TimeDto>());
             Assert.True(
@@ -389,16 +403,16 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             Assert.All(
                 timeSlotEntries,
                 t => Assert.Equal(tableSize, t.MaximumPartySize));
-            Assert.All(
-                dto.Days,
-                d => Assert.Contains(
-                    restaurant.MaitreD.OpensAt.ToIso8601TimeString(),
-                    d.Entries.Select(e => e.Time)));
-            Assert.All(
-                dto.Days,
-                d => Assert.Contains(
-                    restaurant.MaitreD.LastSeating.ToIso8601TimeString(),
-                    d.Entries.Select(e => e.Time)));
+            var opensAt = restaurant.MaitreD.OpensAt.ToIso8601TimeString();
+            Assert.All(dto.Days, d => AssertContainsTime(opensAt, d));
+            var lastSeating =
+                restaurant.MaitreD.LastSeating.ToIso8601TimeString();
+            Assert.All(dto.Days, d => AssertContainsTime(lastSeating, d));
+        }
+
+        private static void AssertContainsTime(string time, DayDto d)
+        {
+            Assert.Contains(time, d.Entries.Select(e => e.Time));
         }
 
         [Theory]
