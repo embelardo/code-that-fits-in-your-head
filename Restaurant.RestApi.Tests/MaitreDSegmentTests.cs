@@ -37,16 +37,16 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 date.Date.Add((TimeSpan)sut.LastSeating),
                 actual.Last().At);
             AssertFifteenMinuteDistances(actual);
-            Assert.All(actual, o => AssertTables(sut.Tables, o.Value));
+            Assert.All(actual, ts => AssertTables(sut.Tables, ts.Tables));
             Assert.All(
                 actual,
-                o => AssertRelevance(reservations, sut.SeatingDuration, o));
+                ts => AssertRelevance(reservations, sut.SeatingDuration, ts));
         }
 
         private static void AssertFifteenMinuteDistances(
-            IEnumerable<Occurrence<IEnumerable<Table>>> actual)
+            IEnumerable<TimeSlot> actual)
         {
-            var times = actual.Select(o => o.At).OrderBy(t => t);
+            var times = actual.Select(ts => ts.At).OrderBy(t => t);
             var deltas = times.Zip(times.Skip(1), (x, y) => y - x);
             Assert.All(deltas, d => Assert.Equal(TimeSpan.FromMinutes(15), d));
         }
@@ -64,16 +64,16 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         private static void AssertRelevance(
             IEnumerable<Reservation> reservations,
             TimeSpan seatingDuration,
-            Occurrence<IEnumerable<Table>> occurrence)
+            TimeSlot timeSlot)
         {
-            var seating = new Seating(seatingDuration, occurrence.At);
+            var seating = new Seating(seatingDuration, timeSlot.At);
             var expected = reservations
                 .Select(r => (new Seating(seatingDuration, r.At), r))
                 .Where(t => seating.Overlaps(t.Item1))
                 .Select(t => t.r)
                 .ToHashSet();
 
-            var actual = occurrence.Value
+            var actual = timeSlot.Tables
                 .SelectMany(t => t.Accept(new ReservationsVisitor()))
                 .ToHashSet();
 

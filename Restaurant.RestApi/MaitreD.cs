@@ -127,7 +127,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
         /// concluding at the restaurant's last seating time. Each segment
         /// contains the table allocation at that time.
         /// </returns>
-        public IEnumerable<Occurrence<IEnumerable<Table>>> Segment(
+        public IEnumerable<TimeSlot> Segment(
             DateTime date,
             IEnumerable<Reservation> reservations)
         {
@@ -140,7 +140,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 var relevantReservations =
                     reservations.Where(seating.Overlaps);
                 var allocation = Allocate(relevantReservations);
-                yield return new Occurrence<IEnumerable<Table>>(at, allocation);
+                yield return new TimeSlot(at, allocation.ToList());
             }
         }
     }

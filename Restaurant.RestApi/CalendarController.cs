@@ -158,10 +158,10 @@ namespace Ploeh.Samples.Restaurants.RestApi
         {
             var segments = maitreD
                 .Segment(date, reservations)
-                .Select(o => new TimeDto
+                .Select(ts => new TimeDto
                 {
-                    Time = o.At.TimeOfDay.ToIso8601TimeString(),
-                    MaximumPartySize = o.Value.Max(t => t.RemainingSeats)
+                    Time = ts.At.TimeOfDay.ToIso8601TimeString(),
+                    MaximumPartySize = ts.Tables.Max(t => t.RemainingSeats)
                 })
                 .ToArray();
 
