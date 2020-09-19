@@ -221,7 +221,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             IEnumerable<Reservation> reservations,
             IEnumerable<Occurrence<Table[]>> expected)
         {
-            var actual = sut.Schedule(reservations);
+            var actual = sut.ScheduleOcc(reservations);
             Assert.Equal(
                 expected,
                 actual.Select(o => o.Select(ts => ts.ToArray())));

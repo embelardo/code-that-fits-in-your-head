@@ -26,7 +26,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             MaitreD sut,
             Reservation[] reservations)
         {
-            var actual = sut.Schedule(reservations);
+            var actual = sut.ScheduleOcc(reservations);
 
             Assert.Equal(
                 reservations.Select(r => r.At).Distinct().Count(),
