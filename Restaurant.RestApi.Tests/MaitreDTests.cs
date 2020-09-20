@@ -173,55 +173,35 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             Assert.False(actual);
         }
 
-        [SuppressMessage(
-            "Performance",
-            "CA1812: Avoid uninstantiated internal classes",
-            Justification = "This class is instantiated via Reflection.")]
-        private class ScheduleTestCases :
-            TheoryData<MaitreD, IEnumerable<Reservation>, IEnumerable<TimeSlot>>
+        [Fact]
+        public void ScheduleNoReservations()
         {
-            public ScheduleTestCases()
-            {
-                NoReservations();
-                SingleReservationCommunalTable();
-            }
+            var sut = new MaitreD(
+                TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
+                TimeSpan.FromHours(6),
+                Table.Communal(12));
 
-            private void NoReservations()
-            {
-                Add(new MaitreD(
-                        TimeSpan.FromHours(18),
-                        TimeSpan.FromHours(21),
-                        TimeSpan.FromHours(6),
-                        Table.Communal(12)),
-                    Array.Empty<Reservation>(),
-                    Array.Empty<TimeSlot>());
-            }
+            var actual = sut.Schedule(Enumerable.Empty<Reservation>());
 
-            private void SingleReservationCommunalTable()
-            {
-                var table = Table.Communal(12);
-                var r = Some.Reservation;
-                Add(new MaitreD(
-                        TimeSpan.FromHours(18),
-                        TimeSpan.FromHours(21),
-                        TimeSpan.FromHours(6),
-                        table),
-                    new[] { r },
-                    new[] { new TimeSlot(r.At, table.Reserve(r)) });
-            }
+            var expected = Enumerable.Empty<TimeSlot>();
+            Assert.Equal(expected, actual);
         }
 
-        [SuppressMessage(
-            "Design",
-            "CA1062:Validate arguments of public methods",
-            Justification = "Parametrised test.")]
-        [Theory, ClassData(typeof(ScheduleTestCases))]
-        public void Schedule(
-            MaitreD sut,
-            IEnumerable<Reservation> reservations,
-            IEnumerable<TimeSlot> expected)
+        [Fact]
+        public void ScheduleSingleReservationCommunalTable()
         {
-            var actual = sut.Schedule(reservations);
+            var table = Table.Communal(12);
+            var sut = new MaitreD(
+                TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
+                TimeSpan.FromHours(6),
+                table);
+
+            var r = Some.Reservation;
+            var actual = sut.Schedule(new[] { r });
+
+            var expected = new[] { new TimeSlot(r.At, table.Reserve(r)) };
             Assert.Equal(expected, actual);
         }
     }
