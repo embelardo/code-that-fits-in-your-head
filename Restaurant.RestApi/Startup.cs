@@ -79,6 +79,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         private void ConfigureAuthorization(IServiceCollection services)
         {
+            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
             services.AddAuthentication(opts =>
             {
                 opts.DefaultAuthenticateScheme =
@@ -99,8 +100,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         private TokenValidationParameters CreateTokenValidationParameters()
         {
-            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-
             var secret = Configuration["JwtIssuerSigningKey"];
 
             return new TokenValidationParameters
