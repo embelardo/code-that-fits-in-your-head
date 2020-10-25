@@ -45,9 +45,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
             var sig = Convert.ToBase64String(
                 hmac.ComputeHash(Encoding.ASCII.GetBytes(url)));
 
-            ub.Query = new QueryString(ub.Query)
-                .Add("sig", sig)
-                .ToString();
+            ub.Query = new QueryString(ub.Query).Add("sig", sig).ToString();
             return ub.ToString();
         }
 
