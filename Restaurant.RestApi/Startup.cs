@@ -51,9 +51,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 .AddControllers(opts =>
                 {
                     opts.Filters.Add<LinksFilter>();
-                    opts.Filters.Add(
-                        new UrlIntegrityFilter(
-                            urlSigningKey));
+                    opts.Filters.Add(new UrlIntegrityFilter(urlSigningKey));
                 })
                 .AddJsonOptions(opts =>
                     opts.JsonSerializerOptions.IgnoreNullValues = true);
