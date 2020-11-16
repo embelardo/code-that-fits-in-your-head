@@ -29,14 +29,13 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         [Obsolete("Use Get method with restaurant ID.")]
         [HttpGet("schedule/{year}/{month}/{day}")]
-        public Task<ActionResult> Get(int year, int month, int day)
+        public ActionResult Get(int year, int month, int day)
         {
-            var result = new RedirectToActionResult(
+            return new RedirectToActionResult(
                 nameof(Get),
                 null,
                 new { restaurantId = Grandfather.Id, year, month, day },
                 permanent: true);
-            return Task.FromResult<ActionResult>(result);
         }
 
         [HttpGet("restaurants/{restaurantId}/schedule/{year}/{month}/{day}")]
