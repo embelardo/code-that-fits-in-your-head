@@ -63,14 +63,13 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         [Obsolete("Use Get method with restaurant ID.")]
         [HttpGet("calendar/{year}/{month}")]
-        public Task<ActionResult> LegacyGet(int year, int month)
+        public ActionResult LegacyGet(int year, int month)
         {
-            var result = new RedirectToActionResult(
+            return new RedirectToActionResult(
                 nameof(Get),
                 null,
                 new { restaurantId = Grandfather.Id, year, month },
                 permanent: true);
-            return Task.FromResult<ActionResult>(result);
         }
 
         /* See comment about Get(int year). */
