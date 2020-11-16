@@ -23,14 +23,13 @@ namespace Ploeh.Samples.Restaurants.RestApi
 
         [Obsolete("Use Get method with restaurant ID.")]
         [HttpGet("calendar/{year}"), ResponseCache(Duration = 60)]
-        public Task<ActionResult> LegacyGet(int year)
+        public ActionResult LegacyGet(int year)
         {
-            var result = new RedirectToActionResult(
+            return new RedirectToActionResult(
                 nameof(Get),
                 null,
                 new { restaurantId = Grandfather.Id, year },
                 permanent: true);
-            return Task.FromResult<ActionResult>(result);
         }
 
         /* This method loads a year's worth of reservation in order to segment
