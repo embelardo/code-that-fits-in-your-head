@@ -27,21 +27,21 @@ namespace Ploeh.Samples.Restaurants.RestApi
             get { return Start + SeatingDuration; }
         }
 
-        public bool Overlaps(Reservation other)
+        public bool Overlaps(Reservation otherRestaurant)
+        {
+            if (otherRestaurant is null)
+                throw new ArgumentNullException(nameof(otherRestaurant));
+
+            var other = new Seating(SeatingDuration, otherRestaurant.At);
+            return Overlaps(other);
+        }
+
+        public bool Overlaps(Seating other)
         {
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
-            var otherSeating = new Seating(SeatingDuration, other.At);
-            return Overlaps(otherSeating);
-        }
-
-        public bool Overlaps(Seating otherSeating)
-        {
-            if (otherSeating is null)
-                throw new ArgumentNullException(nameof(otherSeating));
-
-            return Start < otherSeating.End && otherSeating.Start < End;
+            return Start < other.End && other.Start < End;
         }
 
         public override bool Equals(object? obj)
