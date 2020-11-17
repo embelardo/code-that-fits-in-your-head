@@ -86,10 +86,6 @@ namespace Ploeh.Samples.Restaurants.RestApi
             };
         }
 
-        [SuppressMessage(
-            "Globalization",
-            "CA1305:Specify IFormatProvider",
-            Justification = "Guids aren't culture-specific.")]
         private static ActionResult Reservation201Created(
             int restaurantId,
             Reservation r)
