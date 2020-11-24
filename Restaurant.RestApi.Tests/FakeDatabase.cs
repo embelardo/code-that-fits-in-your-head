@@ -1,18 +1,13 @@
 /* Copyright (c) Mark Seemann 2020. All rights reserved. */
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    [SuppressMessage(
-        "Naming",
-        "CA1710:Identifiers should have correct suffix",
-        Justification = "The role of the class is a Test Double.")]
     public class FakeDatabase :
         ConcurrentDictionary<int, Collection<Reservation>>,
         IReservationsRepository
