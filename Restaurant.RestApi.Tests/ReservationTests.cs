@@ -17,8 +17,8 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 () => new Reservation(
                     Guid.NewGuid(),
                     new DateTime(2024, 8, 19, 11, 30, 0),
-                    new Email("mail@example.com"),
-                    new Name("Marie Ilsøe"),
+                    new Email("vandal@example.com"),
+                    new Name("Ann da Lucia"),
                     invalidQantity));
         }
     }
