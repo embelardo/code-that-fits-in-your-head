@@ -15,16 +15,12 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             Guid id,
             DateTime at,
             Email email,
+            Name name,
             NonNegativeInt i)
         {
             var invalidQuantity = -i?.Item ?? 0;
             Assert.Throws<ArgumentOutOfRangeException>(
-                () => new Reservation(
-                    id,
-                    at,
-                    email,
-                    new Name("Ann da Lucia"),
-                    invalidQuantity));
+                () => new Reservation(id, at, email, name, invalidQuantity));
         }
     }
 }
