@@ -11,12 +11,12 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
     public class ReservationTests
     {
         [Property]
-        public void QuantityMustBePositive(NonNegativeInt i)
+        public void QuantityMustBePositive(Guid id, NonNegativeInt i)
         {
             var invalidQuantity = -i?.Item ?? 0;
             Assert.Throws<ArgumentOutOfRangeException>(
                 () => new Reservation(
-                    Guid.NewGuid(),
+                    id,
                     new DateTime(2024, 8, 19, 11, 30, 0),
                     new Email("vandal@example.com"),
                     new Name("Ann da Lucia"),
