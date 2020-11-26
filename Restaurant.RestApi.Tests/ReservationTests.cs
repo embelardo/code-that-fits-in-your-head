@@ -14,6 +14,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         public void QuantityMustBePositive(
             Guid id,
             DateTime at,
+            Email email,
             NonNegativeInt i)
         {
             var invalidQuantity = -i?.Item ?? 0;
@@ -21,7 +22,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                 () => new Reservation(
                     id,
                     at,
-                    new Email("vandal@example.com"),
+                    email,
                     new Name("Ann da Lucia"),
                     invalidQuantity));
         }
