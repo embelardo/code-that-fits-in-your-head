@@ -11,7 +11,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         [Theory]
         [InlineData( 0)]
         [InlineData(-1)]
-        public void QuantityMustBePositive(int invalidQantity)
+        public void QuantityMustBePositive(int invalidQuantity)
         {
             Assert.Throws<ArgumentOutOfRangeException>(
                 () => new Reservation(
@@ -19,7 +19,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
                     new DateTime(2024, 8, 19, 11, 30, 0),
                     new Email("vandal@example.com"),
                     new Name("Ann da Lucia"),
-                    invalidQantity));
+                    invalidQuantity));
         }
     }
 }
