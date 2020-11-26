@@ -1,4 +1,6 @@
 ﻿/* Copyright (c) Mark Seemann 2020. All rights reserved. */
+using FsCheck;
+using FsCheck.Xunit;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,11 +10,10 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
     public class ReservationTests
     {
-        [Theory]
-        [InlineData( 0)]
-        [InlineData(-1)]
-        public void QuantityMustBePositive(int invalidQuantity)
+        [Property]
+        public void QuantityMustBePositive(NonNegativeInt i)
         {
+            var invalidQuantity = -i?.Item ?? 0;
             Assert.Throws<ArgumentOutOfRangeException>(
                 () => new Reservation(
                     Guid.NewGuid(),
