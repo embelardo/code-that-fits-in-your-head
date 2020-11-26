@@ -11,7 +11,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         [Theory]
         [InlineData(-1)]
         [InlineData(25)]
-        public void AttemptNegativeTimeOfDay(int hours)
+        public void AttemptInvalidTimeOfDay(int hours)
         {
             Assert.Throws<ArgumentOutOfRangeException>(
                 () => new TimeOfDay(TimeSpan.FromHours(hours)));
