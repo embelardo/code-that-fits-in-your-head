@@ -41,14 +41,19 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         }
 
         [Theory]
-        [InlineData(
-            "2023-11-24 19:00", "juliad@example.net", "Julia Domna", 5)]
-        [InlineData("2024-02-13 18:15", "x@example.com", "Xenia Ng", 9)]
-        [InlineData("2023-08-23 16:55", "kite@example.edu", null, 2)]
-        [InlineData("2022-03-18 17:30", "shli@example.org", "Shanghai Li", 5)]
+        [InlineData(1049, 19, 00, "juliad@example.net", "Julia Domna", 5)]
+        [InlineData(1130, 18, 15, "x@example.com", "Xenia Ng", 9)]
+        [InlineData( 956, 16, 55, "kite@example.edu", null, 2)]
+        [InlineData( 433, 17, 30, "shli@example.org", "Shanghai Li", 5)]
         public async Task PostValidReservationWhenDatabaseIsEmpty(
-            string at, string email, string name, int quantity)
+            int days,
+            int hours,
+            int minutes,
+            string email,
+            string name,
+            int quantity)
         {
+            var at = DateTime.Now.Date + new TimeSpan(days, hours, minutes, 0);
             var db = new FakeDatabase();
             var sut = new ReservationsController(
                 new SystemClock(),
@@ -58,7 +63,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var dto = new ReservationDto
             {
                 Id = "B50DF5B1-F484-4D99-88F9-1915087AF568",
-                At = at,
+                At = at.ToString("O"),
                 Email = email,
                 Name = name,
                 Quantity = quantity
