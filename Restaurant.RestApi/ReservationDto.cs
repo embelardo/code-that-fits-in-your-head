@@ -28,7 +28,8 @@ namespace Ploeh.Samples.Restaurants.RestApi
             if (Quantity < 1)
                 return null;
 
-            return new Reservation(id,
+            return new Reservation(
+                id,
                 d,
                 new Email(Email),
                 new Name(Name ?? ""),
