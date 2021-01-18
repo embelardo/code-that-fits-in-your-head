@@ -137,10 +137,11 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         [Fact]
         public async Task BookTableWhenFreeSeatingIsAvailable()
         {
+            var date = (DateTime.Today + 714.Days()).ToIso8601DateString();
             using var api = new LegacyApi();
             await api.PostReservation(new
             {
-                at = "2023-01-02 18:15",
+                at = $"{date} 18:15",
                 email = "net@example.net",
                 name = "Ned Tucker",
                 quantity = 2
@@ -148,7 +149,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var response = await api.PostReservation(new
             {
-                at = "2023-01-02 18:30",
+                at = $"{date} 18:30",
                 email = "kant@example.edu",
                 name = "Katrine Nøhr Troelsen",
                 quantity = 4
