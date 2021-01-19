@@ -137,7 +137,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         [Fact]
         public async Task BookTableWhenFreeSeatingIsAvailable()
         {
-            var date = (DateTime.Today + 714.Days()).ToIso8601DateString();
+            var date = DateTime.Today.AddDays(714).ToIso8601DateString();
             using var api = new LegacyApi();
             await api.PostReservation(new
             {
@@ -260,8 +260,10 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         public async Task DeleteIsIdempotent(string id)
         {
             using var api = new LegacyApi();
+            var at = DateTime.Today.AddDays(435) + new TimeSpan(20, 15, 0);
             var dto = Some.Reservation.ToDto();
             dto.Id = id;
+            dto.At = at.ToIso8601DateTimeString();
             var postResp = await api.PostReservation(dto);
             postResp.EnsureSuccessStatusCode();
             var url = FindReservationAddress(postResp);
@@ -527,7 +529,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         [Fact]
         public async Task ChangeTableAtTheVaticanCellar()
         {
-            var at = DateTime.Today + 437.Days() + new TimeSpan(20, 15, 0);
+            var at = DateTime.Today.AddDays(437) + new TimeSpan(20, 15, 0);
             var r = Some.Reservation.WithDate(at);
             using var api = new SelfHostedApi();
             var client = api.CreateClient();
