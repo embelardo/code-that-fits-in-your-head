@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurants.RestApi
 {
-    public sealed class SigningUrlHelperFactory : IUrlHelperFactory
+    internal sealed class SigningUrlHelperFactory : IUrlHelperFactory
     {
         private readonly IUrlHelperFactory inner;
         private readonly byte[] urlSigningKey;
