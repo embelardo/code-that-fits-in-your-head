@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurants.RestApi
 {
-    public class NullPostOffice : IPostOffice
+    public sealed class NullPostOffice : IPostOffice
     {
         public static readonly NullPostOffice Instance = new NullPostOffice();
 

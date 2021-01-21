@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurants.RestApi
 {
-    public class SqlReservationsRepository : IReservationsRepository
+    public sealed class SqlReservationsRepository : IReservationsRepository
     {
         public SqlReservationsRepository(string connectionString)
         {

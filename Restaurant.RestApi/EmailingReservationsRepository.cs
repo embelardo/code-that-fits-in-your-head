@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurants.RestApi
 {
-    public class EmailingReservationsRepository : IReservationsRepository
+    public sealed class EmailingReservationsRepository :
+        IReservationsRepository
     {
         public EmailingReservationsRepository(
             IPostOffice postOffice,
