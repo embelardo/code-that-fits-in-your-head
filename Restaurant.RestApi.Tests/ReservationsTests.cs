@@ -274,23 +274,6 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             resp.EnsureSuccessStatusCode();
         }
 
-        [Fact]
-        public async Task DeleteAbsentReservationDoesNotSendEmail()
-        {
-            var db = new FakeDatabase();
-            var postOffice = new SpyPostOffice();
-            var sut = new ReservationsController(
-                new SystemClock(),
-                new InMemoryRestaurantDatabase(Some.Restaurant),
-                db);
-
-            await sut.Delete(Guid.NewGuid().ToString("N"));
-
-            Assert.DoesNotContain(
-                postOffice,
-                o => o.Event == SpyPostOffice.Event.Deleted);
-        }
-
         [Theory]
         [InlineData("2022-06-01 18:47", "b@example.net", "Björk", 2, 5)]
         [InlineData("2022-02-10 19:32", "e@example.gov", "Epica", 5, 4)]
