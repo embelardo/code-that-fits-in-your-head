@@ -260,10 +260,10 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         public async Task DeleteIsIdempotent(string id)
         {
             using var api = new LegacyApi();
-            var at = DateTime.Today.AddDays(435) + new TimeSpan(20, 15, 0);
             var dto = Some.Reservation.ToDto();
             dto.Id = id;
-            dto.At = at.ToIso8601DateTimeString();
+            dto.At = DateTime.Today.AddDays(435).At(20, 15)
+                .ToIso8601DateTimeString();
             var postResp = await api.PostReservation(dto);
             postResp.EnsureSuccessStatusCode();
             var url = FindReservationAddress(postResp);
