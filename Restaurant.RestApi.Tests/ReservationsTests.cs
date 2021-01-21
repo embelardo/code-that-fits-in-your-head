@@ -218,6 +218,8 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             using var api = new LegacyApi();
             var dto = Some.Reservation.ToDto();
             dto.Id = id;
+            dto.At = DateTime.Today.AddDays(435).At(20, 15)
+                .ToIso8601DateTimeString();
             var postResp = await api.PostReservation(dto);
             postResp.EnsureSuccessStatusCode();
 
