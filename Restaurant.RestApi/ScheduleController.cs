@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Ploeh.Samples.Restaurants.RestApi
 {
     [Authorize(Roles = "MaitreD")]
-    public class ScheduleController
+    public sealed class ScheduleController
     {
         public ScheduleController(
             IRestaurantDatabase restaurantDatabase,

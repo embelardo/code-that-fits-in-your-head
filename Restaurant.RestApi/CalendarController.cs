@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurants.RestApi
 {
-    public class CalendarController
+    public sealed class CalendarController
     {
         public CalendarController(
             IRestaurantDatabase restaurantDatabase,

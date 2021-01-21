@@ -12,7 +12,7 @@ using System.Transactions;
 namespace Ploeh.Samples.Restaurants.RestApi
 {
     [ApiController]
-    public class ReservationsController
+    public sealed class ReservationsController
     {
         public ReservationsController(
             IClock clock,
