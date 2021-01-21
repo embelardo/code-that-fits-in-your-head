@@ -529,8 +529,8 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         [Fact]
         public async Task ChangeTableAtTheVaticanCellar()
         {
-            var at = DateTime.Today.AddDays(437).At(20, 15);
-            var r = Some.Reservation.WithDate(at);
+            var r = Some.Reservation.WithDate(
+                DateTime.Today.AddDays(437).At(20, 15));
             using var api = new SelfHostedApi();
             var client = api.CreateClient();
             var postResponse = await client.PostReservation(
@@ -544,8 +544,9 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var putResponse = await client.PutReservation(
                 address,
                 r
-                    .WithDate(at.Date)
-                    .AddDate(timeOfDayLaterThanLastSeatingAtTheOtherRestaurants)
+                    .WithDate(
+                       r.At.Date +
+                       timeOfDayLaterThanLastSeatingAtTheOtherRestaurants)
                     .ToDto());
 
             putResponse.EnsureSuccessStatusCode();
