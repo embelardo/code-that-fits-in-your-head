@@ -366,21 +366,22 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         public async Task PutConflictingIds()
         {
             var db = new FakeDatabase();
-            db.Grandfather.Add(Some.Reservation);
+            var r = Some.Reservation.WithDate(
+                DateTime.Today.AddDays(435).At(20, 15));
+            db.Grandfather.Add(r);
             var sut = new ReservationsController(
                 new SystemClock(),
                 new InMemoryRestaurantDatabase(Grandfather.Restaurant),
                 db);
 
-            var dto = Some.Reservation
+            var dto = r
                 .WithId(Guid.NewGuid())
                 .WithName(new Name("Qux"))
                 .ToDto();
-            var id = Some.Reservation.Id.ToString("N");
-            await sut.Put(id, dto);
+            await sut.Put(r.Id.ToString("N"), dto);
 
-            var r = Assert.Single(db.Grandfather);
-            Assert.Equal(Some.Reservation.WithName(new Name("Qux")), r);
+            var actual = Assert.Single(db.Grandfather);
+            Assert.Equal(r.WithName(new Name("Qux")), actual);
         }
 
         [Fact]
