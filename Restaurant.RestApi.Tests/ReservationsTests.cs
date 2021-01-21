@@ -529,7 +529,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         [Fact]
         public async Task ChangeTableAtTheVaticanCellar()
         {
-            var at = DateTime.Today.AddDays(437) + new TimeSpan(20, 15, 0);
+            var at = DateTime.Today.AddDays(437).At(20, 15);
             var r = Some.Reservation.WithDate(at);
             using var api = new SelfHostedApi();
             var client = api.CreateClient();
