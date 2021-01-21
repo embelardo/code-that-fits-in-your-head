@@ -28,7 +28,8 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
 
             var expected = new ReservationDto
             {
-                At = "2023-03-10 19:00",
+                At = DateTime.Today.AddDays(778).At(19, 0)
+                        .ToIso8601DateTimeString(),
                 Email = "katinka@example.com",
                 Name = "Katinka Ingabogovinanana",
                 Quantity = 2
