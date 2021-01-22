@@ -459,7 +459,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             using var api = new SelfHostedApi();
             var client = api.CreateClient();
             var at = Some.Reservation.At;
-            var dto = Some.Reservation.ToDto();
+            var dto = Some.Reservation.WithDate(at).ToDto();
             dto.Quantity = 6;
 
             var response = await client.PostReservation("Nono", dto);
