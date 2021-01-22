@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public sealed class SelfHostedApi : WebApplicationFactory<Startup>
+    internal sealed class SelfHostedApi : WebApplicationFactory<Startup>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
