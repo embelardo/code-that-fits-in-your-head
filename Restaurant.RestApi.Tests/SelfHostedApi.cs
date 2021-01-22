@@ -21,9 +21,6 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            if (builder is null)
-                throw new ArgumentNullException(nameof(builder));
-
             builder.ConfigureServices(services =>
             {
                 services.RemoveAll<IReservationsRepository>();
