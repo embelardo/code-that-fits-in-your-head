@@ -458,7 +458,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         {
             using var api = new SelfHostedApi();
             var client = api.CreateClient();
-            var at = Some.Reservation.At;
+            var at = DateTime.Today.AddDays(434).At(20, 15);
             var dto = Some.Reservation.WithDate(at).ToDto();
             dto.Quantity = 6;
 
