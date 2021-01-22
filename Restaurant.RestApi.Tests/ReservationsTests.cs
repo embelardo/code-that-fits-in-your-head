@@ -318,9 +318,21 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             {
                 Add(null, "led@example.net", "Light Expansion Dread", 2);
                 Add("not a date", "cygnet@example.edu", "Committee", 9);
-                Add("2023-12-29 19:00", null, "Quince", 3);
-                Add("2022-10-10 19:10", "4@example.org", "4 Beard", 0);
-                Add("2045-01-31 18:45", "svn@example.com", "Severin", -1);
+                AddWithDate(1071, 19, 0, null, "Quince", 3);
+                AddWithDate( 626, 19, 10, "4@example.org", "4 Beard", 0);
+                AddWithDate(8775, 18, 45, "svn@example.com", "Severin", -1);
+            }
+
+            private void AddWithDate(
+                int days,
+                int hours,
+                int minutes,
+                string? email,
+                string name,
+                int quantity)
+            {
+                var at = DateTime.Today.AddDays(days).At(hours, minutes);
+                Add(at.ToIso8601DateTimeString(), email, name, quantity);
             }
         }
 
