@@ -307,12 +307,24 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             Assert.Equal(persisted, actual, new ReservationDtoComparer());
         }
 
-        [Theory]
-        [InlineData(null, "led@example.net", "Light Expansion Dread", 2)]
-        [InlineData("not a date", "cygnet@example.edu", "Committee", 9)]
-        [InlineData("2023-12-29 19:00", null, "Quince", 3)]
-        [InlineData("2022-10-10 19:10", "4@example.org", "4 Beard", 0)]
-        [InlineData("2045-01-31 18:45", "svn@example.com", "Severin", -1)]
+        [SuppressMessage(
+            "Performance",
+            "CA1812: Avoid uninstantiated internal classes",
+            Justification = "This class is instantiated via Reflection.")]
+        private sealed class PutInvalidReservationTestCases :
+            TheoryData<string?, string?, string, int>
+        {
+            public PutInvalidReservationTestCases()
+            {
+                Add(null, "led@example.net", "Light Expansion Dread", 2);
+                Add("not a date", "cygnet@example.edu", "Committee", 9);
+                Add("2023-12-29 19:00", null, "Quince", 3);
+                Add("2022-10-10 19:10", "4@example.org", "4 Beard", 0);
+                Add("2045-01-31 18:45", "svn@example.com", "Severin", -1);
+            }
+        }
+
+        [Theory, ClassData(typeof(PutInvalidReservationTestCases))]
         public async Task PutInvalidReservation(
             string at,
             string email,
