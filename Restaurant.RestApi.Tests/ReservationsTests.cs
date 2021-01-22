@@ -458,12 +458,12 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         {
             using var api = new SelfHostedApi();
             var client = api.CreateClient();
+            var at = Some.Reservation.At;
             var dto = Some.Reservation.ToDto();
             dto.Quantity = 6;
 
             var response = await client.PostReservation("Nono", dto);
 
-            var at = Some.Reservation.At;
             await AssertRemainingCapacity(client, at, "Nono", 4);
             await AssertRemainingCapacity(client, at, "Hipgnosta", 10);
         }
