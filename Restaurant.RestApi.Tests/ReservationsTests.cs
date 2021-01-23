@@ -164,13 +164,13 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             "2023-06-09 19:10", "adur@example.net", "Adrienne Ursa", 2)]
         [InlineData("2023-07-13 18:55", "emol@example.gov", "Emma Olsen", 5)]
         public async Task ReadSuccessfulReservation(
-            string date,
+            string at,
             string email,
             string name,
             int quantity)
         {
             using var api = new LegacyApi();
-            var expected = Create.ReservationDto(date, email, name, quantity);
+            var expected = Create.ReservationDto(at, email, name, quantity);
             var postResp = await api.PostReservation(expected);
             Uri address = FindReservationAddress(postResp);
 
