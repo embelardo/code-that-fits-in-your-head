@@ -353,7 +353,8 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             using var api = new LegacyApi();
             var dto = new ReservationDto
             {
-                At = "2022-03-22 19:00",
+                At = DateTime.Today.AddDays(423).At(19, 0)
+                        .ToIso8601DateTimeString(),
                 Email = "soylent@example.net",
                 Name = ":wumpscut:",
                 Quantity = 1
