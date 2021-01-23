@@ -285,16 +285,20 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
         }
 
         [Theory]
-        [InlineData("2022-06-01 18:47", "b@example.net", "Björk", 2, 5)]
-        [InlineData("2022-02-10 19:32", "e@example.gov", "Epica", 5, 4)]
+        [InlineData(494, 18, 47, "b@example.net", "Björk", 2, 5)]
+        [InlineData(383, 19, 32, "e@example.gov", "Epica", 5, 4)]
         public async Task UpdateReservation(
-            string at,
+            int days,
+            int hours,
+            int minutes,
             string email,
             string name,
             int quantity,
             int newQuantity)
         {
             using var api = new LegacyApi();
+            var at = DateTime.Today.AddDays(days).At(hours, minutes)
+                .ToIso8601DateTimeString();
             var dto = Create.ReservationDto(at, email, name, quantity);
             var postResp = await api.PostReservation(dto);
             Uri address = FindReservationAddress(postResp);
