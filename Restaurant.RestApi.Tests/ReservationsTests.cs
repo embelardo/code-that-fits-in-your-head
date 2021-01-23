@@ -516,10 +516,9 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
             var timeOfDayLaterThanLastSeatingAtTheOtherRestaurants =
                 TimeSpan.FromHours(21.5);
 
-            var dto = Some.Reservation
-                .WithDate(Some.Reservation.At.Date)
-                .AddDate(timeOfDayLaterThanLastSeatingAtTheOtherRestaurants)
-                .ToDto();
+            var at = DateTime.Today.AddDays(433).Add(
+                timeOfDayLaterThanLastSeatingAtTheOtherRestaurants);
+            var dto = Some.Reservation.WithDate(at).ToDto();
             var response =
                 await client.PostReservation("The Vatican Cellar", dto);
 
