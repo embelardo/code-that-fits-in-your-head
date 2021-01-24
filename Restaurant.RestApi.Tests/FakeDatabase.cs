@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class FakeDatabase :
+    public sealed class FakeDatabase :
         ConcurrentDictionary<int, Collection<Reservation>>,
         IReservationsRepository
     {

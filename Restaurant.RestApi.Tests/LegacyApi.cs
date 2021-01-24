@@ -48,7 +48,7 @@ namespace Ploeh.Samples.Restaurants.RestApi.Tests
     /// lifted.
     /// </para>
     /// </remarks>
-    public class LegacyApi : WebApplicationFactory<Startup>
+    public sealed class LegacyApi : WebApplicationFactory<Startup>
     {
         private bool authorizeClient;
 
