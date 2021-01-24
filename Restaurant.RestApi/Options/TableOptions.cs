@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Options
 {
-    public class TableOptions
+    public sealed class TableOptions
     {
         public TableType TableType { get; set; }
         public int Seats { get; set; }

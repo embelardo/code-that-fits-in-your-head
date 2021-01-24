@@ -7,7 +7,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
             "Performance",
             "CA1819:Properties should not return arrays",
             Justification = "DTO.")]
-    public class CalendarDto
+    public sealed class CalendarDto
     {
         public LinkDto[]? Links { get; set; }
 

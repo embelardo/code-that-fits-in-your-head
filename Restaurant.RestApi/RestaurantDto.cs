@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Ploeh.Samples.Restaurants.RestApi
 {
-    public class RestaurantDto
+    public sealed class RestaurantDto
     {
         [SuppressMessage(
             "Performance",

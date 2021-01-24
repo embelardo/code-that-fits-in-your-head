@@ -7,7 +7,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
         "Performance",
         "CA1819:Properties should not return arrays",
         Justification = "DTO.")]
-    public class TimeDto
+    public sealed class TimeDto
     {
         public string? Time { get; set; }
         public int? MaximumPartySize { get; set; }

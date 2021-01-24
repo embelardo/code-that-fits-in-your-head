@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Options
 {
-    public class RestaurantOptions
+    public sealed class RestaurantOptions
     {
         public int Id { get; set; }
         public string? Name { get; set; }

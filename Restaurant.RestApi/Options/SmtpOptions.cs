@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Options
 {
-    public class SmtpOptions
+    public sealed class SmtpOptions
     {
         public string? Host { get; set; }
         public int Port { get; set; }

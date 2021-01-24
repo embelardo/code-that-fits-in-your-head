@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Ploeh.Samples.Restaurants.RestApi
 {
-    public class ReservationDto
+    public sealed class ReservationDto
     {
         public string? Id { get; set; }
         public string? At { get; set; }
