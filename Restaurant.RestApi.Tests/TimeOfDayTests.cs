@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class TimeOfDayTests
+    public sealed class TimeOfDayTests
     {
         [Theory]
         [InlineData(-1)]

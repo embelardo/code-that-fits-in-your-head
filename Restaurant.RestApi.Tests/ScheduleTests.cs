@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class ScheduleTests
+    public sealed class ScheduleTests
     {
         [Theory]
         [InlineData(2022,  3, 11)]

@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class MaitreDScheduleTests
+    public sealed class MaitreDScheduleTests
     {
         [Property]
         public Property Schedule()

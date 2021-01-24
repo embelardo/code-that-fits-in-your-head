@@ -19,7 +19,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class ReservationsTests
+    public sealed class ReservationsTests
     {
         [Fact]
         public async Task PostValidReservation()

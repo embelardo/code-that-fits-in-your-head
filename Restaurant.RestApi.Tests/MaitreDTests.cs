@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class MaitreDTests
+    public sealed class MaitreDTests
     {
         [SuppressMessage(
             "Performance",

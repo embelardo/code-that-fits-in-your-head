@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class MaitreDSegmentTests
+    public sealed class MaitreDSegmentTests
     {
         [Property]
         public Property Segment()

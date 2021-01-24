@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class UrlBuilderTests
+    public sealed class UrlBuilderTests
     {
         [Theory]
         [InlineData("Home")]

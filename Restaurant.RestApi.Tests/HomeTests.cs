@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class HomeTests
+    public sealed class HomeTests
     {
         [Fact]
         public async Task HomeReturnsJson()

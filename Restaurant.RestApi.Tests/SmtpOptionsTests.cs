@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class SmtpOptionsTests
+    public sealed class SmtpOptionsTests
     {
         [Theory]
         [InlineData("", 587, "foo", "bar", "w@example.com")]

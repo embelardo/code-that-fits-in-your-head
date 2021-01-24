@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class RestaurantTests
+    public sealed class RestaurantTests
     {
         [Theory]
         [InlineData("Hipgnosta")]

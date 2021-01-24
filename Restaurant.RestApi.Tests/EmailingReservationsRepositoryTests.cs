@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class EmailingReservationsRepositoryTests
+    public sealed class EmailingReservationsRepositoryTests
     {
         [Theory]
         [InlineData( 3)]

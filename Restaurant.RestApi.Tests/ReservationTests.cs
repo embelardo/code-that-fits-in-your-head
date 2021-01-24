@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class ReservationTests
+    public sealed class ReservationTests
     {
         [Property]
         public void QuantityMustBePositive(

@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    public class CalendarTests
+    public sealed class CalendarTests
     {
         [Fact]
         public async Task GetCurrentYear()
