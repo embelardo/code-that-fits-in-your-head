@@ -14,7 +14,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
         "Performance",
         "CA1812: Avoid uninstantiated internal classes",
         Justification = "This class is instantiated via Reflection.")]
-    internal class LinksFilter : IAsyncActionFilter
+    internal sealed class LinksFilter : IAsyncActionFilter
     {
         public IUrlHelperFactory UrlHelperFactory { get; }
         public IRestaurantDatabase Database { get; }

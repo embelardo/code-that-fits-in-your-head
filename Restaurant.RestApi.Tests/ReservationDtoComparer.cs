@@ -5,7 +5,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    internal class ReservationDtoComparer : IEqualityComparer<ReservationDto>
+    internal sealed class ReservationDtoComparer :
+        IEqualityComparer<ReservationDto>
     {
         public bool Equals(ReservationDto? x, ReservationDto? y)
         {

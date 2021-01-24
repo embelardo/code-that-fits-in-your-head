@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    internal class SpyPostOffice :
+    internal sealed class SpyPostOffice :
         Collection<SpyPostOffice.Observation>, IPostOffice
     {
         public Task EmailReservationCreated(

@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Ploeh.Samples.Restaurants.RestApi.Tests
 {
-    internal class TimeDtoComparer : IEqualityComparer<TimeDto>
+    internal sealed class TimeDtoComparer : IEqualityComparer<TimeDto>
     {
         public bool Equals([AllowNull] TimeDto x, [AllowNull] TimeDto y)
         {
