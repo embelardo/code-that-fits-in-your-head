@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Ploeh.Samples.Restaurants.RestApi
 {
-    public sealed partial class Table
+    public sealed class Table
     {
         private readonly bool isStandard;
         private readonly Reservation[] reservations;
