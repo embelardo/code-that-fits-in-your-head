@@ -56,7 +56,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
                 .AddJsonOptions(opts =>
                     opts.JsonSerializerOptions.IgnoreNullValues = true);
 
-            ConfigureUrSigning(services, urlSigningKey);
+            ConfigureUrlSigning(services, urlSigningKey);
             ConfigureAuthorization(services);
             ConfigureRepository(services);
             ConfigureRestaurants(services);
@@ -64,7 +64,7 @@ namespace Ploeh.Samples.Restaurants.RestApi
             ConfigurePostOffice(services);
         }
 
-        private static void ConfigureUrSigning(
+        private static void ConfigureUrlSigning(
             IServiceCollection services,
             byte[] urlSigningKey)
         {
