@@ -1,6 +1,6 @@
 # Restaurant reservations sample code base
 
-This is the sample code base that accompanies the book *The art of software engineering.* It pretends to be a REST API that implements a restaurant reservation system.
+This is the sample code base that accompanies the book *Code That Fits in Your Head.* It pretends to be a REST API that implements a restaurant reservation system.
 
 ## Normal development
 
